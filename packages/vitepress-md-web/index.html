@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link rel="stylesheet" href="src/styles/vars.css">
+	<!-- <link rel="stylesheet" href="src/styles/index.css"> -->
+	<link rel="stylesheet" href="src/styles/base.css">
+	<link rel="stylesheet" href="src/styles/icons.css">
+	<link rel="stylesheet" href="src/styles/fonts.css">
+	<link rel="stylesheet" href="src/styles/utils.css">
+	<link rel="stylesheet" href="src/styles/components/vp-code.css">
+	<link rel="stylesheet" href="src/styles/components/vp-code-group.css">
+	<link rel="stylesheet" href="src/styles/components/vp-doc.css">
+	<link rel="stylesheet" href="src/styles/components/vp-sponsor.css">
+	<link rel="stylesheet" href="src/styles/components/custom-block.css">
+
+
+</head>
+
+<body>
+	<Button>vitepress-dark</Button>
+	<Button>light</Button>
+	<script>
+		document.querySelectorAll('Button').forEach(item => {
+			item.addEventListener('click', () => {
+				document.documentElement.classList.add(item.textContent)
+			})
+		})
+		document.documentElement.classList.add('vitepress-dark')
+	</script>
+	<div id="app"></div>
+</body>
+<script type="module" src="./__test__/mian.ts"></script>
+
+</html>
