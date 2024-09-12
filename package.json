@@ -2,11 +2,17 @@
   "name": "zaizai-monorepo",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": ""
+    "dev": "pnpm -F piece-zaizai dev"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "scss": "^0.2.4",
+    "vite": "^5.4.4"
+  }
 }

@@ -129,4 +129,6 @@ type BundledLanguage =
 
 import MarkdownIt from 'markdown-it'
 type MarkdownRenderer = MarkdownIt
-declare function createMarkdownRenderer(): MarkdownRenderer
+import { MarkdownOptions as Options } from './markdown/markdown-web'
+export { Options }
+declare function createMarkdownRenderer(options: Options): MarkdownRenderer

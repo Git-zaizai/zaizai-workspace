@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+
+    "importsNotUsedAsValues": "remove" /* 删除未使用的导入 */,
+
+    /* 类型检查选项 */
+    "strict": false /* 启用所有严格类型检查选项 */,
+    "strictBindCallApply": true /* 启用严格的 bind/call/apply 检查 */,
+    "declaration": true /* 生成声明文件 */,
+    "noImplicitThis": true /* 禁止 this 表达式隐式的 any 类型 */,
+
+    "allowJs": true /* 允许编译 JavaScript 文件 */,
+    "checkJs": true /* 允许检查 JavaScript 文件 */,
+
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/**.vue", "./global.d.ts"],
+  "exclude": ["**/node_modules/**"]
+}
