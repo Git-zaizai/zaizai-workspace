@@ -1,9 +1,29 @@
 <script setup lang="ts">
-import VPLocalNavOutlineDropdown from './VPLocalNavOutlineDropdown.vue'
+import '../styles/fonts.css'
+import '../styles/vars.css'
+import '../styles/icons.css'
+import '../styles/base.css'
+import '../styles/utils.css'
+import '../styles/components/custom-block.css'
+import '../styles/components/vp-code-group.css'
+import '../styles/components/vp-code.css'
+import '../styles/components/vp-doc.css'
+import '../styles/components/vp-sponsor.css'
+
 import VPDocOutlineItem from './VPDocOutlineItem.vue'
+import VPLocalNavOutlineDropdown from './VPLocalNavOutlineDropdown.vue'
 
 import { ref, shallowRef, onMounted, nextTick, computed, type Ref, watch, onUnmounted } from 'vue'
-import { type MenuItem, getHeaders, useActiveAnchor, findScrollableParent, isScrollHeight } from './outline'
+
+import {
+  type MenuItem,
+  getHeaders,
+  useActiveAnchor,
+  findScrollableParent,
+  isScrollHeight,
+  useCodeGroups,
+  useCopyCode,
+} from './outline'
 
 const props = withDefaults(
   defineProps<{
@@ -13,13 +33,13 @@ const props = withDefaults(
     isAsideContainerPadding?: boolean
     scrollEl?: HTMLElement | string
   }>(),
-  { leftAside: false, isAsideContainerPadding: false }
+  { leftAside: false, isAsideContainerPadding: true }
 )
 
 const headers = shallowRef<MenuItem[]>([])
 const AsideContainerPadding = computed(() => {
   if (props.isAsideContainerPadding) {
-    return '0px'
+    return false
   }
   return `calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + var(--vp-doc-top-height, 0px) + -62px)`
 })
@@ -69,9 +89,13 @@ const winClick = (e: any) => {
 
 onMounted(() => {
   window.addEventListener('click', winClick)
+  window.addEventListener('click', useCodeGroups)
+  window.addEventListener('click', useCopyCode)
 })
 onUnmounted(() => {
   window.removeEventListener('click', winClick)
+  window.removeEventListener('click', useCodeGroups)
+  window.removeEventListener('click', useCopyCode)
 })
 </script>
 
@@ -87,13 +111,13 @@ onUnmounted(() => {
         :class="{ 'left-aside': leftAside }"
       >
         <div class="aside-curtain" />
-        <div class="aside-container">
-          <div
-            class="aside-content"
-            :style="{
-              padding: AsideContainerPadding,
-            }"
-          >
+        <div
+          class="aside-container"
+          :style="{
+            padding: AsideContainerPadding,
+          }"
+        >
+          <div class="aside-content">
             <div class="VPDocAside">
               <nav
                 aria-labelledby="doc-outline-aria-label"

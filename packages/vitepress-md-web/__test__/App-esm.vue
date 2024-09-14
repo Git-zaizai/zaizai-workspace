@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { createMarkdownRenderer, getEvn } from '../src/index-web'
-import VPDocView from '../src/VPDocView/VPDocView.vue'
+import { createMarkdownRenderer, getEvn, VPDocView } from '../dist/esm'
 
 import { onMounted, ref } from 'vue'
+
 const test = async () => {
   const test = await fetch('markdown.md')
   return await test.text()
@@ -18,7 +18,7 @@ onMounted(async () => {
     },
     gfmAlerts: true,
     headers: true,
-    math: true,
+    math: false,
     theme: 'andromeeda',
   })
   const mdText = await test()
@@ -36,3 +36,5 @@ onMounted(async () => {
     />
   </div>
 </template>
+
+<style src="../dist/esm/index.css"></style>

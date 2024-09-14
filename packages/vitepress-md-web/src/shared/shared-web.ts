@@ -1,4 +1,4 @@
-import type { HeadConfig, PageData, SiteData } from '../types/shared'
+import type { HeadConfig, PageData, SiteData } from '../types-web/shared'
 
 export type {
   Awaitable,
@@ -12,7 +12,7 @@ export type {
   PageDataPayload,
   SSGContext,
   SiteData,
-} from '../types/shared'
+} from '../types-web/shared'
 
 export const EXTERNAL_URL_RE = /^(?:[a-z]+:|\/\/)/i
 export const APPEARANCE_KEY = 'vitepress-theme-appearance'

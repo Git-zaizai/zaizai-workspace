@@ -2,7 +2,8 @@ node_modules
 dist
 .cache
 
-__test__code/*
+__test__code
+dist-test
 
 .local
 # local env files

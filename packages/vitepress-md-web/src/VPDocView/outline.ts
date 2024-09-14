@@ -50,7 +50,8 @@ export function getHeaders(range?: any): MenuItem[] {
       }
     })
 
-  return resolveHeaders(headers, range)
+  // return resolveHeaders(headers, range)
+  return buildTree(headers, 1, 6)
 }
 
 function serializeHeader(h: Element): string {
@@ -82,11 +83,12 @@ export function resolveHeaders(headers: MenuItem[], range?: any): MenuItem[] {
   const [high, low]: [number, number] =
     typeof levelsRange === 'number' ? [levelsRange, levelsRange] : levelsRange === 'deep' ? [2, 6] : levelsRange
  */
-  return buildTree(headers, 2, 6)
+  return buildTree(headers, 1, 6)
 }
 
 export function getScrollOffset() {
   // let scrollOffset = siteDataRef.value.scrollOffset
+
   let scrollOffset: any = document.querySelector('#app')
   let offset = 0
   let padding = 24
@@ -120,7 +122,7 @@ function tryOffsetSelector(selector: string, padding: number): number {
 }
 
 export function throttleAndDebounce(fn: () => void, delay: number): () => void {
-  let timeoutId: number
+  let timeoutId: any
   let called = false
 
   return () => {
@@ -134,7 +136,7 @@ export function throttleAndDebounce(fn: () => void, delay: number): () => void {
 }
 
 export function useActiveAnchor(container: Ref<HTMLElement>, marker: Ref<HTMLElement>, fn: Function): void {
-  const onScroll = throttleAndDebounce(setActiveLink, 100)
+  const onScroll = throttleAndDebounce(setActiveLink, 200)
 
   let scrollElement: any = fn()
   let prevActiveLink: HTMLAnchorElement | null = null
@@ -154,8 +156,6 @@ export function useActiveAnchor(container: Ref<HTMLElement>, marker: Ref<HTMLEle
   })
 
   function setActiveLink() {
-    console.log('setActiveLink')
-
     const VPLocalNav = document.querySelector('#VPLocalNavId')
     // @ts-ignore
     if (VPLocalNav && VPLocalNav.style?.display === 'none') {
@@ -164,7 +164,7 @@ export function useActiveAnchor(container: Ref<HTMLElement>, marker: Ref<HTMLEle
 
     const scrollY = scrollElement.scrollY
     const innerHeight = scrollElement.innerHeight
-    const offsetHeight = scrollElement.offsetHeight
+    const offsetHeight = scrollElement === window ? document.body.offsetHeight : scrollElement.offsetHeight
     const isBottom = Math.abs(scrollY + innerHeight - offsetHeight) < 1
 
     // resolvedHeaders may be repositioned, hidden or fix positioned
@@ -197,13 +197,15 @@ export function useActiveAnchor(container: Ref<HTMLElement>, marker: Ref<HTMLEle
     // find the last header above the top of viewport
     let activeLink: string | null = null
     let index = 0
+
     for (const { top } of headers) {
-      if (top > scrollY + getScrollOffset() + 4) {
+      activeLink = headers[index].link
+      if (top > scrollY + 8) {
         break
       }
-      activeLink = headers[index + 1].link
       index++
     }
+
     activateLink(activeLink)
   }
 
@@ -221,7 +223,6 @@ export function useActiveAnchor(container: Ref<HTMLElement>, marker: Ref<HTMLEle
     const activeLink = prevActiveLink
 
     if (activeLink) {
-      activeLink.classList.add('active')
       marker.value.style.top = activeLink.offsetTop + 39 + 'px'
       marker.value.style.opacity = '1'
     } else {
@@ -296,4 +297,112 @@ export function findScrollableParent(element: any, VPDoc: Ref<HTMLElement>) {
 
 export function isScrollHeight(element: Element) {
   return element.scrollHeight > element.clientHeight
+}
+
+const timeoutIdMap: WeakMap<HTMLElement, NodeJS.Timeout> = new WeakMap()
+
+export function useCodeGroups(e: any) {
+  const el = e.target as HTMLInputElement
+
+  if (el.matches('.vp-code-group input')) {
+    // input <- .tabs <- .vp-code-group
+    const group = el.parentElement?.parentElement
+    if (!group) return
+
+    const i = Array.from(group.querySelectorAll('input')).indexOf(el)
+    if (i < 0) return
+
+    const blocks = group.querySelector('.blocks')
+    if (!blocks) return
+
+    const current = Array.from(blocks.children).find(child => child.classList.contains('active'))
+    if (!current) return
+
+    const next = blocks.children[i]
+    if (!next || current === next) return
+
+    current.classList.remove('active')
+    next.classList.add('active')
+
+    const label = group?.querySelector(`label[for="${el.id}"]`)
+    label?.scrollIntoView({ block: 'nearest' })
+  }
+}
+
+export function useCopyCode(e: any) {
+  const el = e.target as HTMLElement
+  if (el.matches('div[class*="language-"] > button.copy')) {
+    const parent = el.parentElement
+    const sibling = el.nextElementSibling?.nextElementSibling
+    if (!parent || !sibling) {
+      return
+    }
+
+    const isShell = /language-(shellscript|shell|bash|sh|zsh)/.test(parent.className)
+
+    const ignoredNodes = ['.vp-copy-ignore', '.diff.remove']
+
+    // Clone the node and remove the ignored nodes
+    const clone = sibling.cloneNode(true) as HTMLElement
+    clone.querySelectorAll(ignoredNodes.join(',')).forEach(node => node.remove())
+
+    let text = clone.textContent || ''
+
+    if (isShell) {
+      text = text.replace(/^ *(\$|>) /gm, '').trim()
+    }
+
+    copyToClipboard(text).then(() => {
+      el.classList.add('copied')
+      clearTimeout(timeoutIdMap.get(el))
+      const timeoutId = setTimeout(() => {
+        el.classList.remove('copied')
+        el.blur()
+        timeoutIdMap.delete(el)
+      }, 2000)
+      timeoutIdMap.set(el, timeoutId)
+    })
+  }
+}
+
+async function copyToClipboard(text: string) {
+  try {
+    return navigator.clipboard.writeText(text)
+  } catch {
+    const element = document.createElement('textarea')
+    const previouslyFocusedElement = document.activeElement
+
+    element.value = text
+
+    // Prevent keyboard from showing on mobile
+    element.setAttribute('readonly', '')
+
+    element.style.contain = 'strict'
+    element.style.position = 'absolute'
+    element.style.left = '-9999px'
+    element.style.fontSize = '12pt' // Prevent zooming on iOS
+
+    const selection = document.getSelection()
+    const originalRange = selection ? selection.rangeCount > 0 && selection.getRangeAt(0) : null
+
+    document.body.appendChild(element)
+    element.select()
+
+    // Explicit selection workaround for iOS
+    element.selectionStart = 0
+    element.selectionEnd = text.length
+
+    document.execCommand('copy')
+    document.body.removeChild(element)
+
+    if (originalRange) {
+      selection!.removeAllRanges() // originalRange can't be truthy when selection is falsy
+      selection!.addRange(originalRange)
+    }
+
+    // Get the focus back on the previously focused element, if any
+    if (previouslyFocusedElement) {
+      ;(previouslyFocusedElement as HTMLElement).focus()
+    }
+  }
 }

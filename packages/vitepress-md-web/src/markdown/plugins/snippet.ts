@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import type MarkdownIt from 'markdown-it'
 import type { RuleBlock } from 'markdown-it/lib/parser_block.mjs'
 import path from 'path'
-import type { MarkdownEnv } from '../../shared'
+import type { MarkdownEnv } from '../../shared/shared'
 
 /**
  * raw path format: "/path/to/file.extension#region {meta} [title]"
@@ -19,15 +19,9 @@ export const rawPathRegexp =
   /^(.+?(?:(?:\.([a-z0-9]+))?))(?:(#[\w-]+))?(?: ?(?:{(\d+(?:[,-]\d+)*)? ?(\S+)? ?(\S+)?}))? ?(?:\[(.+)\])?$/
 
 export function rawPathToToken(rawPath: string) {
-  const [
-    filepath = '',
-    extension = '',
-    region = '',
-    lines = '',
-    lang = '',
-    attrs = '',
-    rawTitle = ''
-  ] = (rawPathRegexp.exec(rawPath) || []).slice(1)
+  const [filepath = '', extension = '', region = '', lines = '', lang = '', attrs = '', rawTitle = ''] = (
+    rawPathRegexp.exec(rawPath) || []
+  ).slice(1)
 
   const title = rawTitle || filepath.split('/').pop() || ''
 
@@ -45,26 +39,16 @@ export function dedent(text: string): string {
   }, Infinity)
 
   if (minIndentLength < Infinity) {
-    return lines.map((x) => x.slice(minIndentLength)).join('\n')
+    return lines.map(x => x.slice(minIndentLength)).join('\n')
   }
 
   return text
 }
 
-function testLine(
-  line: string,
-  regexp: RegExp,
-  regionName: string,
-  end: boolean = false
-) {
+function testLine(line: string, regexp: RegExp, regionName: string, end: boolean = false) {
   const [full, tag, name] = regexp.exec(line.trim()) || []
 
-  return (
-    full &&
-    tag &&
-    name === regionName &&
-    tag.match(end ? /^[Ee]nd ?[rR]egion$/ : /^[rR]egion$/)
-  )
+  return full && tag && name === regionName && tag.match(end ? /^[Ee]nd ?[rR]egion$/ : /^[rR]egion$/)
 }
 
 export function findRegion(lines: Array<string>, regionName: string) {
@@ -75,7 +59,7 @@ export function findRegion(lines: Array<string>, regionName: string) {
     /^<!-- #?((?:end)?region) ([\w*-]+) -->$/, // HTML, markdown
     /^#((?:End )Region) ([\w*-]+)$/, // Visual Basic
     /^::#((?:end)region) ([\w*-]+)$/, // Bat
-    /^# ?((?:end)?region) ([\w*-]+)$/ // C#, PHP, Powershell, Python, perl & misc
+    /^# ?((?:end)?region) ([\w*-]+)$/, // C#, PHP, Powershell, Python, perl & misc
   ]
 
   let regexp = null
@@ -121,21 +105,14 @@ export const snippetPlugin = (md: MarkdownIt, srcDir: string) => {
     const start = pos + 3
     const end = state.skipSpacesBack(max, pos)
 
-    const rawPath = state.src
-      .slice(start, end)
-      .trim()
-      .replace(/^@/, srcDir)
-      .trim()
+    const rawPath = state.src.slice(start, end).trim().replace(/^@/, srcDir).trim()
 
-    const { filepath, extension, region, lines, lang, attrs, title } =
-      rawPathToToken(rawPath)
+    const { filepath, extension, region, lines, lang, attrs, title } = rawPathToToken(rawPath)
 
     state.line = startLine + 1
 
     const token = state.push('fence', 'code', 0)
-    token.info = `${lang || extension}${lines ? `{${lines}}` : ''}${
-      title ? `[${title}]` : ''
-    }  ${attrs ?? ''}`
+    token.info = `${lang || extension}${lines ? `{${lines}}` : ''}${title ? `[${title}]` : ''}  ${attrs ?? ''}`
 
     const { realPath, path: _path } = state.env as MarkdownEnv
     const resolvedPath = path.resolve(path.dirname(realPath ?? _path), filepath)
@@ -164,9 +141,7 @@ export const snippetPlugin = (md: MarkdownIt, srcDir: string) => {
 
     const isAFile = fs.statSync(src).isFile()
     if (!fs.existsSync(src) || !isAFile) {
-      token.content = isAFile
-        ? `Code snippet path not found: ${src}`
-        : `Invalid code snippet option`
+      token.content = isAFile ? `Code snippet path not found: ${src}` : `Invalid code snippet option`
       token.info = ''
       return fence(...args)
     }
@@ -181,7 +156,7 @@ export const snippetPlugin = (md: MarkdownIt, srcDir: string) => {
         content = dedent(
           lines
             .slice(region.start, region.end)
-            .filter((line) => !region.regexp.test(line.trim()))
+            .filter((line: any) => !region.regexp.test(line.trim()))
             .join('\n')
         )
       }

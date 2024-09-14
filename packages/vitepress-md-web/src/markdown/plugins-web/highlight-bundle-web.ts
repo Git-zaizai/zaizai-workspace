@@ -3,7 +3,7 @@
 import type { ShikiTransformer } from 'shiki'
 // import { bundledLanguages, createHighlighter, isSpecialLang } from 'shiki'
 import { createHighlighterCore } from 'shiki/core'
-import { bundledThemesInfo, bundledLanguages } from 'shiki/bundle-web.mjs'
+import { bundledThemesInfo, bundledLanguages, type BundledLanguage } from 'shiki/bundle-web.mjs'
 
 import {
   transformerCompactLineOptions,
@@ -14,7 +14,7 @@ import {
   type TransformerCompactLineOption,
 } from '@shikijs/transformers'
 // import type { Logger } from 'vite'
-import type { MarkdownOptions, ThemeOptions } from '../markdown'
+import type { MarkdownOptions, ThemeOptions } from '../markdown-web'
 
 import { nanoid } from '../../shared/shared-web'
 
@@ -81,23 +81,23 @@ export async function highlight(
    * }
    *
    */
-  let defaultLangs: any = []
+  let defaultLangsKeys: any = []
 
   if (options.languages && options.languages.length > 0) {
     for (const key in bundledLanguages) {
       // @ts-ignore
       if (options.languages.includes(key)) {
         // @ts-ignore
-        defaultLangs.push(bundledLanguages[key])
+        defaultLangsKeys.push(key)
       }
     }
   } else {
-    defaultLangs = Object.values(bundledLanguages)
+    defaultLangsKeys = Object.keys(bundledLanguages)
   }
 
   const highlighter = await createHighlighterCore({
     themes,
-    langs: defaultLangs,
+    langs: defaultLangsKeys.map((key: BundledLanguage) => bundledLanguages[key]),
     loadWasm: import('shiki/wasm'),
   })
 
@@ -132,8 +132,8 @@ export async function highlight(
     lang = lang.replace(lineNoStartRE, '').replace(lineNoRE, '').replace(vueRE, '').toLowerCase() || defaultLang
 
     //这里是判断语言类型
-    if (lang !== '' && !bundledLanguages.hasOwnProperty(lang)) {
-      console.log(`language < ${lang} > 没有导入该语言，请在手动打包shiki中导入该语言`)
+    if (lang !== '' && !defaultLangsKeys.includes(lang)) {
+      console.log(`language < ${lang} > 没有导入该语言，请传入选项来加载该语言`)
       return str
     }
 

@@ -1,7 +1,7 @@
 // markdown-it plugin for normalizing image source
 
 import type MarkdownIt from 'markdown-it'
-import { EXTERNAL_URL_RE } from '../../shared/shared'
+import { EXTERNAL_URL_RE } from '../../shared/shared-web'
 
 export interface Options {
   /**
@@ -17,9 +17,8 @@ export const imagePlugin = (md: MarkdownIt, { lazyLoading }: Options = {}) => {
     const token = tokens[idx]
     let url = token.attrGet('src')
     if (url && !EXTERNAL_URL_RE.test(url)) {
-      // if (!/^\.?\//.test(url)) url = './' + url
-      // token.attrSet('src', decodeURIComponent(url))
-      url = window.location.origin + url
+      if (!/^\.?\//.test(url)) url = './' + url
+      token.attrSet('src', decodeURIComponent(url))
     }
     if (lazyLoading) {
       token.attrSet('loading', 'lazy')

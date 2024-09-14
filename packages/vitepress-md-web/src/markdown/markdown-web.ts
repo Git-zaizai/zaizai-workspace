@@ -5,9 +5,11 @@ import { headersPlugin, type HeadersPluginOptions } from '@mdit-vue/plugin-heade
 import { titlePlugin } from '@mdit-vue/plugin-title'
 import { tocPlugin, type TocPluginOptions } from '@mdit-vue/plugin-toc'
 import { slugify } from '@mdit-vue/shared'
+
 import MarkdownIt from 'markdown-it'
 import anchorPlugin from 'markdown-it-anchor'
 import attrsPlugin from 'markdown-it-attrs'
+
 import { full as emojiPlugin } from 'markdown-it-emoji'
 
 import { containerPlugin, type ContainerOptions } from './plugins-web/containers'
@@ -175,6 +177,16 @@ export type MarkdownRenderer = MarkdownIt
 // 暂时用不到
 // , base = ''
 export const createMarkdownRenderer = async (options: MarkdownOptions = {}): Promise<MarkdownRenderer> => {
+  options = {
+    attrs: {
+      disable: true,
+    },
+    gfmAlerts: true,
+    headers: true,
+    math: true,
+    ...options,
+  }
+
   const theme = options.theme ?? { light: 'vitesse-light', dark: 'andromeeda' }
   const codeCopyButtonTitle = options.codeCopyButtonTitle || 'Copy Code'
   const hasSingleTheme = typeof theme === 'string' || 'name' in theme
@@ -205,7 +217,7 @@ export const createMarkdownRenderer = async (options: MarkdownOptions = {}): Pro
     return '<table tabindex="0">\n'
   }
 
-  if (options.gfmAlerts !== false) {
+  if (options.gfmAlerts) {
     md.use(gitHubAlertsPlugin)
   }
 
@@ -251,7 +263,7 @@ export const createMarkdownRenderer = async (options: MarkdownOptions = {}): Pro
     ...options.toc,
   } as TocPluginOptions)
 
-  if (options.math) {
+  /*   if (options.math) {
     try {
       const mathPlugin = await import('markdown-it-mathjax3')
       md.use(mathPlugin.default ?? mathPlugin, {
@@ -264,7 +276,7 @@ export const createMarkdownRenderer = async (options: MarkdownOptions = {}): Pro
     } catch (error) {
       throw new Error('You need to install `markdown-it-mathjax3` to use math support.')
     }
-  }
+  } */
 
   // apply user config
   if (options.config) {

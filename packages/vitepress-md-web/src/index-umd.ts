@@ -1,4 +1,4 @@
-import type { MarkdownEnv } from './shared/shared-web'
+import type { MarkdownEnv } from './shared/shared'
 
 export const getEvn = (): MarkdownEnv => {
   const env: MarkdownEnv = {

@@ -2,9 +2,7 @@ import type MarkdownIt from 'markdown-it'
 import container from 'markdown-it-container'
 import type { RenderRule } from 'markdown-it/lib/renderer.mjs'
 import type Token from 'markdown-it/lib/token.mjs'
-// import { nanoid } from 'nanoid'
-import { nanoid } from '../../shared/shared'
-
+import { nanoid } from 'nanoid'
 import type { MarkdownEnv } from '../../shared/shared'
 
 import { extractTitle, getAdaptiveThemeMarker, type Options } from './preWrapper'
@@ -55,7 +53,7 @@ function createCodeGroup(options: Options, md: MarkdownIt): ContainerArgs {
     {
       render(tokens, idx) {
         if (tokens[idx].nesting === 1) {
-          const name = nanoid()
+          const name = nanoid(5)
           let tabs = ''
           let checked = 'checked'
 
@@ -66,7 +64,7 @@ function createCodeGroup(options: Options, md: MarkdownIt): ContainerArgs {
               const title = extractTitle(isHtml ? tokens[i].content : tokens[i].info, isHtml)
 
               if (title) {
-                const id = nanoid()
+                const id = nanoid(7)
                 tabs += `<input type="radio" name="group-${name}" id="tab-${id}" ${checked}><label data-title="${md.utils.escapeHtml(
                   title
                 )}" for="tab-${id}">${title}</label>`

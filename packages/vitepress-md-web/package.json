@@ -1,32 +1,61 @@
 {
-  "name": "vitepress-md-web",
+  "name": "vitepress-md-renderer-web",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build:dev": "SET DEV=true && rimraf dist && rimraf dist-min && pnpm build && pnpm node:js",
+    "build:js": "SET DEV=true && rimraf dist && rollup --config rollup.config.js",
+    "node:js": "node ./script/cssto.js && node ./script/rm-css.js",
+    "build:prod": "rimraf dist && pnpm build && node ./script/build.js",
+    "build": "SET DEV=false && rollup --config rollup.config.ts --configPlugin esbuild",
+    "build:vite": "vite build",
+    "preview": "vite preview"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "main": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    "./dist/*": "./dist/*",
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/umd/index-umd.js"
+    },
+    "./components": {
+      "default": "./dist/components/index.js"
+    }
+  },
   "devDependencies": {
+    "@mdit-vue/plugin-component": "^2.1.3",
+    "@mdit-vue/plugin-frontmatter": "^2.1.3",
+    "@mdit-vue/plugin-sfc": "^2.1.3",
     "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/fs-extra": "^11.0.4",
     "@types/markdown-it-attrs": "^4.1.3",
     "@types/markdown-it-container": "^2.0.10",
     "@types/markdown-it-emoji": "^3.0.1",
     "@vitejs/plugin-vue": "^5.1.3",
+    "fs-extra": "^11.2.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.21.2",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-visualizer": "^5.12.0",
     "vite": "^5.4.3",
     "vue": "^3.5.3"
   },
   "dependencies": {
-    "@mdit-vue/plugin-component": "^2.1.3",
-    "@mdit-vue/plugin-frontmatter": "^2.1.3",
     "@mdit-vue/plugin-headers": "^2.1.3",
-    "@mdit-vue/plugin-sfc": "^2.1.3",
     "@mdit-vue/plugin-title": "^2.1.3",
     "@mdit-vue/plugin-toc": "^2.1.3",
     "@mdit-vue/shared": "^2.1.3",

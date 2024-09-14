@@ -1,25 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cn">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../dist-test/css/index.css">
 </head>
 
 <body>
-
-    <pre>
-        <code>
-        <span>```html</span>
-        <ul>
-          <li v-for="todo in todos" :key="todo.id">
-            {{ todo.text }}
-          </li>
-        </ul>
-        <span>```</span>
-        </code>
-    </pre>
+  <div id="app"></div>
 </body>
+<script type="module" src="../dist/index.js"></script>
+<script type="module">
+  import { createMarkdownRenderer } from '../dist/index.js'
+
+
+  const mian = async () => {
+
+    const mdRenderer = await createMarkdownRenderer()
+    let res = await fetch('../public/markdown.md')
+    let text = await res.text()
+    let html = mdRenderer.render(text)
+    document.querySelector('#app').innerHTML = html
+  }
+  mian()
+</script>
 
 </html>

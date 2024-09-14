@@ -11,7 +11,7 @@ import anchorPlugin from 'markdown-it-anchor'
 import attrsPlugin from 'markdown-it-attrs'
 import { full as emojiPlugin } from 'markdown-it-emoji'
 import type { BuiltinTheme, Highlighter, LanguageInput, ShikiTransformer, ThemeRegistrationAny } from 'shiki'
-// import type { Logger } from 'vite'
+import type { Logger } from 'vite'
 import { containerPlugin, type ContainerOptions } from './plugins/containers'
 import { gitHubAlertsPlugin } from './plugins/githubAlerts'
 import { highlight } from './plugins/highlight'
@@ -21,7 +21,7 @@ import { lineNumberPlugin } from './plugins/lineNumbers'
 import { linkPlugin } from './plugins/link'
 import { preWrapperPlugin } from './plugins/preWrapper'
 import { restoreEntities } from './plugins/restoreEntities'
-// import { snippetPlugin } from './plugins/snippet'
+import { snippetPlugin } from './plugins/snippet'
 
 export type { Header } from '../shared/shared'
 
@@ -181,22 +181,22 @@ export type MarkdownRenderer = MarkdownIt
 export const createMarkdownRenderer = async (
   srcDir: string,
   options: MarkdownOptions = {},
-  base = '/'
-  // logger: Pick<Logger, 'warn'> = console
+  base = '/',
+  logger: Pick<Logger, 'warn'> = console
 ): Promise<MarkdownRenderer> => {
-  const theme = options.theme ?? { light: 'one-dark-pro', dark: 'andromeeda' }
+  const theme = options.theme ?? { light: 'github-light', dark: 'github-dark' }
   const codeCopyButtonTitle = options.codeCopyButtonTitle || 'Copy Code'
   const hasSingleTheme = typeof theme === 'string' || 'name' in theme
 
   const md = MarkdownIt({
     html: true,
     linkify: true,
-    highlight: options.highlight || (await highlight(theme, options)),
+    highlight: options.highlight || (await highlight(theme, options, logger)),
     ...options,
   })
 
   md.linkify.set({ fuzzyLink: false })
-  // md.use(restoreEntities)
+  md.use(restoreEntities)
 
   if (options.preConfig) {
     options.preConfig(md)
@@ -204,14 +204,13 @@ export const createMarkdownRenderer = async (
 
   // custom plugins
   md.use(componentPlugin, { ...options.component })
-  md.use(highlightLinePlugin)
-  md.use(preWrapperPlugin, { codeCopyButtonTitle, hasSingleTheme })
-  // .use(snippetPlugin, srcDir)
-  md.use(containerPlugin, { hasSingleTheme }, options.container)
-  md.use(imagePlugin, options.image)
-  // .use(linkPlugin, { target: '_blank', rel: 'noreferrer', ...options.externalLinks }, base)
-  md.use(linkPlugin, { target: '_blank', rel: 'noreferrer', ...options.externalLinks }, base)
-  md.use(lineNumberPlugin, options.lineNumbers)
+    .use(highlightLinePlugin)
+    .use(preWrapperPlugin, { codeCopyButtonTitle, hasSingleTheme })
+    .use(snippetPlugin, srcDir)
+    .use(containerPlugin, { hasSingleTheme }, options.container)
+    .use(imagePlugin, options.image)
+    .use(linkPlugin, { target: '_blank', rel: 'noreferrer', ...options.externalLinks }, base)
+    .use(lineNumberPlugin, options.lineNumbers)
 
   md.renderer.rules.table_open = function (tokens, idx, options, env, self) {
     return '<table tabindex="0">\n'
@@ -247,12 +246,10 @@ export const createMarkdownRenderer = async (
       },
     }),
     ...options.anchor,
-  } as anchorPlugin.AnchorOptions)
-
-  /*  md.use(frontmatterPlugin, {
+  } as anchorPlugin.AnchorOptions).use(frontmatterPlugin, {
     ...options.frontmatter,
   } as FrontmatterPluginOptions)
- */
+
   if (options.headers) {
     md.use(headersPlugin, {
       level: [2, 3, 4, 5, 6],
@@ -264,10 +261,10 @@ export const createMarkdownRenderer = async (
   md.use(sfcPlugin, {
     ...options.sfc,
   } as SfcPluginOptions)
-
-  md.use(titlePlugin).use(tocPlugin, {
-    ...options.toc,
-  } as TocPluginOptions)
+    .use(titlePlugin)
+    .use(tocPlugin, {
+      ...options.toc,
+    } as TocPluginOptions)
 
   if (options.math) {
     try {

@@ -9,10 +9,13 @@
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
+
+    "declaration": true /* 生成声明文件 */,
+    "declarationMap": true,
     "jsx": "preserve",
     "lib": ["esnext", "dom", "dom.iterable"],
     "baseUrl": "."
   },
   "include": ["**/*.ts", "**/*.tsx", "**/**.vue"],
-  "exclude": ["**/node_modules/**"]
+  "exclude": ["**/node_modules/**", "./__test__code", "./public"]
 }

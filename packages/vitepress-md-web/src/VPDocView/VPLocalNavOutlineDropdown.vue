@@ -272,13 +272,13 @@ onUnmounted(() => {
   background-clip: padding-box;
 }
 
-@media (min-width: 960px) {
+/* @media (min-width: 960px) {
   .items {
     right: auto;
     left: calc(var(--vp-sidebar-width) + 32px);
     width: 320px;
   }
-}
+} */
 
 .header {
   background-color: var(--vp-c-bg-soft);

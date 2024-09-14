@@ -1,3 +1,14 @@
+@import url('./fonts.css');
+@import url('./vars.css');
+@import url('./icons.css');
+@import url('./base.css');
+@import url('./utils.css');
+@import url('./components/custom-block.css');
+@import url('./components/vp-code-group.css');
+@import url('./components/vp-code.css');
+@import url('./components/vp-doc.css');
+@import url('./components/vp-sponsor.css');
+
 .VPDoc {
   padding: 32px 24px 96px;
   width: 100%;
@@ -126,61 +137,6 @@
   max-width: 688px;
 } */
 
-/* VPDocAside.vue */
-
-.VPDocAside {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.spacer {
-  flex-grow: 1;
-}
-
-.VPDocAside :deep(.spacer + .VPDocAsideSponsors),
-.VPDocAside :deep(.spacer + .VPDocAsideCarbonAds) {
-  margin-top: 24px;
-}
-
-.VPDocAside :deep(.VPDocAsideSponsors + .VPDocAsideCarbonAds) {
-  margin-top: 16px;
-}
-
-/** VPDocOutlineItem.vue */
-
-.root {
-  position: relative;
-  z-index: 1;
-}
-
-.nested {
-  padding-right: 16px;
-  padding-left: 16px;
-}
-
-.outline-link {
-  display: block;
-  line-height: 32px;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--vp-c-text-2);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color 0.5s;
-}
-
-.outline-link:hover,
-.outline-link.active {
-  color: var(--vp-c-text-1);
-  transition: color 0.25s;
-}
-
-.outline-link.nested {
-  padding-left: 13px;
-}
-
 /**  VPDocAsideOutline.vue  **/
 
 .VPDocAsideOutline {
@@ -216,4 +172,279 @@
   line-height: 32px;
   font-size: 14px;
   font-weight: 600;
+}
+
+.outline-link {
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+  cursor: pointer;
+}
+
+.outline-link:hover {
+  color: var(--vp-c-text-2);
+}
+
+/* VPDocOutlineItem.vue */
+.root {
+  position: relative;
+  z-index: 1;
+}
+
+.nested {
+  padding-right: 16px;
+  padding-left: 16px;
+}
+
+.outline-link {
+  display: block;
+  line-height: 32px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--vp-c-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+  padding-left: 20px;
+  border-radius: 3px;
+}
+
+.outline-link:hover {
+  color: var(--vp-c-text-1);
+}
+
+.outline-link.active {
+  color: var(--vp-c-text-1);
+  transition: color 0.25s;
+}
+
+.outline-link.nested {
+  padding-left: 13px;
+}
+
+@media (max-width: 1280px) {
+  .outline-link:hover {
+    background-color: var(--vp-outline-bg-color);
+    color: var(--vp-c-brand-2);
+  }
+}
+/* VPLocalNavOutlineDropdown.vue */
+
+.VPLocalNavOutlineDropdown {
+  padding: 12px 20px 11px;
+}
+
+@media (min-width: 960px) {
+  .VPLocalNavOutlineDropdown {
+    padding: 12px 36px 11px;
+  }
+}
+
+.VPLocalNavOutlineDropdown button {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--vp-c-text-2);
+  transition: color 0.5s;
+  position: relative;
+}
+
+.VPLocalNavOutlineDropdown button:hover {
+  color: var(--vp-c-text-1);
+  transition: color 0.25s;
+}
+
+.VPLocalNavOutlineDropdown button.open {
+  color: var(--vp-c-text-1);
+}
+
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 2px;
+  font-size: 14px;
+  transform: rotate(0deg);
+  transition: transform 0.25s;
+}
+
+@media (min-width: 960px) {
+  .VPLocalNavOutlineDropdown button {
+    font-size: 14px;
+  }
+
+  .icon {
+    font-size: 16px;
+  }
+}
+
+.open > .icon {
+  transform: rotate(90deg);
+}
+
+.items {
+  position: absolute;
+  top: 40px;
+  right: 16px;
+  left: 16px;
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background-color: var(--vp-c-gutter);
+  max-height: calc(100vh - 86px);
+  overflow: hidden auto;
+  box-shadow: var(--vp-shadow-3);
+  overflow-y: overlay;
+}
+
+.items::-webkit-scrollbar {
+  width: 4px;
+}
+.items::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background-clip: padding-box;
+}
+
+@media (min-width: 960px) {
+  .items {
+    right: auto;
+    left: calc(var(--vp-sidebar-width) + 32px);
+    width: 320px;
+  }
+}
+
+.header {
+  background-color: var(--vp-c-bg-soft);
+  padding: 7px;
+}
+
+.top-link {
+  display: block;
+  width: 100%;
+  height: 36px;
+  line-height: 36px;
+  padding-left: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-brand-1);
+  border-radius: 3px;
+  transition: background-color 0.25s ease-in, color 0.25s ease-in;
+}
+
+.top-link:hover {
+  background-color: var(--vp-outline-bg-color);
+  color: var(--vp-c-brand-2);
+}
+
+.outline {
+  padding: 8px 0;
+  background-color: var(--vp-c-bg-soft);
+}
+
+.flyout-enter-active {
+  transition: all 0.2s ease-out;
+}
+
+.flyout-leave-active {
+  transition: all 0.15s ease-in;
+}
+
+.flyout-enter-from,
+.flyout-leave-to {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+
+/* VPLocalNav.vue */
+.VPLocalNav {
+  position: sticky;
+  top: 0;
+  /*rtl:ignore*/
+  left: 0;
+  z-index: var(--vp-z-index-local-nav);
+  border-bottom: 1px solid var(--vp-c-gutter);
+  padding-top: var(--vp-layout-top-height, 0px);
+  width: 100%;
+  background-color: var(--vp-local-nav-bg-color);
+}
+
+.VPLocalNav.fixed {
+  position: fixed;
+}
+
+@media (min-width: 960px) {
+  /*  .VPLocalNav {
+    top: var(--vp-nav-height);
+  }
+ */
+  .VPLocalNav.has-sidebar {
+    padding-left: var(--vp-sidebar-width);
+  }
+  /* 
+  .VPLocalNav.empty {
+    display: none;
+  } */
+}
+
+@media (min-width: 1280px) {
+  .VPLocalNav {
+    display: none;
+  }
+}
+
+@media (min-width: 1440px) {
+  .VPLocalNav.has-sidebar {
+    padding-left: calc((100vw - var(--vp-layout-max-width)) / 2 + var(--vp-sidebar-width));
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px 11px;
+  line-height: 24px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  transition: color 0.5s;
+}
+
+.menu:hover {
+  color: var(--vp-c-text-1);
+  transition: color 0.25s;
+}
+
+@media (min-width: 768px) {
+  .menu {
+    padding: 0 32px;
+  }
+}
+
+@media (min-width: 960px) {
+  .menu {
+    display: none;
+  }
+}
+
+.menu-icon {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.VPOutlineDropdown {
+  padding: 12px 24px 11px;
+}
+
+@media (min-width: 768px) {
+  .VPOutlineDropdown {
+    padding: 12px 32px 11px;
+  }
 }

@@ -2,14 +2,8 @@
 // 1. adding target="_blank" to external links
 // 2. normalize internal links to end with `.html`
 
-/**
- * 转换链接使用  在vitepress中，将外部链接的target设置为_blank，内部链接转换为.html
- *
- *
- */
-
 import type MarkdownIt from 'markdown-it'
-// import { URL } from 'url'
+import { URL } from 'url'
 import { EXTERNAL_URL_RE, isExternal, treatAsHtml, type MarkdownEnv } from '../../shared/shared'
 
 const indexRE = /(^|.*\/)index.md(#?.*)$/i
@@ -20,7 +14,6 @@ export const linkPlugin = (md: MarkdownIt, externalAttrs: Record<string, string>
     const hrefIndex = token.attrIndex('href')
     const targetIndex = token.attrIndex('target')
     const downloadIndex = token.attrIndex('download')
-
     if (hrefIndex >= 0 && targetIndex < 0 && downloadIndex < 0) {
       const hrefAttr = token.attrs![hrefIndex]
       const url = hrefAttr[1]
@@ -54,7 +47,6 @@ export const linkPlugin = (md: MarkdownIt, externalAttrs: Record<string, string>
           hrefAttr[1] = `${base}${hrefAttr[1]}`.replace(/\/+/g, '/')
         }
       }
-      console.log('hrefAttr', hrefAttr)
     }
     return self.renderToken(tokens, idx, options)
   }
