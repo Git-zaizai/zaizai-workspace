@@ -256,7 +256,7 @@ function buildTree(data: MenuItem[], min: number, max: number): MenuItem[] {
 
   data.forEach(item => {
     const node: any = { ...item, children: [] }
-    let parent = stack[stack.length - 1]
+    let parent: any = stack[stack.length - 1]
 
     while (parent && parent.level >= node.level) {
       stack.pop()
@@ -271,8 +271,11 @@ function buildTree(data: MenuItem[], min: number, max: number): MenuItem[] {
     if (node.level > max || node.level < min) return
     resolvedHeaders.push({ element: node.element, link: node.link })
 
-    if (parent) parent.children!.push(node)
-    else result.push(node)
+    if (parent) {
+      parent.children.push(node)
+    } else {
+      result.push(node)
+    }
 
     stack.push(node)
   })
@@ -299,7 +302,7 @@ export function isScrollHeight(element: Element) {
   return element.scrollHeight > element.clientHeight
 }
 
-const timeoutIdMap: WeakMap<HTMLElement, NodeJS.Timeout> = new WeakMap()
+const timeoutIdMap: WeakMap<HTMLElement, any> = new WeakMap()
 
 export function useCodeGroups(e: any) {
   const el = e.target as HTMLInputElement

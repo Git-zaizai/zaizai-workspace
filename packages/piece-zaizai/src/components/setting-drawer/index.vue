@@ -10,7 +10,10 @@
     v-model:show="active"
     :width="width"
   >
-    <n-drawer-content title="App setting">
+    <n-drawer-content
+      title="App setting"
+      :native-scrollbar="false"
+    >
       <div class="flex-col justify-between">
         <div>
           <n-divider> 主题模式 </n-divider>
@@ -83,6 +86,8 @@
           >
             更多预设
           </n-button>
+
+          <layoutSetting />
         </div>
 
         <div>
@@ -109,6 +114,7 @@ import { appStore } from '@/store'
 import { themeColorList } from './colorData'
 import ColorCheckbox from './color-checkbox.vue'
 import colorModal from './color-modal.vue'
+import layoutSetting from './layout-setting.vue'
 
 interface Props {
   width?: number | string
@@ -121,7 +127,6 @@ withDefaults(defineProps<Props>(), {
 const app = appStore()
 
 const appPatch = (color: string) => {
-  console.log('🚀 ~ appPatch ~ color:', color)
   app.$patch({ themeColor: color })
 }
 
@@ -136,7 +141,6 @@ const reset = () => {
     app.$reset()
     window.$message.success('恢复默认成功')
   } catch (e) {
-    console.log('🚀 ~ reset ~ e:', e)
     window.$message.error('恢复默认失败')
   }
 }

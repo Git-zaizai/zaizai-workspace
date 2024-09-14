@@ -16,6 +16,8 @@ interface State {
   transition: { value: AnimateMode['value']; label: string }
   themeColor: string
   autoTheme: boolean
+  // 反转 layout 背景颜色
+  Layoutinverted: boolean
 }
 
 export const appStore = defineStore('appStore', {
@@ -53,6 +55,7 @@ export const appStore = defineStore('appStore', {
         label: '缩放消退',
       },
     ],
+    Layoutinverted: false,
   }),
   getters: {
     naiveThemeOverrides(state): GlobalThemeOverrides | null {

@@ -4,25 +4,25 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build:dev": "SET DEV=true && rimraf dist && rimraf dist-min && pnpm build && pnpm node:js",
-    "build:js": "SET DEV=true && rimraf dist && rollup --config rollup.config.js",
-    "node:js": "node ./script/cssto.js && node ./script/rm-css.js",
-    "build:prod": "rimraf dist && pnpm build && node ./script/build.js",
-    "build": "SET DEV=false && rollup --config rollup.config.ts --configPlugin esbuild",
+    "dev:vite": "vite",
     "build:vite": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:prod": "rollup --config rollup.config.js",
+    "build:dts": "vue-tsc -p tsconfig.web.json --declaration --emitDeclarationOnly",
+    "build:vue": "vue-tsc -p ./tsconfig.vue.json --declaration --emitDeclarationOnly",
+    "node": "node ./script/build.js",
+    "build": "rimraf dist && pnpm build:prod && pnpm build:dts && pnpm node"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "main": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     "./dist/*": "./dist/*",
     ".": {
-      "types": "./dist/esm/index.d.ts",
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
       "require": "./dist/umd/index-umd.js"
     },
@@ -52,7 +52,8 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-visualizer": "^5.12.0",
     "vite": "^5.4.3",
-    "vue": "^3.5.3"
+    "vue": "^3.5.3",
+    "vue-tsc": "^2.0.29"
   },
   "dependencies": {
     "@mdit-vue/plugin-headers": "^2.1.3",

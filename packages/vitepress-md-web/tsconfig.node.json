@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "outDir": "dist/types",
+    "target": "ES2022",
+    "module": "esnext",
+    "baseUrl": "./src" /* 指定模块解析的基本目录 */,
+    "sourceMap": false,
+    "moduleResolution": "node",
+    "allowJs": false,
+    "strict": false,
+    "noUnusedLocals": false /* 禁止未使用的局部变量 */,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true /* 允许从没有默认导出的模块中导入 */,
+    "esModuleInterop": true,
+    "removeComments": false,
+    "emitDeclarationOnly": true, // 只输出声明文件(ts 产物)
+    "declaration": true, // 自动生成声明文件
+    "rootDir": "./src" /* 指定项目根目录 */,
+    "composite": true,
+    "jsx": "preserve",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "**/dist",
+    "**/__tests__/**",
+    "**/gulpfile.ts",
+    "**/test-helper",
+    "**/__test__code/**/*",
+    "**/script/**/*",
+    "**/tsconfig_esm/**/*",
+    "**/public/**/*",
+    "**/*.md",
+    "**/src/**.vue",
+    "./src/index-umd.ts",
+    "./src/index.ts",
+    "./src/markdown/plugins/**.ts"
+  ]
+}

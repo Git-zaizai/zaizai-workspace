@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "outDir": "dist/types",
+    "target": "ESNext",
+    "module": "ESNext",
+    "baseUrl": "." /* 指定模块解析的基本目录 */,
+    "sourceMap": false /* 生成源码映射文件 */,
+    "moduleResolution": "node",
+    "allowJs": false /* 允许编译 JavaScript 文件 */,
+    "strict": false,
+    "noUnusedLocals": false /* 禁止未使用的局部变量 */,
+    "resolveJsonModule": true /* 解析 JSON 模块 */,
+    "allowSyntheticDefaultImports": true /* 允许从没有默认导出的模块中导入 */,
+    "esModuleInterop": true /* 允许从 CommonJS 模块中导入 */,
+    "removeComments": false /* 删除注释 */,
+    "emitDeclarationOnly": true, // 只输出声明文件(ts 产物)
+    "declaration": true, // 自动生成声明文件
+    "rootDir": "./src" /* 指定项目根目录 */,
+    "composite": true,
+    "jsx": "preserve",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": [],
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.vue", "./src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "**/dist",
+    "**/__tests__/**",
+    "**/gulpfile.ts",
+    "**/test-helper",
+    "**/__test__code/**/*",
+    "**/script/**/*",
+    "**/tsconfig_esm/**/*",
+    "**/public/**/*",
+    "**/*.md"
+  ]
+}

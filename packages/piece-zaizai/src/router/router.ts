@@ -1,11 +1,22 @@
 import type { RouteRecordRaw } from 'vue-router'
-import { defulatLayout } from './constant'
+import { defulatLayout, demoLayout } from './constant'
 
-export const defaultRouters: RouteRecordRaw[] = [
-  {
-    path: '/',
-    component: defulatLayout,
-  },
-]
+import index from '@/views/home/index.vue'
 
-export const routes = [...defaultRouters]
+export const defaultRouters: RouteRecordRaw = {
+  path: '/',
+  component: defulatLayout,
+  children: [
+    {
+      path: '',
+      component: index,
+    },
+  ],
+}
+
+const demoRouters: RouteRecordRaw = {
+  path: '/demo',
+  component: demoLayout,
+}
+
+export const routes = [defaultRouters, demoRouters]

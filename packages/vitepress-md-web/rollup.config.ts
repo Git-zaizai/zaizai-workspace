@@ -128,24 +128,4 @@ const vueComponentsBuild: RollupOptions = {
   ],
 }
 
-const typesExternal = require(r('./typesExternal.json'))
-
-const dtsBuild: RollupOptions = {
-  input: r('./src/index.web.d.ts'),
-  output: {
-    format: 'es',
-    file: r('dist/types/index.d.ts'),
-  },
-  external: typesExternal,
-  plugins: [
-    nodeResolve({ preferBuiltins: false }),
-    commonjs(),
-    typescript({
-      tsconfig: r('./tsconfig_esm/tsconfig.json'),
-    }),
-    json(),
-  ],
-}
-
-// export default defineConfig([webBuild, vueComponentsBuild, webMinBuild])
-export default defineConfig([webBuild, dtsBuild])
+export default defineConfig([webBuild])

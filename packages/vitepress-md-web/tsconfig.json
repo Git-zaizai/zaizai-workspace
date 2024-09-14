@@ -16,6 +16,6 @@
     "lib": ["esnext", "dom", "dom.iterable"],
     "baseUrl": "."
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/**.vue"],
+  "include": ["**/*.ts", "**/*.tsx", "**/**.vue", "./script/**.js"],
   "exclude": ["**/node_modules/**", "./__test__code", "./public"]
 }

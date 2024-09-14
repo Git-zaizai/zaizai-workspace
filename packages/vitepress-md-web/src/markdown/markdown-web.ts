@@ -66,7 +66,8 @@ export interface MarkdownOptions extends Options {
    * Languages for syntax highlighting.
    * @see https://shiki.style/languages
    */
-  languages?: LanguageInput[]
+  // languages?: LanguageInput[]
+  languages?: string[]
   /**
    * Custom language aliases.
    *
@@ -173,20 +174,9 @@ export interface MarkdownOptions extends Options {
 }
 
 export type MarkdownRenderer = MarkdownIt
-
 // 暂时用不到
 // , base = ''
-export const createMarkdownRenderer = async (options: MarkdownOptions = {}): Promise<MarkdownRenderer> => {
-  options = {
-    attrs: {
-      disable: true,
-    },
-    gfmAlerts: true,
-    headers: true,
-    math: true,
-    ...options,
-  }
-
+export async function createMarkdownRenderer(options: MarkdownOptions = {}): Promise<MarkdownRenderer> {
   const theme = options.theme ?? { light: 'vitesse-light', dark: 'andromeeda' }
   const codeCopyButtonTitle = options.codeCopyButtonTitle || 'Copy Code'
   const hasSingleTheme = typeof theme === 'string' || 'name' in theme
@@ -263,7 +253,9 @@ export const createMarkdownRenderer = async (options: MarkdownOptions = {}): Pro
     ...options.toc,
   } as TocPluginOptions)
 
-  /*   if (options.math) {
+  /*   
+  // TODO: 数学公式处理  暂时不引入 math 
+  if (options.math) {
     try {
       const mathPlugin = await import('markdown-it-mathjax3')
       md.use(mathPlugin.default ?? mathPlugin, {

@@ -29,3 +29,8 @@ import VPLocalNavOutlineDropdown from './VPLocalNavOutlineDropdown.vue'
 ```
 
 按照上面的代码，最终打包的顺序就是你引入的顺序
+
+## vue-tsc 生成 d.ts 文件
+
+
+## 可以借助 vue-tsc 生成所有的 d.ts 文件，生成 d.ts 文件底层是调用 typescript 的 API，在 rollup 中也是一样，那些插件都是基于 ts 提供的 API 来实现的

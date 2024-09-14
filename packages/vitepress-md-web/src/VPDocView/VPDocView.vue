@@ -39,9 +39,9 @@ const props = withDefaults(
 const headers = shallowRef<MenuItem[]>([])
 const AsideContainerPadding = computed(() => {
   if (props.isAsideContainerPadding) {
-    return false
+    return ''
   }
-  return `calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + var(--vp-doc-top-height, 0px) + -62px)`
+  return `padding:calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + var(--vp-doc-top-height, 0px) + -62px);`
 })
 
 const vodeoConentRef = ref<HTMLDivElement>()
@@ -113,9 +113,7 @@ onUnmounted(() => {
         <div class="aside-curtain" />
         <div
           class="aside-container"
-          :style="{
-            padding: AsideContainerPadding,
-          }"
+          :style="AsideContainerPadding"
         >
           <div class="aside-content">
             <div class="VPDocAside">

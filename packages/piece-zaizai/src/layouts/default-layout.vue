@@ -3,10 +3,13 @@
     <n-layout-header
       class="h-67px flex-center justify-between pr-30px"
       bordered
+      :inverted="app.Layoutinverted"
     >
-      <div></div>
+      <div class="flex-center">
+        <h1 class="pl-5vw">( *￣▽￣)</h1>
+      </div>
       <div class="flex-center gap-3">
-        <router-link to="/">
+        <router-link to="/demo">
           <n-button
             quaternary
             size="small"
@@ -30,13 +33,22 @@
         <SettingDrawer />
       </div>
     </n-layout-header>
-    <n-layout-content content-style="height:calc(100vh - 67px)"> </n-layout-content>
+    <n-layout-content
+      content-style="height:calc(100vh - 67px)"
+      :embedded="app.Layoutinverted"
+    >
+      <default-layout-view />
+    </n-layout-content>
   </n-layout>
 </template>
 
 <script setup lang="ts">
 import SettingDrawer from '@/components/setting-drawer/index.vue'
+import { DefaultLayoutView } from '@/components/layout-router-view'
 
+import { appStore } from '@/store'
+
+const app = appStore()
 const { VITE_GITHUB } = import.meta.env
 </script>
 
