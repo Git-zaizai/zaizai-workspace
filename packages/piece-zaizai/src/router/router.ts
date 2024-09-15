@@ -2,6 +2,17 @@ import type { RouteRecordRaw } from 'vue-router'
 import { defulatLayout, demoLayout } from './constant'
 
 import index from '@/views/home/index.vue'
+import demors from './demo'
+
+const commonRoutes: RouteRecordRaw[] = [
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('@/views/common/404.vue'),
+    meta: {
+      title: '404',
+    },
+  },
+]
 
 export const defaultRouters: RouteRecordRaw = {
   path: '/',
@@ -16,7 +27,9 @@ export const defaultRouters: RouteRecordRaw = {
 
 const demoRouters: RouteRecordRaw = {
   path: '/demo',
+  name: 'demo-layout',
   component: demoLayout,
+  children: demors,
 }
 
-export const routes = [defaultRouters, demoRouters]
+export const routes = [...commonRoutes, defaultRouters, demoRouters]

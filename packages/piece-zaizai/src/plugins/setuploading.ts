@@ -1,3 +1,4 @@
+import { getCurrentTheme } from '@/utils/initTheme'
 export function setuploading(show = false) {
   const html = `<svg class="truck" viewBox="0 0 48 24" width="48px" height="24px">
         <g fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
@@ -24,7 +25,11 @@ export function setuploading(show = false) {
         </g>
     </svg>`
 
-  const cssVars = `--zai-bg-color:rgb(24, 24, 28);--zai-loading-color: #63e2b7;`
+  let lacalTheme = getCurrentTheme()
+
+  const cssVars = `--zai-bg-color:${lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff'};--zai-loading-color: ${
+    lacalTheme === 'dark' ? '#63e2b7' : '18a058'
+  };`
   const element = document.createElement('div')
   element.style.cssText = cssVars
   element.innerHTML = html
@@ -41,6 +46,10 @@ export function setuploading(show = false) {
   if (show) {
     app.style.display = 'none'
   }
+
+  // 随便在做一下 body 的初始化
+  // document.documentElement.classList.add(lacalTheme)
+  document.body.style.backgroundColor = lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff'
 }
 
 setuploading()

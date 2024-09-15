@@ -26,3 +26,5 @@ declare namespace Env {
 interface ImportMeta {
   readonly env: Env.ImportMeta
 }
+
+type CssStyle = import('vue').CSSProperties

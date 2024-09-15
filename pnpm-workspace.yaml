@@ -1,4 +1,7 @@
 packages:
+  # 选择 packages 目录下的所有首层子目录的包
   - 'packages/*'
+  # 选择 components 目录下所有层级的包
   - 'components/**'
+  # 排除所有包含 test 的包
   - '!**/test/**'

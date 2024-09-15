@@ -18,6 +18,15 @@
           </n-button>
         </router-link>
 
+        <router-link to="/console">
+          <n-button
+            quaternary
+            size="small"
+          >
+            console
+          </n-button>
+        </router-link>
+
         <a
           :href="VITE_GITHUB"
           target="_blank"

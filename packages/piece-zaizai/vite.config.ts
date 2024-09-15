@@ -13,8 +13,6 @@ import { getConfigEnv } from './build/index'
 export default defineConfig(configEnv => {
   const env = getConfigEnv(configEnv.mode)
 
-  console.log(fileURLToPath(new URL('./src', import.meta.url)))
-
   return {
     plugins: [
       vue(),

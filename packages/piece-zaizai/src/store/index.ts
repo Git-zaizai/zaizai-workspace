@@ -19,11 +19,11 @@ interface State {
   // 反转 layout 背景颜色
   Layoutinverted: boolean
 }
-
+let localTheme = getCurrentTheme()
 export const appStore = defineStore('appStore', {
   state: (): State => ({
-    theme: getCurrentTheme(),
-    themeColor: '#18a058',
+    theme: localTheme,
+    themeColor: localTheme === 'dark' ? '#63e2b7' : '#18a058',
     autoTheme: false,
     transition: {
       value: 'fade',
@@ -59,7 +59,8 @@ export const appStore = defineStore('appStore', {
   }),
   getters: {
     naiveThemeOverrides(state): GlobalThemeOverrides | null {
-      if (state.themeColor === '#18a058') return null
+      if (state.themeColor === '#63e2b7' || state.themeColor === '#18a058') return null
+
       return getNaiveThemeOverrides(
         {
           primary: state.themeColor,

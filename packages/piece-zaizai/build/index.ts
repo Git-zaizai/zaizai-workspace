@@ -1,7 +1,7 @@
 import { loadEnv } from 'vite'
 
 export const getConfigEnv = (mode: string) => {
-  const viteEnv = loadEnv(mode, process.cwd()) as unknown as ENV
+  const viteEnv = loadEnv(mode, process.cwd()) as unknown as ImportMeta
 
   for (const viteEnvKey in viteEnv) {
     if (viteEnv[viteEnvKey] === 'true') {

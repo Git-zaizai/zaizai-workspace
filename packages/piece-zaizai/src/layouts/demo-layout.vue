@@ -10,24 +10,27 @@
       :width="240"
       show-trigger="bar"
       :native-scrollbar="false"
+      default-collapsed
     >
       <div
         :style="cssVars"
-        class="h-45px gap-1 flex-y-center pl-5px border-b border-b-solid border-b-[--n-border-color]"
+        class="px-10px py-5px flex-x-center flex-wrap border-b border-b-solid border-b-[--n-border-color]"
       >
         <n-button
           quaternary
           size="small"
-          @click="router.go(-1)"
+          class="flex-1 my-5px"
+          @click="router.push('/')"
         >
           <Iconify class="i-ph:barn hover:text-[--zai-primary-color-hover]" />
         </n-button>
-        <setting-drawer />
+        <setting-drawer :setting-button-props="{ class: 'flex-1 my-5px' }" />
       </div>
       <n-menu
         :collapsed-width="64"
         :collapsed-icon-size="22"
         :options="menuOptions"
+        v-model:value="selectedKey"
       />
     </n-layout-sider>
     <n-layout-content
@@ -42,81 +45,44 @@
 <script setup lang="ts">
 import SettingDrawer from '@/components/setting-drawer/index.vue'
 import { DefaultLayoutView } from '@/components/layout-router-view'
+import Iconify from '@/components/Iconify.vue'
 
 import { appStore } from '@/store'
 import { useCssVars } from '@/hooks/useCssVars'
+import { h } from 'vue'
+import type { MenuOption } from 'naive-ui'
+import { type RouteRecordRaw, RouterLink } from 'vue-router'
+
+const DefaultMenuIcon = () => h(Iconify, { class: 'i-ph:app-store-logo-bold' })
+const MenuIcon = (c: string) => () => h(Iconify, { class: c })
+const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
+  let menu: MenuOption[] = []
+  list.forEach(item => {
+    let to = (item.name as string) ?? routePath + '/' + item.path
+    let label = item.meta?.title ?? to
+    let icon: any = item.meta?.icon ? MenuIcon(item.meta.icon as string) : DefaultMenuIcon
+    let menuItem: MenuOption = {
+      key: to,
+      label: () => h(RouterLink, { to }, { default: () => label }),
+      icon,
+    }
+    if (item.children && item.children.length > 0) {
+      menuItem.children = initMenu(item.children, routePath + '/' + item.path)
+    }
+    menu.push(menuItem)
+  })
+  return menu
+}
 
 const app = appStore()
 const cssVars = useCssVars(['primaryColorHover'])
 const router = useRouter()
-const menuOptions = [
-  {
-    label: '且听风吟',
-    key: 'hear-the-wind-sing',
-  },
-  {
-    label: '1973年的弹珠玩具',
-    key: 'pinball-1973',
-    disabled: true,
-    children: [
-      {
-        label: '鼠',
-        key: 'rat',
-      },
-    ],
-  },
-  {
-    label: '寻羊冒险记',
-    key: 'a-wild-sheep-chase',
-    disabled: true,
-  },
-  {
-    label: '舞，舞，舞',
-    key: 'dance-dance-dance',
-
-    children: [
-      {
-        type: 'group',
-        label: '人物',
-        key: 'people',
-        children: [
-          {
-            label: '叙事者',
-            key: 'narrator',
-          },
-          {
-            label: '羊男',
-            key: 'sheep-man',
-          },
-        ],
-      },
-      {
-        label: '饮品',
-        key: 'beverage',
-        children: [
-          {
-            label: '威士忌',
-            key: 'whisky',
-          },
-        ],
-      },
-      {
-        label: '食物',
-        key: 'food',
-        children: [
-          {
-            label: '三明治',
-            key: 'sandwich',
-          },
-        ],
-      },
-      {
-        label: '过去增多，未来减少',
-        key: 'the-past-increases-the-future-recedes',
-      },
-    ],
-  },
-]
+const route = useRoute()
+const menuOptions = initMenu(router.getRoutes().find(v => v.name === 'demo-layout').children, '/demo')
+const selectedKey = ref(route.path)
+watchEffect(() => {
+  selectedKey.value = (route.name as string) ?? route.path
+})
 </script>
 
 <style scoped></style>

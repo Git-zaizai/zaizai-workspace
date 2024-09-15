@@ -2,6 +2,7 @@
   <n-button
     quaternary
     size="small"
+    v-bind="settingButtonProps"
     @click="active = !active"
   >
     <Iconify class="i-ph:codesandbox-logo-fill" />
@@ -110,18 +111,25 @@
 </template>
 
 <script setup lang="ts">
-import { appStore } from '@/store'
-import { themeColorList } from './colorData'
 import ColorCheckbox from './color-checkbox.vue'
 import colorModal from './color-modal.vue'
 import layoutSetting from './layout-setting.vue'
 
+import type { ButtonProps } from 'naive-ui'
+import { themeColorList } from './colorData'
+import { appStore } from '@/store'
+
+interface SettingButton extends Pick<ButtonProps, 'block'> {
+  class?: string
+}
 interface Props {
   width?: number | string
+  settingButtonProps?: SettingButton
 }
 
 withDefaults(defineProps<Props>(), {
   width: 300,
+  settingButtonProps: () => ({}),
 })
 
 const app = appStore()
