@@ -2,7 +2,7 @@ import { useToggle } from '@vueuse/core'
 import type { ZaiTablePropsType } from '../props'
 import { cloneDeep, isBoolean } from 'lodash-es'
 import type { DataTableColumn, DataTableProps } from 'naive-ui'
-import { columnDefulatWidth, zaiTableProvideKey, ColumnUID } from '../enum'
+import { columnDefulatWidth, zaiTableProvideKey, ColumnUID, columnHides } from '../enum'
 import defaultAction from '../components/default-action.vue'
 
 const defaultActionColumn: ZaiTableColumn = {
@@ -15,18 +15,16 @@ const defaultActionColumn: ZaiTableColumn = {
 }
 
 export type ZaiTableColumn = DataTableColumn & {
-  uid: string | number
+  uid: number
 }
 
-type ZaiTableInject = Pick<ReturnType<typeof createTableContext>, 'columns' | 'loading' | 'toggleLoading' | 'setfixed'>
+type ZaiTableInject = Pick<ReturnType<typeof createTableContext>, 'columns' | 'setfixed'>
 
 export const useTableContext = (): ReturnType<typeof createTableContext> => {
   return inject(zaiTableProvideKey)
 }
 
 export const createTableContext = (optinos: ZaiTablePropsType) => {
-  const [loading, toggleLoading] = useToggle(false)
-
   let scrollautoX = 0
 
   let cacheColumns = []
@@ -77,7 +75,14 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     }
 
     cacheColumns = cloneDeep(columns.value)
-    console.log('🚀 ~ initColumns ~ cacheColumns:', cacheColumns)
+
+    columnHides.forEach(key => {
+      if (!optinos.columnHides.includes(key)) {
+        const uid = ColumnUID[key]
+        const index = columns.value.findIndex(item => item.uid === uid)
+        columns.value.splice(index, 1)
+      }
+    })
   }
 
   const setfixed = (uid: number, value: 'left' | 'right' | undefined) => {
@@ -112,7 +117,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
       if (newindex <= 0) {
         newindex = 0
       } else if (newindex >= columns.value.length) {
-        newindex = columns.value.length - 1
+        newindex = columns.value.length
       }
       columns.value.splice(newindex, 0, find)
       columns.value = [...columns.value]
@@ -171,10 +176,11 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
   }
   initPagination()
 
+  const columnsome = (uid: number) => {
+    return columns.value.some(item => item.uid === uid)
+  }
+
   const result = {
-    loading,
-    toggleLoading,
-    setLoading: (value: boolean) => toggleLoading(value),
     columns,
     scrollautoX,
     getCacheColumns,
@@ -183,6 +189,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     columnsSort,
     paginationReactive,
     deletePopconfirmShow: optinos.deletePopconfirmShow,
+    columnsome,
   }
   provide(zaiTableProvideKey, result)
 

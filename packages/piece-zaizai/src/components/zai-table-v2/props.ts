@@ -1,6 +1,7 @@
 import type { DataTableColumn, DataTableColumns, DataTableProps } from 'naive-ui'
 import { dataTableProps } from 'naive-ui'
 import { ExtractPropTypes, PropType } from 'vue'
+import { type ColumnUIDTypeKey } from './const'
 
 export type InternalRowData = Record<string, unknown>
 
@@ -18,23 +19,26 @@ export const zaiTableProps = {
     type: Boolean,
     default: false,
   },
-  indexColumnProps: {
+  indexColumn: {
     type: [Boolean, Object] as PropType<boolean | DataTableColumn>,
     default: true,
+  },
+  actionColumn: {
+    type: [Boolean, Object] as PropType<boolean | DataTableColumn>,
+    default: true,
+  },
+  popconfirmShow: {
+    type: Boolean,
+    default: true,
+  },
+  columnHideKeys: {
+    type: Array as PropType<ColumnUIDTypeKey[]>,
+    default: () => [],
   },
   pagination: {
     type: [Boolean, Object] as PropType<boolean | DataTableProps['pagination']>,
     default: true,
   },
-  defaultActionColumn: {
-    type: [Boolean, Object] as PropType<boolean | DataTableColumn>,
-    default: true,
-  },
-  deletePopconfirmShow: {
-    type: Boolean,
-    default: true,
-  },
 }
 
 export type ZaiTablePropsType = ExtractPropTypes<typeof zaiTableProps>
-export type Row = ZaiTablePropsType['data']

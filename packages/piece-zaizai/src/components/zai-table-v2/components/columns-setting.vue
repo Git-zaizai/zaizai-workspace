@@ -3,7 +3,7 @@
     <template #trigger>
       <n-switch
         size="small"
-        :default-value="true"
+        :default-value="false"
         @update-value="columnSwitch($event, ColumnUID.selection)"
       />
     </template>
@@ -14,7 +14,7 @@
     <template #trigger>
       <n-switch
         size="small"
-        :default-value="true"
+        :default-value="false"
         @update-value="columnSwitch($event, ColumnUID.index_column)"
       />
     </template>
@@ -137,7 +137,7 @@ import { useCssVars } from '@/hooks/useCssVars'
 import { useTableContext, type ZaiTableColumn } from '../hooks/useTableContext'
 import { isFunction, isString } from 'lodash-es'
 import { VueDraggable, type DraggableEvent } from 'vue-draggable-plus'
-import { ColumnUID } from '../enum'
+import { ColumnUID } from '../const'
 
 const cssVars = useCssVars(['primaryColor'])
 const columnList = ref([])

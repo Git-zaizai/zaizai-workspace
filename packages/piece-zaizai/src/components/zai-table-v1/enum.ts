@@ -25,3 +25,5 @@ export enum ColumnUID {
   'index_column' = -2,
   'default_action_column' = -3,
 }
+
+export const columnHides = ['selection', 'index_column', 'default_action_column']

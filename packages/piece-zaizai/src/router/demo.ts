@@ -23,20 +23,20 @@ const demoRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/demo/zidingyi-loading.vue'),
   },
   {
-    path: 'form',
+    path: 'form-v1',
     meta: {
-      title: '表单',
+      title: '表单-v1',
       icon: 'i-ph:waveform-fill',
     },
-    component: () => import('@/views/demo/table.vue'),
+    component: () => import('@/views/demo/table/table-v1.vue'),
   },
   {
-    path: 'request',
+    path: 'form-v2',
     meta: {
-      title: 'fetct',
-      icon: 'i-ph:share-network',
+      title: '表单-v2',
+      icon: 'i-ph:waveform-fill',
     },
-    component: () => import('@/views/demo/req.vue'),
+    component: () => import('@/views/demo/table/table-v2.vue'),
   },
 ]
 
