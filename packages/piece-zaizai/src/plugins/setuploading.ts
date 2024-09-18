@@ -1,6 +1,6 @@
 import { getCurrentTheme } from '@/utils/initTheme'
 export function setuploading(show = false) {
-  const html = `<svg class="truck" viewBox="0 0 48 24" width="48px" height="24px">
+  const html = `<svg class="truck" style="width:12em" viewBox="0 0 48 24" width="48px" height="24px">
         <g fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
             transform="translate(0,2)">
             <g class="tt-bb">

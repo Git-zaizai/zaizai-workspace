@@ -32,4 +32,10 @@ const demoRouters: RouteRecordRaw = {
   children: demors,
 }
 
-export const routes = [...commonRoutes, defaultRouters, demoRouters]
+const markdownRoute: RouteRecordRaw = {
+  path: '/markdown',
+  name: 'markdown',
+  component: () => import('@/views/demo/MarkdownRendererView.vue'),
+}
+
+export const routes = [...commonRoutes, defaultRouters, demoRouters, markdownRoute]

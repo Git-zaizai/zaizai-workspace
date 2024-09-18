@@ -14,7 +14,6 @@
 .truck {
   --dur: 3s;
   display: block;
-  width: 12em;
   height: auto;
   color: var(--zai-loading-color, #63e2b7);
 }

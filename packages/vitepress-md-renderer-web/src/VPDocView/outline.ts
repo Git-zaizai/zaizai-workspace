@@ -37,7 +37,10 @@ export type MenuItem = Omit<Header, 'slug' | 'children'> & {
   children?: MenuItem[]
 }
 
-export function getHeaders(range?: any): MenuItem[] {
+export function getHeaders(): {
+  headerTree: MenuItem[]
+  resolvedHeaders: { element: HTMLHeadElement; link: string }[]
+} {
   const headers = [...document.querySelectorAll('.VPDoc :where(h1,h2,h3,h4,h5,h6)')]
     .filter(el => el.id && el.hasChildNodes())
     .map(el => {
@@ -51,7 +54,8 @@ export function getHeaders(range?: any): MenuItem[] {
     })
 
   // return resolveHeaders(headers, range)
-  return buildTree(headers, 1, 6)
+  let headerTree = buildTree(headers, 1, 6)
+  return { headerTree, resolvedHeaders: resolvedHeaders }
 }
 
 function serializeHeader(h: Element): string {
@@ -121,118 +125,18 @@ function tryOffsetSelector(selector: string, padding: number): number {
   return bot + padding
 }
 
-export function throttleAndDebounce(fn: () => void, delay: number): () => void {
+export function debounce(fn: () => void, delay: number) {
   let timeoutId: any
-  let called = false
-
   return () => {
     if (timeoutId) clearTimeout(timeoutId)
-
-    if (!called) {
+    timeoutId = setTimeout(() => {
       fn()
-      ;(called = true) && setTimeout(() => (called = false), delay)
-    } else timeoutId = setTimeout(fn, delay)
+      timeoutId = null
+    }, delay)
   }
 }
 
-export function useActiveAnchor(container: Ref<HTMLElement>, marker: Ref<HTMLElement>, fn: Function): void {
-  const onScroll = throttleAndDebounce(setActiveLink, 200)
-
-  let scrollElement: any = fn()
-  let prevActiveLink: HTMLAnchorElement | null = null
-
-  onMounted(() => {
-    requestAnimationFrame(setActiveLink)
-    window.addEventListener('scroll', onScroll)
-  })
-
-  onUpdated(() => {
-    // sidebar update means a route change
-    activateLink(location.hash)
-  })
-
-  onUnmounted(() => {
-    window.removeEventListener('scroll', onScroll)
-  })
-
-  function setActiveLink() {
-    const VPLocalNav = document.querySelector('#VPLocalNavId')
-    // @ts-ignore
-    if (VPLocalNav && VPLocalNav.style?.display === 'none') {
-      return
-    }
-
-    const scrollY = scrollElement.scrollY
-    const innerHeight = scrollElement.innerHeight
-    const offsetHeight = scrollElement === window ? document.body.offsetHeight : scrollElement.offsetHeight
-    const isBottom = Math.abs(scrollY + innerHeight - offsetHeight) < 1
-
-    // resolvedHeaders may be repositioned, hidden or fix positioned
-    const headers = resolvedHeaders
-      .map(({ element, link }) => ({
-        link,
-        top: getAbsoluteTop(element),
-      }))
-      .filter(({ top }) => !Number.isNaN(top))
-      .sort((a, b) => a.top - b.top)
-
-    // no headers available for active link
-    if (!headers.length) {
-      activateLink(null)
-      return
-    }
-
-    // page top
-    if (scrollY < 1) {
-      activateLink(null)
-      return
-    }
-
-    // page bottom - highlight last link
-    if (isBottom) {
-      activateLink(headers[headers.length - 1].link)
-      return
-    }
-
-    // find the last header above the top of viewport
-    let activeLink: string | null = null
-    let index = 0
-
-    for (const { top } of headers) {
-      activeLink = headers[index].link
-      if (top > scrollY + 8) {
-        break
-      }
-      index++
-    }
-
-    activateLink(activeLink)
-  }
-
-  function activateLink(hash: string | null) {
-    if (prevActiveLink) {
-      prevActiveLink.classList.remove('active')
-    }
-
-    if (hash == null) {
-      prevActiveLink = null
-    } else {
-      prevActiveLink = container.value.querySelector(`a[href="${decodeURIComponent(hash)}"]`)
-    }
-
-    const activeLink = prevActiveLink
-
-    if (activeLink) {
-      marker.value.style.top = activeLink.offsetTop + 39 + 'px'
-      marker.value.style.opacity = '1'
-    } else {
-      marker.value.style.top = '33px'
-      marker.value.style.opacity = '0'
-    }
-  }
-}
-
-function getAbsoluteTop(element: HTMLElement): number {
+export function getAbsoluteTop(element: HTMLElement): number {
   let offsetTop = 0
   while (element !== document.body) {
     if (element === null) {
@@ -283,19 +187,19 @@ function buildTree(data: MenuItem[], min: number, max: number): MenuItem[] {
   return result
 }
 
-export function findScrollableParent(element: any, VPDoc: Ref<HTMLElement>) {
+export function findScrollableParent(element: any, VPDoc: HTMLElement) {
   let current = element
 
   // 循环向上查找直到找到可滚动的父元素或者到达最顶层元素
   while (current !== null && current.tagName !== 'BODY' && current.tagName !== 'HTML') {
     // 检查当前元素是否可以垂直滚动
-    if (current.scrollHeight > current.clientHeight && !VPDoc.value.contains(current)) {
+    if (current.scrollHeight > current.clientHeight && !VPDoc.contains(current)) {
       return current // 找到可滚动的父元素，返回该元素
     }
     current = current.parentNode // 否则继续向上查找
   }
 
-  return null // 没有找到可滚动的父元素，返回null
+  return window // 没有找到可滚动的父元素，返回null
 }
 
 export function isScrollHeight(element: Element) {

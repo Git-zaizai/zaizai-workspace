@@ -12,6 +12,7 @@
 .VPDoc {
   padding: 32px 24px 96px;
   width: 100%;
+  position: relative;
 }
 
 @media (min-width: 768px) {
@@ -370,9 +371,9 @@
   background-color: var(--vp-local-nav-bg-color);
 }
 
-.VPLocalNav.fixed {
+/* .VPLocalNav.fixed {
   position: fixed;
-}
+} */
 
 @media (min-width: 960px) {
   /*  .VPLocalNav {

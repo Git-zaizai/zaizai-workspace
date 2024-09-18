@@ -58,7 +58,7 @@ onUnmounted(() => {
 <template>
   <div
     id="VPLocalNavId"
-    class="VPLocalNav has-sidebar fixed"
+    class="VPLocalNav has-sidebar"
   >
     <div class="container">
       <div
@@ -113,9 +113,9 @@ onUnmounted(() => {
   background-color: var(--vp-local-nav-bg-color);
 }
 
-.VPLocalNav.fixed {
+/* .VPLocalNav.fixed {
   position: fixed;
-}
+} */
 
 @media (min-width: 960px) {
   /*  .VPLocalNav {
@@ -306,6 +306,7 @@ onUnmounted(() => {
 .outline {
   padding: 8px 0;
   background-color: var(--vp-c-bg-soft);
+  outline-style: none;
 }
 
 .flyout-enter-active {

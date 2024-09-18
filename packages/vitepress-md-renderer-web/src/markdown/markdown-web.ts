@@ -182,10 +182,16 @@ export async function createMarkdownRenderer(options: MarkdownOptions = {}): Pro
   const hasSingleTheme = typeof theme === 'string' || 'name' in theme
 
   // @ts-ignore
-  const md = MarkdownIt({
+  /* const md = MarkdownIt({
     html: true,
     linkify: true,
     highlight: options.highlight || (await highlight(theme, options)),
+    ...options,
+  }) */
+  const md = MarkdownIt({
+    html: true,
+    linkify: true,
+    highlight: await highlight(theme, options),
     ...options,
   })
 
@@ -203,6 +209,7 @@ export async function createMarkdownRenderer(options: MarkdownOptions = {}): Pro
   md.use(linkPlugin, { target: '_blank', rel: 'noreferrer', ...options.externalLinks }, '/')
   md.use(lineNumberPlugin, options.lineNumbers)
 
+  // @ts-ignore
   md.renderer.rules.table_open = function (tokens, idx, options, env, self) {
     return '<table tabindex="0">\n'
   }
@@ -241,7 +248,7 @@ export async function createMarkdownRenderer(options: MarkdownOptions = {}): Pro
 
   if (options.headers) {
     md.use(headersPlugin, {
-      level: [2, 3, 4, 5, 6],
+      level: [1, 2, 3, 4, 5, 6],
       slugify,
       ...(typeof options.headers === 'boolean' ? undefined : options.headers),
     } as HeadersPluginOptions)

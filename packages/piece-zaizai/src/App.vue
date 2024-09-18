@@ -13,7 +13,7 @@
 import { zhCN, darkTheme, lightTheme } from 'naive-ui'
 import { appStore } from '@/store'
 
-const inlinethemedisabled = true
+const inlinethemedisabled = false
 const appProvider = appStore()
 const theme = computed(() => (appProvider.theme === 'light' ? lightTheme : darkTheme))
 </script>

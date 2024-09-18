@@ -7,12 +7,12 @@ const ROOT = fileURLToPath(import.meta.url)
 const r = p => path.resolve(ROOT, '..', p)
 
 const mian = () => {
-  if (fs.existsSync(r('../dist/esm'))) {
-    fs.copySync(r('../src/fonts'), r('../dist/esm/fonts'))
-  }
+  // if (fs.existsSync(r('../dist/esm'))) {
+  //   fs.copySync(r('../src/fonts'), r('../dist/esm/fonts'))
+  // }
+  fs.copySync(r('../src/fonts'), r('../dist/fonts'))
 
   if (fs.existsSync(r('../dist/umd'))) {
-    fs.copySync(r('../src/fonts'), r('../dist/umd'))
     fs.copySync(r('../src/styles'), r('../dist/umd/css'))
   }
 

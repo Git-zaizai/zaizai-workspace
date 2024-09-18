@@ -3,6 +3,7 @@ import { appStore } from '@/store'
 
 type CssKey = keyof ThemeCommonVars
 type Style = Record<string, [string, string]>
+type Style2 = Record<string, CssKey>
 
 function convertToKebabCase(str: string): string {
   return str
@@ -10,7 +11,7 @@ function convertToKebabCase(str: string): string {
     .toLowerCase() // 转换为小写
 }
 
-export const useCssVars = (keys: CssKey[], style?: Style) => {
+export const useCssVars = (keys: CssKey[], style?: Style | null, style2?: Style2 | null, css?: CssStyle) => {
   const { theme } = appStore()
   const naiveTheme = useThemeVars()
   const vars = computed(() => {
@@ -20,9 +21,17 @@ export const useCssVars = (keys: CssKey[], style?: Style) => {
       let kvalue = `--zai-${convertToKebabCase(key)}`
       value[kvalue] = nvalue
     })
-    for (const key in style) {
-      value[`--zai-${key}`] = theme === 'dark' ? style[key][0] : style[key][1]
+    if (style) {
+      for (const key in style) {
+        value[`--zai-${key}`] = theme === 'dark' ? style[key][0] : style[key][1]
+      }
     }
+    if (style2) {
+      for (const key2 in style2) {
+        value[`--zai-${key2}`] = naiveTheme.value[style2[key2]]
+      }
+    }
+    value = { ...value, ...css }
     return value
   })
 

@@ -13,16 +13,17 @@ import '../styles/components/vp-sponsor.css'
 import VPDocOutlineItem from './VPDocOutlineItem.vue'
 import VPLocalNavOutlineDropdown from './VPLocalNavOutlineDropdown.vue'
 
-import { ref, shallowRef, onMounted, nextTick, computed, type Ref, watch, onUnmounted } from 'vue'
+import { ref, shallowRef, onMounted, nextTick, computed, watch, onUnmounted, onUpdated } from 'vue'
 
 import {
   type MenuItem,
   getHeaders,
-  useActiveAnchor,
   findScrollableParent,
   isScrollHeight,
   useCodeGroups,
   useCopyCode,
+  getAbsoluteTop,
+  debounce,
 } from './outline'
 
 const props = withDefaults(
@@ -36,6 +37,8 @@ const props = withDefaults(
   { leftAside: false, isAsideContainerPadding: true }
 )
 
+let resolvedHeaders: any[] = []
+let scrollElement: HTMLElement | null | Window = null
 const headers = shallowRef<MenuItem[]>([])
 const AsideContainerPadding = computed(() => {
   if (props.isAsideContainerPadding) {
@@ -45,26 +48,18 @@ const AsideContainerPadding = computed(() => {
 })
 
 const vodeoConentRef = ref<HTMLDivElement>()
-const container = ref<HTMLElement>()
-const marker = ref<HTMLElement>()
-const VPdoc = ref<HTMLElement>()
-
-const getScrollElement = (target: Element) => {
-  let scrollElement = typeof props.scrollEl !== 'string' ? props.scrollEl : document.querySelector(props.scrollEl)
-  if (scrollElement && !isScrollHeight(scrollElement)) {
-    scrollElement = findScrollableParent(target, VPdoc as Ref<HTMLElement>)
-  }
-  return scrollElement ?? window
-}
-
-useActiveAnchor(container as Ref<HTMLElement>, marker as Ref<HTMLElement>, getScrollElement)
+const containerRef = ref<HTMLElement>()
+const markerRef = ref<HTMLElement>()
+const VPdocRef = ref<HTMLElement>()
 
 watch(
   () => props.content,
   value => {
     if (value) {
       nextTick(() => {
-        headers.value = getHeaders()
+        const obj = getHeaders()
+        headers.value = obj.headerTree
+        resolvedHeaders = obj.resolvedHeaders
       })
     }
   }
@@ -72,18 +67,20 @@ watch(
 
 const winClick = (e: any) => {
   let href: string = e.target.getAttribute('href')
-  const selector: HTMLElement | null = VPdoc.value?.querySelector(href) ?? document.querySelector(href)
+
+  const selector = VPdocRef.value?.contains(e.target)
   if (e.target.tagName === 'A' && href && selector) {
     e.preventDefault()
-    let scrollElement = getScrollElement(e.target)
 
-    if (href.split('#').length === 2 && href.split('#')[1] === '' && scrollElement) {
+    if (href.split('#')[1] === '' && scrollElement) {
       scrollElement.scrollTo({ top: 0, behavior: 'smooth' })
     }
-    let top = selector.offsetTop
+    // @ts-ignore
+    let top = document.querySelector(decodeURIComponent(href))!.offsetTop
     if (scrollElement) {
       scrollElement.scrollTo({ top, behavior: 'smooth' })
     }
+    console.log('scrollElement', scrollElement)
   }
 }
 
@@ -92,25 +89,100 @@ onMounted(() => {
   window.addEventListener('click', useCodeGroups)
   window.addEventListener('click', useCopyCode)
 })
+
 onUnmounted(() => {
   window.removeEventListener('click', winClick)
   window.removeEventListener('click', useCodeGroups)
   window.removeEventListener('click', useCopyCode)
+  scrollElement?.removeEventListener('click', scrollFnDebounce)
+})
+
+const scrollFn = () => {
+  if (getComputedStyle(document.querySelector('#VPLocalNavId') as HTMLElement).display !== 'none') {
+    return
+  }
+
+  // @ts-ignore
+  const scrollY = scrollElement === window ? window.scrollY : scrollElement.scrollTop
+  // @ts-ignore
+  const offsetHeight = scrollElement === window ? document.body.offsetHeight : scrollElement.offsetHeight
+
+  if (scrollY <= 0) {
+    markerRef.value!.classList.remove('active')
+    markerRef.value!.style.opacity = '0'
+    markerRef.value!.style.opacity = '0'
+    return
+  }
+
+  const Headersfilter = resolvedHeaders
+    .map(({ element, link }) => ({
+      link,
+      top: getAbsoluteTop(element),
+    }))
+    .filter(({ top }) => !Number.isNaN(top))
+    .sort((a, b) => a.top - b.top)
+  // find the last header above the top of viewport
+  let activeLink: string | null = null
+  let index = 0
+  for (const { top } of Headersfilter) {
+    activeLink = Headersfilter[index].link
+    if (top > scrollY + 8) {
+      break
+    }
+    index++
+  }
+
+  if (activeLink) {
+    const activeLinkEl = containerRef.value?.querySelector(`a[href="${decodeURIComponent(activeLink)}"]`)
+    if (activeLinkEl) {
+      // @ts-ignore
+      markerRef.value.style.top = activeLinkEl.offsetTop + 39 + 'px'
+      // @ts-ignore
+      markerRef.value.style.opacity = '1'
+    } else {
+      // @ts-ignore
+      markerRef.value.style.top = '33px'
+      // @ts-ignore
+      markerRef.value.style.opacity = '0'
+    }
+  }
+}
+const scrollFnDebounce = debounce(scrollFn, 50)
+
+onUpdated(() => {
+  if (!scrollElement) {
+    if (typeof props.scrollEl === 'string') {
+      scrollElement = document.querySelector(props.scrollEl) as HTMLElement
+    } else if (props.scrollEl instanceof Element) {
+      scrollElement = props.scrollEl
+    }
+
+    if (scrollElement instanceof Element && !isScrollHeight(scrollElement)) {
+      scrollElement = findScrollableParent(VPdocRef.value, VPdocRef.value as HTMLElement)
+    } else {
+      scrollElement = findScrollableParent(VPdocRef.value, VPdocRef.value as HTMLElement)
+    }
+
+    if (scrollElement) {
+      scrollElement!.addEventListener('scroll', scrollFnDebounce)
+    }
+  }
 })
 </script>
 
 <template>
   <div
     class="VPDoc has-sidebar has-aside"
-    ref="VPdoc"
+    ref="VPdocRef"
   >
     <VPLocalNavOutlineDropdown :headers="headers" />
+
     <div class="container">
       <div
         class="aside"
         :class="{ 'left-aside': leftAside }"
       >
-        <div class="aside-curtain" />
+        <!-- <div class="aside-curtain" ></div> -->
         <div
           class="aside-container"
           :style="AsideContainerPadding"
@@ -121,12 +193,12 @@ onUnmounted(() => {
                 aria-labelledby="doc-outline-aria-label"
                 class="VPDocAsideOutline"
                 :class="{ 'has-outline': headers.length > 0 }"
-                ref="container"
+                ref="containerRef"
               >
                 <div class="VPDocAside-content">
                   <div
                     class="outline-marker"
-                    ref="marker"
+                    ref="markerRef"
                   ></div>
 
                   <div
@@ -173,20 +245,28 @@ onUnmounted(() => {
 
 <style scoped>
 .VPDoc {
-  padding: 32px 24px 96px;
+  /* padding: 32px 24px 96px; */
   width: 100%;
+  position: relative;
+}
+
+/* @media (min-width: 100px) {
+  .VPDoc {
+    padding: 0px 32px 128px;
+  }
 }
 
 @media (min-width: 768px) {
   .VPDoc {
-    padding: 48px 32px 128px;
+    padding: 0px 32px 128px;
+    padding-bottom: 128px;
   }
 }
-
+ */
 @media (min-width: 960px) {
-  .VPDoc {
-    padding: 48px 32px 0;
-  }
+  /* .VPDoc {
+    padding: 0px 32px 128px;
+  } */
 
   .VPDoc:not(.has-sidebar) .container {
     display: flex;
@@ -280,7 +360,8 @@ onUnmounted(() => {
 
 @media (min-width: 960px) {
   .content {
-    padding: 0 32px 128px;
+    padding: 0 70px 128px;
+    margin-top: 48px;
   }
 }
 
@@ -289,6 +370,7 @@ onUnmounted(() => {
     order: 1;
     margin: 0;
     min-width: 640px;
+    margin-top: 48px;
   }
 }
 

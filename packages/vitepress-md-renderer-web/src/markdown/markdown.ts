@@ -188,10 +188,17 @@ export const createMarkdownRenderer = async (
   const codeCopyButtonTitle = options.codeCopyButtonTitle || 'Copy Code'
   const hasSingleTheme = typeof theme === 'string' || 'name' in theme
 
+  // @ts-ignore
+  /* const md = MarkdownIt({
+    html: true,
+    linkify: true,
+    highlight: options.highlight || (await highlight(theme, options)),
+    ...options,
+  }) */
   const md = MarkdownIt({
     html: true,
     linkify: true,
-    highlight: options.highlight || (await highlight(theme, options, logger)),
+    highlight: await highlight(theme, options),
     ...options,
   })
 

@@ -161,13 +161,14 @@ interface Options extends MarkdownOptions {
 export async function createMarkdownRenderer(options: Options): Promise<MarkdownRenderer> {
   options = {
     attrs: {
-      disable: true,
+      disable: false,
     },
     gfmAlerts: true,
     headers: true,
     math: false,
     ...options,
   }
+
   return createMdRenderer(options)
 }
 

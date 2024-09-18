@@ -33,10 +33,7 @@
         v-model:value="selectedKey"
       />
     </n-layout-sider>
-    <n-layout-content
-      content-style="height:calc(100vh - 67px)"
-      :embedded="app.Layoutinverted"
-    >
+    <n-layout-content :embedded="app.Layoutinverted">
       <default-layout-view />
     </n-layout-content>
   </n-layout>

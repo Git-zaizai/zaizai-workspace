@@ -6,10 +6,10 @@ import {
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
-import type { Theme } from '@unocss/preset-uno'
-import type { IconifyJSON } from '@iconify/types'
+// import type { Theme } from '@unocss/preset-uno'
+// import type { IconifyJSON } from '@iconify/types'
 
-const preset: Preset<Theme> = {
+const preset: Preset = {
   name: 'preset-soybean-admin',
   shortcuts: [
     {
@@ -54,7 +54,7 @@ const preset: Preset<Theme> = {
   ],
 }
 
-export default defineConfig<Theme>({
+export default defineConfig({
   content: {
     pipeline: {
       exclude: ['node_modules', 'dist'],
@@ -74,7 +74,8 @@ export default defineConfig<Theme>({
         },
       },
       collections: {
-        ph: () => import('@iconify-json/ph/icons.json').then(i => i.default as IconifyJSON),
+        ph: () => import('@iconify-json/ph/icons.json').then(i => i.default as any),
+        'line-md': () => import('@iconify-json/line-md/icons.json').then(i => i.default),
       },
     }),
     preset,

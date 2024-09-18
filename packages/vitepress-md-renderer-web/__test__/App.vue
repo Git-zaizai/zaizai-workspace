@@ -18,7 +18,7 @@ onMounted(async () => {
     },
     gfmAlerts: true,
     headers: true,
-    math: true,
+    math: false,
     theme: 'andromeeda',
   })
   const mdText = await test()
