@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="zai-table">
     <div
       class="flex-y-center justify-between pb-3"
       :style="headerStyle"
@@ -147,7 +147,7 @@ const densitySelect = (key: 'small' | 'medium' | 'large') => {
   tableSize.value = key
 }
 
-const { loading, columns, scrollautoX, paginationReactive } = createTableContext(props)
+const { columns, scrollautoX, paginationReactive } = createTableContext(props)
 
 const { dropdownXY, showDropdownRef, rowProps, dropdownOptions, onClickoutside, handleSelect } = useKoutSide(emits)
 

@@ -1,4 +1,3 @@
-import { useToggle } from '@vueuse/core'
 import type { ZaiTablePropsType } from '../props'
 import { cloneDeep, isBoolean } from 'lodash-es'
 import type { DataTableColumn, DataTableProps } from 'naive-ui'
@@ -9,9 +8,27 @@ const defaultActionColumn: ZaiTableColumn = {
   key: 'default_action_column',
   title: '操作',
   fixed: 'right',
-  width: 150,
+  width: columnDefulatWidth,
   uid: ColumnUID.default_action_column,
   render: (row: any, index: number) => h(defaultAction, { row, index }),
+}
+
+const default_index_column: ZaiTableColumn = {
+  title: '序号',
+  uid: ColumnUID.index_column,
+  width: 70,
+  fixed: 'left',
+  align: 'center',
+  titleAlign: 'center',
+  key: 'index_column_key',
+  render: (_: any, _columnIndex: number) => _columnIndex,
+}
+
+const defulat_selection: ZaiTableColumn = {
+  type: 'selection',
+  uid: ColumnUID.selection,
+  width: 40,
+  fixed: 'left',
 }
 
 export type ZaiTableColumn = DataTableColumn & {
@@ -41,18 +58,17 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
       scrollautoX += getWidth(item)
     })
 
-    if (optinos.indexColumnProps === true) {
-      columns.value.unshift({
-        title: '序号',
-        uid: ColumnUID.index_column,
-        width: 70,
-        fixed: 'left',
-        align: 'center',
-        titleAlign: 'center',
-        key: 'index_column_key',
-        render: (_: any, _columnIndex: number) => _columnIndex,
-      } as ZaiTableColumn)
-      scrollautoX += 70
+    if (isBoolean(optinos.defaultActionColumn) && optinos.defaultActionColumn) {
+      let w = getWidth(columns.value.at(-1))
+      if (w !== columnDefulatWidth) {
+        default_index_column.width = w
+      }
+      columns.value.unshift(default_index_column)
+      scrollautoX += default_index_column.width as number
+    } else {
+      let assign = Object.assign(defaultActionColumn, optinos.defaultActionColumn)
+      columns.value.push(assign)
+      scrollautoX += getWidth(assign)
     }
 
     if (isBoolean(optinos.defaultActionColumn) && optinos.defaultActionColumn) {
@@ -65,13 +81,8 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     }
 
     if (isselection) {
-      columns.value.unshift({
-        type: 'selection',
-        uid: ColumnUID.selection,
-        width: 40,
-        fixed: 'left',
-      })
-      scrollautoX += 40
+      columns.value.unshift(defulat_selection)
+      scrollautoX += defulat_selection.width as number
     }
 
     cacheColumns = cloneDeep(columns.value)

@@ -3,6 +3,7 @@ import { defulatLayout, demoLayout } from './constant'
 
 import index from '@/views/home/index.vue'
 import demors from './demo'
+import { consoleRoute } from './console'
 
 const commonRoutes: RouteRecordRaw[] = [
   {
@@ -38,4 +39,4 @@ const markdownRoute: RouteRecordRaw = {
   component: () => import('@/views/demo/MarkdownRendererView.vue'),
 }
 
-export const routes = [...commonRoutes, defaultRouters, demoRouters, markdownRoute]
+export const routes = [...commonRoutes, defaultRouters, demoRouters, markdownRoute, consoleRoute]

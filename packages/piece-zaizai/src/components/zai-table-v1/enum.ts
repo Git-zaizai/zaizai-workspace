@@ -26,4 +26,6 @@ export enum ColumnUID {
   'default_action_column' = -3,
 }
 
-export const columnHides = ['selection', 'index_column', 'default_action_column']
+export type columnHidesType = keyof typeof ColumnUID
+
+export const columnHides: columnHidesType[] = ['selection', 'index_column', 'default_action_column']

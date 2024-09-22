@@ -12,7 +12,7 @@ const demoRoutes: RouteRecordRaw[] = [
       title: 'MarkdownRenderer',
       icon: 'i-ph:markdown-logo',
     },
-    component: () => import('@/views/demo/demo-MarkdownRenderer.vue'),
+    component: () => import('@/views/demo/demo-markdown-renderer.vue'),
   },
   {
     path: 'loading-vue',

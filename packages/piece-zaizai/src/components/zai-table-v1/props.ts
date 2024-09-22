@@ -1,7 +1,7 @@
 import type { DataTableColumn, DataTableColumns, DataTableProps } from 'naive-ui'
 import { dataTableProps } from 'naive-ui'
 import { ExtractPropTypes, PropType } from 'vue'
-import { columnHides } from './enum'
+import { type columnHidesType } from './enum'
 
 export type InternalRowData = Record<string, unknown>
 
@@ -36,7 +36,7 @@ export const zaiTableProps = {
     default: true,
   },
   columnHides: {
-    type: Array as PropType<typeof columnHides>,
+    type: Array as PropType<columnHidesType[]>,
     default: () => [],
   },
 }
