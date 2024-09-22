@@ -4,6 +4,12 @@ import type { DataTableColumn, DataTableProps } from 'naive-ui'
 import { columnDefulatWidth, zaiTableProvideKey, ColumnUID, columnHides } from '../enum'
 import defaultAction from '../components/default-action.vue'
 
+export type InternalRowData = Record<string, unknown>
+
+export type ZaiTableColumn<U = InternalRowData> = DataTableColumn<U> & {
+  uid: number
+}
+
 const defaultActionColumn: ZaiTableColumn = {
   key: 'default_action_column',
   title: '操作',
@@ -29,10 +35,6 @@ const defulat_selection: ZaiTableColumn = {
   uid: ColumnUID.selection,
   width: 40,
   fixed: 'left',
-}
-
-export type ZaiTableColumn = DataTableColumn & {
-  uid: number
 }
 
 type ZaiTableInject = Pick<ReturnType<typeof createTableContext>, 'columns' | 'setfixed'>

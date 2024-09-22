@@ -3,8 +3,6 @@ import { dataTableProps } from 'naive-ui'
 import { ExtractPropTypes, PropType } from 'vue'
 import { type columnHidesType } from './enum'
 
-export type InternalRowData = Record<string, unknown>
-
 const PickDataTableProps = (key: Array<keyof DataTableProps>) => {
   return key.reduce((prev, curr) => {
     prev[curr] = dataTableProps[curr]

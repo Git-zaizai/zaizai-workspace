@@ -104,6 +104,7 @@
       :row-key="rowKey"
       :row-props="rowProps"
       @update:checked-row-keys="handleCheck"
+      :flex-height="props.flexHeight ?? true"
     />
     <n-dropdown
       placement="bottom-start"

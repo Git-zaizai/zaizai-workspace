@@ -19,26 +19,6 @@ export const zaiTableProps = {
     type: Boolean,
     default: false,
   },
-  indexColumn: {
-    type: [Boolean, Object] as PropType<boolean | DataTableColumn>,
-    default: true,
-  },
-  actionColumn: {
-    type: [Boolean, Object] as PropType<boolean | DataTableColumn>,
-    default: true,
-  },
-  popconfirmShow: {
-    type: Boolean,
-    default: true,
-  },
-  columnHideKeys: {
-    type: Array as PropType<ColumnUIDTypeKey[]>,
-    default: () => [],
-  },
-  pagination: {
-    type: [Boolean, Object] as PropType<boolean | DataTableProps['pagination']>,
-    default: true,
-  },
 }
 
 export type ZaiTablePropsType = ExtractPropTypes<typeof zaiTableProps>
