@@ -37,6 +37,10 @@ export const zaiTableProps = {
     type: Array as PropType<columnHidesType[]>,
     default: () => [],
   },
+  flexHeight: {
+    type: Boolean,
+    default: true,
+  },
 }
 
 export type ZaiTablePropsType = ExtractPropTypes<typeof zaiTableProps>

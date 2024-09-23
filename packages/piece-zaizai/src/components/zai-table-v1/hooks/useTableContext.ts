@@ -10,6 +10,10 @@ export type ZaiTableColumn<U = InternalRowData> = DataTableColumn<U> & {
   uid: number
 }
 
+type ColumnExpand = {
+  uid: number
+}
+
 const defaultActionColumn: ZaiTableColumn = {
   key: 'default_action_column',
   title: '操作',

@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { ZaiTable } from '@/components/zai-table-v1'
-import { defineComponent, h } from 'vue'
+import { h } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 
 interface RowData {

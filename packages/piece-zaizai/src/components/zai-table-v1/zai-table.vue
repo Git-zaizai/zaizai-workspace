@@ -95,16 +95,16 @@
     <n-data-table
       v-bind="props"
       :columns="columns"
-      :data="props.data"
+      :data="data"
       :pagination="paginationReactive"
       :loading="loading"
       :bordered="tablebordered"
-      :scroll-x="props.scrollX ?? scrollautoX"
+      :scroll-x="scrollX ?? scrollautoX"
       :striped="tablestriped"
       :row-key="rowKey"
       :row-props="rowProps"
       @update:checked-row-keys="handleCheck"
-      :flex-height="props.flexHeight ?? true"
+      :flex-height="flexHeight"
     />
     <n-dropdown
       placement="bottom-start"

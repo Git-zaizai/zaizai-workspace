@@ -1,7 +1,6 @@
 import type { DataTableColumn, DataTableColumns, DataTableProps } from 'naive-ui'
 import { dataTableProps } from 'naive-ui'
 import { ExtractPropTypes, PropType } from 'vue'
-import { type ColumnUIDTypeKey } from './const'
 
 export type InternalRowData = Record<string, unknown>
 
