@@ -5,6 +5,7 @@
       :columns="columns"
       @action-update="handleActionUpdate"
       @action-delete="handleActionDelete"
+      :min-height="'calc(100vh - 170px)'"
     />
   </div>
 </template>
@@ -14,6 +15,8 @@ import { ZaiTable } from '@/components/zai-table-v1'
 import { h } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 
+import { Component } from 'vue'
+
 interface RowData {
   key: number
   name: string
@@ -21,7 +24,7 @@ interface RowData {
   address: string
 }
 
-const columns: DataTableColumns<RowData> = [
+const columns: any[] = [
   {
     title: 'Name',
     key: 'name',
@@ -42,38 +45,38 @@ const columns: DataTableColumns<RowData> = [
     },
   },
   {
-    title: 'Row1',
-    key: 'row1',
-    render(row, index) {
-      return h('span', ['row 1', index])
-    },
-  },
-  {
-    title: 'Row11',
-    key: 'row11',
-    render(row, index) {
-      return h('span', ['row 11', index])
-    },
-  },
-  {
-    title: 'Row12',
-    key: 'row12',
-    render(row, index) {
-      return h('span', ['row 12', index])
-    },
-  },
-  {
-    title: 'Row13',
-    key: 'row13',
-    render(row, index) {
-      return h('span', ['row 13', index])
-    },
-  },
-  {
     title: 'Row2',
-    key: 'row2',
+    key: 'Row2',
     render(row, index) {
-      return h('span', ['row ', index])
+      return h('span', ['Row2 ', index])
+    },
+  },
+  {
+    title: 'Row3',
+    key: 'Row3',
+    render(row, index) {
+      return h('span', ['Row3 ', index])
+    },
+  },
+  {
+    title: 'Row4',
+    key: 'Row4',
+    render(row, index) {
+      return h('span', ['Row4 ', index])
+    },
+  },
+  {
+    title: 'Row5',
+    key: 'Row5',
+    render(row, index) {
+      return h('span', ['Row5', index])
+    },
+  },
+  {
+    title: 'Row6',
+    key: 'Row6',
+    render(row, index) {
+      return h('span', ['Row6 ', index])
     },
     width: 100,
     fixed: 'right',
@@ -84,14 +87,16 @@ const columns: DataTableColumns<RowData> = [
     width: 200,
     fixed: 'right',
   },
-]
+].slice(0, 3)
 
-const data = Array.from({ length: 100 }).map((_, index) => ({
-  key: index,
-  name: `Edward King ${index}`,
-  age: 32,
-  address: `London, Park Lane no. ${index}`,
-}))
+const dataitem = columns.map(col => col.key)
+const data = Array.from({ length: 100 }).map((_, index) => {
+  let obj = {}
+  dataitem.forEach(item => {
+    obj[item] = `${item} + ${index} ==> ${index * 2}`
+  })
+  return obj as RowData
+})
 
 const handleActionUpdate = row => {
   window.$message.success(`Update ${row.name}`)

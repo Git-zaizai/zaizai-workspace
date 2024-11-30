@@ -1,1 +1,1 @@
-export { default as ZaiTable } from './zai-table.vue'
+export { default as ZaiTableV2 } from './zai-table.vue'

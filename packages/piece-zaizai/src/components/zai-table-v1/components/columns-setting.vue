@@ -175,7 +175,7 @@ const getTitle = (item: ZaiTableColumn, index: number) => {
 
 const deaggableChange = (e: DraggableEvent) => {
   if (e.data.checked) {
-    columnsSort(columnList.value.map(mv => mv.uid))
+    columnsSort(columnList.value.filter(fv => fv.checked).map(mv => mv.uid))
   }
 }
 

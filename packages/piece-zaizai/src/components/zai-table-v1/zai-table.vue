@@ -95,7 +95,7 @@
     <n-data-table
       v-bind="props"
       :columns="columns"
-      :data="data"
+      :data="props.data"
       :pagination="paginationReactive"
       :loading="loading"
       :bordered="tablebordered"

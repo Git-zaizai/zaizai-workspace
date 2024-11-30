@@ -38,6 +38,14 @@ const demoRoutes: RouteRecordRaw[] = [
     },
     component: () => import('@/views/demo/table/table-v2.vue'),
   },
+  {
+    path: 'hook-test',
+    meta: {
+      title: 'vue关于hook的实验',
+      icon: 'i-ph:webhooks-logo',
+    },
+    component: () => import('@/views/demo/hook-test/index.vue'),
+  },
 ]
 
 export default demoRoutes
