@@ -46,6 +46,14 @@ const demoRoutes: RouteRecordRaw[] = [
     },
     component: () => import('@/views/demo/hook-test/index.vue'),
   },
+  {
+    path: 'crud',
+    meta: {
+      title: 'crud',
+      icon: 'i-ph:at-fill',
+    },
+    component: () => import('@/views/demo/hook-test/index.vue'),
+  },
 ]
 
 export default demoRoutes
