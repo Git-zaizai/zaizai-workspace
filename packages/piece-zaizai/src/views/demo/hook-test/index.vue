@@ -9,8 +9,8 @@
         <n-button
           type="success"
           @click="state.sum++"
-          >点击</n-button
-        >
+          >点击
+        </n-button>
       </div>
     </div>
 

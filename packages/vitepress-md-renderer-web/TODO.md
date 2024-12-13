@@ -35,3 +35,13 @@ import VPLocalNavOutlineDropdown from './VPLocalNavOutlineDropdown.vue'
 
 ## 可以借助 vue-tsc 生成所有的 d.ts 文件，生成 d.ts 文件底层是调用 typescript 的 API，在 rollup 中也是一样，那些插件都是基于 ts 提供的 API 来实现的
 
+
+## 2024-12-24 vue-tsc的问题
+
+使用 vue-tsc 生成d.ts文件会报错
+```lua
+Search string not found: "/supportedTSExtensions = .*(?=;)/"
+(Use `node --trace-uncaught ...` to show where the exception was thrown)
+```
+
+[参考链接](https://juejin.cn/post/7447374654720688179)

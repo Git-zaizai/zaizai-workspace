@@ -48,7 +48,7 @@ const webBuild = {
     nodeResolve({ preferBuiltins: false }),
     commonjs(),
     vuePlugin(),
-    esbuild({ target: 'node20' }),
+    esbuild({ target: 'node22' }),
     postcss({
       extract: true,
     }),
