@@ -1,10 +1,15 @@
-<template>
-  <div class="demo-content-view">
-    <div>
-      <h1>父组件：</h1>
+<script
+  setup
+  lang="ts"
+>
+import zi1 from './1/index.vue'
+</script>
 
-      <div class="flex-col-center">
-        content.sum {{ state.sum }}
+<template>
+  <div class="demo-content-view flex-col-center gap-5">
+    <zi1 />
+
+    <div class="h-5px bg-amber w-full"></div>
 
         <n-button
           type="success"
@@ -20,12 +25,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { content } from './index'
+<style scoped>
 
-import Zi from './zi-1.vue'
-
-const { state } = content()
-</script>
-
-<style scoped></style>
+</style>
