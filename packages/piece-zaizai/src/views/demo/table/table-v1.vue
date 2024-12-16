@@ -1,6 +1,6 @@
 <template>
   <div class="demo-content-view">
-    <ZaiTable
+    <ZaiTableV1
       :data="data"
       :columns="columns"
       @action-update="handleActionUpdate"
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { ZaiTable } from '@/components/zai-table-v1'
+import { ZaiTableV1 } from '@/components/zai-table-v1'
 import { h } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 

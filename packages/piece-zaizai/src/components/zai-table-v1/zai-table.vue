@@ -7,10 +7,16 @@
       <div class="flex-y-center gap-4">
         <slot name="tableHeaderLeft">
           <n-button ghost>
-            <Iconify class="i-ph:plus-circle-bold" />
+            <Iconify
+              class="i-ph:plus-circle-bold"
+              @click="emits('add')"
+            />
           </n-button>
           <n-button ghost>
-            <Iconify class="i-ph:trash-simple-bold" />
+            <Iconify
+              class="i-ph:trash-simple-bold"
+              @click="bandallDelete"
+            />
           </n-button>
 
           <n-input-group class="w-100">
@@ -128,7 +134,6 @@ import { useCssVars } from '@/hooks/useCssVars'
 import { tableDensity } from './enum'
 import { type ZaiTableEmitType, createTableEmitContext } from './hooks/useTableEmits'
 import { useKoutSide } from './hooks/useKoutSide'
-
 import type { DataTableRowKey } from 'naive-ui'
 
 const props = defineProps(zaiTableProps)
@@ -152,8 +157,17 @@ const { columns, scrollautoX, paginationReactive } = createTableContext(props)
 
 const { dropdownXY, showDropdownRef, rowProps, dropdownOptions, onClickoutside, handleSelect } = useKoutSide(emits)
 
+let rowKeyList: DataTableRowKey[] = []
 const handleCheck = (rowKeys: DataTableRowKey[]) => {
+  rowKeyList = rowKeys
   emits('checkedRows', rowKeys)
+}
+const bandallDelete = () => {
+  if (rowKeyList.length === 0) {
+    window.$message.warning(`请选择要删除的行！`)
+    return
+  }
+  emits('del', rowKeyList)
 }
 </script>
 

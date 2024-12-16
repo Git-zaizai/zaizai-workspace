@@ -1,6 +1,6 @@
 <template>
   <div class="console-content-view">
-    <ZaiTable
+    <ZaiTableV1
       :data="data"
       :columns="columns"
       :column-hides="['default_action_column']"
@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { ZaiTable } from '@/components/zai-table-v1'
+import { ZaiTableV1 } from '@/components/zai-table-v1'
 import { h } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 

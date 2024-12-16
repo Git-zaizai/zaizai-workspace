@@ -1,16 +1,23 @@
+// @unocss-include
 import type { DropdownOption } from 'naive-ui'
 import { type ZaiTableEmitType } from './useTableEmits'
 import type { EmitFn } from 'vue'
 import { NButton } from 'naive-ui'
+import Iconify from '@/components/Iconify.vue'
 
 const options: DropdownOption[] = [
   {
     label: () =>
       h(
         NButton,
-        { text: true, type: 'primary' },
+        { text: true, type: 'primary', class: 'pt-2px' },
         {
           default: () => '编辑',
+          icon: () =>
+            h(Iconify, {
+              size: 14,
+              class: 'i-ph:pencil-bold',
+            }),
         }
       ),
     key: 'actionUpdate',
@@ -19,9 +26,14 @@ const options: DropdownOption[] = [
     label: () =>
       h(
         NButton,
-        { text: true, type: 'error' },
+        { text: true, type: 'error', class: 'pt-2px' },
         {
           default: () => '删除',
+          icon: () =>
+            h(Iconify, {
+              size: 14,
+              class: 'i-ph:trash-bold',
+            }),
         }
       ),
     key: 'actionDelete',

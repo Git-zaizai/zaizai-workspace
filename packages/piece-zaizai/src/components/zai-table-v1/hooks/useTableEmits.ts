@@ -9,6 +9,8 @@ export type ZaiTableEmitType = {
   refresh: []
   checkedRows: [row: DataTableRowKey[]]
   selectChanga: [value: string]
+  add: []
+  del: [value: DataTableRowKey[]]
 }
 
 export const useTableEmits = (): EmitFn<ZaiTableEmitType> => {

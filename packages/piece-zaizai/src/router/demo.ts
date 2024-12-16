@@ -52,7 +52,7 @@ const demoRoutes: RouteRecordRaw[] = [
       title: 'crud',
       icon: 'i-ph:at-fill',
     },
-    component: () => import('@/views/demo/hook-test/index.vue'),
+    component: () => import('@/views/demo/crud/index.vue'),
   },
 ]
 

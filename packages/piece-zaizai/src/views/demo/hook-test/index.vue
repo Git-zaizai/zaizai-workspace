@@ -1,7 +1,4 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import zi1 from './1/index.vue'
 </script>
 
@@ -9,22 +6,8 @@ import zi1 from './1/index.vue'
   <div class="demo-content-view flex-col-center gap-5">
     <zi1 />
 
-    <div class="h-5px bg-amber w-full"></div>
-
-        <n-button
-          type="success"
-          @click="state.sum++"
-          >点击
-        </n-button>
-      </div>
-    </div>
-
-    <br />
-    <div class="h-1 w-full bg-amber"></div>
-    <Zi />
+    <div class="w-full bg-amber h-2px"></div>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

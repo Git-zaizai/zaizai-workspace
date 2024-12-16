@@ -29,13 +29,13 @@ export function setuploading(show = false) {
 	let lacalTheme = getCurrentTheme()
 	console.log(lacalTheme)
 	const cssVars = `
-	--zai-bg-color:${ lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff' };
+	--zai-loading-bg:${ lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff' };
 	--zai-loading-color: ${ lacalTheme === 'dark' ? '#63e2b7' : '#18a058' };`
 
 	const element = document.createElement('div')
-	element.style.cssText = cssVars
 	element.innerHTML = html
 	const app = document.querySelector('#app-loading') as HTMLElement
+    app.style.cssText = cssVars
 	app.appendChild(element)
 	const Observer = new MutationObserver(() => {
 		setTimeout(() => {
