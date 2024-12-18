@@ -54,6 +54,14 @@ const demoRoutes: RouteRecordRaw[] = [
     },
     component: () => import('@/views/demo/crud/index.vue'),
   },
+  {
+    path: 'icons',
+    meta: {
+      title: '引入icon的多种方式',
+      icon: 'i-ph:intersect-duotone',
+    },
+    component: () => import('@/views/demo/icons.vue'),
+  },
 ]
 
 export default demoRoutes

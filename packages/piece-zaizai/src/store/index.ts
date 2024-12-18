@@ -19,6 +19,7 @@ interface State {
   // 反转 layout 背景颜色
   Layoutinverted: boolean
 }
+
 let localTheme = getCurrentTheme()
 export const appStore = defineStore('appStore', {
   state: (): State => ({

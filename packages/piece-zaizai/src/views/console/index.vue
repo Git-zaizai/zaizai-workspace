@@ -3,8 +3,8 @@
     <ZaiTableV1
       :data="data"
       :columns="columns"
-      :column-hides="['default_action_column']"
     />
+    
   </div>
 </template>
 
@@ -12,7 +12,6 @@
 import { ZaiTableV1 } from '@/components/zai-table-v1'
 import { h } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
-
 import { useTable } from '@/hooks/useTable'
 
 interface RowData {

@@ -1,9 +1,12 @@
 <template>
-  <div class="console-content-view">
-    <ZaiTableV1
-      :data="data"
-      :columns="columns"
-    />
+  <div>
+    <h1 class="w-full text-center">待完成</h1>
+    <div class="console-content-view">
+      <ZaiTableV1
+        :data="data"
+        :columns="columns"
+      />
+    </div>
   </div>
 </template>
 

@@ -19,7 +19,7 @@
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
     "lib": ["esnext", "dom", "dom.iterable"],
-    "types": ["vite/client"],
+    "types": ["vite/client", "unplugin-icons/types/vue"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

@@ -1,0 +1,48 @@
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 13.1082 13.1082"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+  >
+    <desc>
+      Created with Pixso.
+    </desc>
+    <defs>
+      <radialGradient
+        gradientTransform="translate(5.81383 4.7889) rotate(0) scale(4.91556 4.91556)"
+        cx="0.000000"
+        cy="0.000000"
+        r="1.000000"
+        id="paint_radial_1_4522_0"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stop-color="#FFFFFF" />
+        <stop offset="0.275507" stop-color="#FAC6B3" />
+        <stop offset="0.527885" stop-color="#F69775" />
+        <stop offset="0.740140" stop-color="#F37649" />
+        <stop offset="0.904159" stop-color="#F1612E" />
+        <stop offset="1.000000" stop-color="#F15A24" />
+      </radialGradient>
+    </defs>
+    <g style="mix-blend-mode:normal">
+      <circle
+        id="椭圆 158"
+        cx="6.554077"
+        cy="6.554138"
+        r="4.915560"
+        fill="url(#paint_radial_1_4522_0)"
+        fill-opacity="1.000000"
+      />
+      <circle
+        id="椭圆 158"
+        cx="6.554077"
+        cy="6.554138"
+        r="5.734820"
+        stroke="#FFFFFF"
+        stroke-opacity="1.000000"
+        stroke-width="1.638520"
+      />
+    </g>
+  </svg>

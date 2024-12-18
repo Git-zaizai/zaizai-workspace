@@ -1,7 +1,7 @@
 import { getCurrentTheme } from '@/utils/initTheme'
 
 export function setuploading(show = false) {
-	const html = `<svg class="truck" style="width:12em" viewBox="0 0 48 24" width="48px" height="24px">
+  const html = `<svg class="truck" style="width:12em" viewBox="0 0 48 24" width="48px" height="24px">
         <g fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
             transform="translate(0,2)">
             <g class="tt-bb">
@@ -26,32 +26,37 @@ export function setuploading(show = false) {
         </g>
     </svg>`
 
-	let lacalTheme = getCurrentTheme()
-	console.log(lacalTheme)
-	const cssVars = `
-	--zai-loading-bg:${ lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff' };
-	--zai-loading-color: ${ lacalTheme === 'dark' ? '#63e2b7' : '#18a058' };`
+  let lacalTheme = getCurrentTheme()
+  console.log(lacalTheme)
+  const cssVars = `
+	--zai-loading-bg:${lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff'};
+	--zai-loading-color: ${lacalTheme === 'dark' ? '#63e2b7' : '#18a058'};`
 
-	const element = document.createElement('div')
-	element.innerHTML = html
-	const app = document.querySelector('#app-loading') as HTMLElement
-    app.style.cssText = cssVars
-	app.appendChild(element)
-	const Observer = new MutationObserver(() => {
-		setTimeout(() => {
-			app.style.display = 'none'
-		}, 700)
-	})
+  const element = document.createElement('div')
+  element.innerHTML = html
+  const app = document.querySelector('#app-loading') as HTMLElement
+  app.style.cssText = cssVars
+  app.appendChild(element)
+  const Observer = new MutationObserver(() => {
+    setTimeout(() => {
+      app.style.display = 'none'
+    }, 700)
+  })
 
-	Observer.observe(document.querySelector('#app'), { childList: true, subtree: true })
+  Observer.observe(document.querySelector('#app'), { childList: true, subtree: true })
 
-	if (show) {
-		app.style.display = 'none'
-	}
+  if (show) {
+    app.style.display = 'none'
+  }
 
-	// 随便在做一下 body 的初始化
-	// document.documentElement.classList.add(lacalTheme)
-	document.body.style.backgroundColor = lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff'
+  // 随便在做一下 body 的初始化
+  if (lacalTheme === 'dark') {
+    document.body.style.backgroundColor = 'rgb(24, 24, 28)'
+    // document.documentElement.classList.add('vitepress-dark')
+  } else {
+    document.body.style.backgroundColor = '#fff'
+    // document.documentElement.classList.remove('vitepress-dark')
+  }
 }
 
 setuploading()

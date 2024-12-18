@@ -5,8 +5,14 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import UnoCSS from 'unocss/vite'
-import { URL, fileURLToPath } from 'node:url'
 
+import Icons from 'unplugin-icons/vite'
+// icon 自动引入解析器
+import IconsResolver from 'unplugin-icons/resolver'
+// icon 加载 loader 自定义 icon 图标
+import { FileSystemIconLoader } from 'unplugin-icons/loaders'
+
+import { URL, fileURLToPath } from 'node:url'
 import { getConfigEnv } from './build/index'
 
 // https://vitejs.dev/config/
@@ -35,9 +41,32 @@ export default defineConfig(configEnv => {
         ],
       }),
       Components({
-        resolvers: [NaiveUiResolver()],
+        resolvers: [
+          NaiveUiResolver(),
+          IconsResolver({
+            // 自动引入的Icon组件统一前缀，默认为icon，设置false为不需要前缀
+            prefix: 'i',
+            // 当图标集名字过长时，可使用集合别名
+            // alias: {
+            //   ph: 'ph',
+            //   md: 'line-md',
+            // },
+            customCollections:['local']
+          }),
+        ],
       }),
       UnoCSS(),
+      Icons({
+        compiler: 'vue3',
+        autoInstall: true,
+        iconCustomizer(collection, icon, props) {
+          props.width = '1.5em'
+          props.height = '1.5em'
+        },
+        customCollections:{
+          "local": FileSystemIconLoader('./src/assets/icons')
+        }
+      }),
     ],
     resolve: {
       alias: {

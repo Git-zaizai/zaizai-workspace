@@ -27,13 +27,14 @@ watch(
   value => {
     if (value === 'dark') {
       document.documentElement.classList.add('vitepress-dark')
+      document.body.style.backgroundColor = 'rgb(24, 24, 28)'
     } else {
       document.documentElement.classList.remove('vitepress-dark')
+      document.body.style.backgroundColor = '#fff'
     }
   },
   { immediate: true }
 )
-const route = useRoute()
 </script>
 
 <style scoped></style>
