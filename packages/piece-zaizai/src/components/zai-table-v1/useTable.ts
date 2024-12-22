@@ -1,4 +1,5 @@
 import { useToggle, useDebounceFn } from '@vueuse/core'
+import type { DataTableColumns } from 'naive-ui'
 
 const getOtherViewHeight = () => {
   const header: HTMLDivElement = document.querySelector('.n-layout-header')
@@ -17,17 +18,22 @@ const getOtherViewHeight = () => {
   return h
 }
 
+type CreateColunm = <T, U>(value: T) => DataTableColumns<U>
+
 interface Options {
   refresh: (...args: any[]) => any | Promise<any>
   mount?: boolean
   heigthAuto?: boolean
+  data?: any[]
+  createColunm: CreateColunm
 }
 
 export const useTable = <T>(options: Options): ReturnType<typeof useTable> => {
   const { mount = true, heigthAuto = true } = options
 
   const [loading, toggleLoading] = useToggle(false)
-  const data = ref<T[]>([])
+  const data = ref<T[]>(options.data ?? [])
+  const colunms = shallowRef([])
 
   const initRefresh = async () => {
     toggleLoading(true)
@@ -36,8 +42,7 @@ export const useTable = <T>(options: Options): ReturnType<typeof useTable> => {
       const response = await options.refresh()
       if (response) {
         data.value = response.data as T[]
-        msg = response.msg || '获取成功'
-        window.$message.success(msg)
+        colunms.value = options.createColunm(data.value)
       } else {
         window.$message.error(msg)
       }

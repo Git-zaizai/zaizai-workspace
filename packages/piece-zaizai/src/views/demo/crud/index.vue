@@ -11,11 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import { ZaiTableV1 } from '@/components/zai-table-v1'
+import { ZaiTableV1, useTable } from '@/components/zai-table-v1'
 import { h } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
-
-import { useTable } from '@/hooks/useTable'
 
 interface RowData {
   key: number

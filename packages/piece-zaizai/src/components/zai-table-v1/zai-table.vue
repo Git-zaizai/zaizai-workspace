@@ -1,32 +1,36 @@
 <template>
-  <div class="zai-table">
+  <div
+    class="zai-table"
+    ref="zaiTableRef"
+  >
     <div
       class="flex-y-center justify-between pb-3"
       :style="headerStyle"
     >
-      <div class="flex-y-center gap-4">
+      <div class="flex-y-center gap-4 w-full">
         <slot name="tableHeaderLeft">
-          <n-button ghost>
-            <Iconify
-              class="i-ph:plus-circle-bold"
-              @click="emits('add')"
-            />
+          <n-button
+            ghost
+            class="header-left__button"
+            @click="emits('add')"
+          >
+            <Iconify class="i-ph:plus-circle-bold" />
           </n-button>
-          <n-button ghost>
-            <Iconify
-              class="i-ph:trash-simple-bold"
-              @click="bandallDelete"
-            />
+          <n-button
+            ghost
+            class="header-left__button"
+            @click="bandallDelete"
+          >
+            <Iconify class="i-ph:trash-simple-bold" />
           </n-button>
 
-          <n-input-group class="w-100">
+          <n-input-group class="w-150">
             <n-input
               clearable
               v-model:value="selectValue"
             />
             <n-button
-              strong
-              secondary
+              ghost
               @click="emits('selectChanga', selectValue)"
             >
               <Iconify class="i-ph:list-magnifying-glass-bold" />
@@ -48,6 +52,28 @@
         </n-tooltip>
 
         <div class="w-1px h-20px bg-[--zai-border-color]"></div>
+
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <Iconify
+              size="20"
+              transition
+              class="i-ph-arrows-in-light cursor-pointer hover:text-[--zai-primary-color]"
+              :class="{ 'text-[--zai-primary-color]': tablestriped }"
+              @click="bandcancelFullscreen"
+              v-if="outIn"
+            />
+            <Iconify
+              size="20"
+              transition
+              class="i-ph-arrows-out-light cursor-pointer hover:text-[--zai-primary-color]"
+              :class="{ 'text-[--zai-primary-color]': tablestriped }"
+              @click="bandfullscreen"
+              v-else
+            />
+          </template>
+          {{ outIn ? '还原' : '全屏' }}
+        </n-tooltip>
 
         <n-tooltip trigger="hover">
           <template #trigger>
@@ -135,6 +161,8 @@ import { tableDensity } from './enum'
 import { type ZaiTableEmitType, createTableEmitContext } from './hooks/useTableEmits'
 import { useKoutSide } from './hooks/useKoutSide'
 import type { DataTableRowKey } from 'naive-ui'
+import { useToggle } from '@vueuse/core'
+import { fullscreen, cancelFullscreen } from '@/utils'
 
 const props = defineProps(zaiTableProps)
 const emits = defineEmits<ZaiTableEmitType>()
@@ -169,10 +197,29 @@ const bandallDelete = () => {
   }
   emits('del', rowKeyList)
 }
+
+const [outIn, outInToggle] = useToggle()
+const zaiTableRef = useTemplateRef('zaiTableRef')
+const bandfullscreen = async () => {
+  if (!outIn.value) {
+    try {
+      await fullscreen(zaiTableRef.value)
+      outInToggle()
+    } catch (e) {
+      window.$message.warning(e.toString().replace('Error:', ''))
+    }
+  }
+}
+const bandcancelFullscreen = () => {
+  if (outIn.value) {
+    outInToggle()
+    cancelFullscreen()
+  }
+}
 </script>
 
 <style scoped>
-:deep(.n-button .n-button__border) {
+.header-left__button :deep(.n-button__border) {
   border: none;
 }
 </style>

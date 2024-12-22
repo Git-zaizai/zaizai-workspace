@@ -13,9 +13,6 @@
 <script setup lang="ts">
 import { ZaiTableV1 } from '@/components/zai-table-v1'
 import { h } from 'vue'
-import type { DataTableColumns } from 'naive-ui'
-
-import { Component } from 'vue'
 
 interface RowData {
   key: number
