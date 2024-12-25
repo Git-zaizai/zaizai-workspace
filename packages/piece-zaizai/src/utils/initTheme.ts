@@ -17,18 +17,18 @@ export function isBetweenSevenAndFivePM(): boolean {
 }
 
 export function getCurrentTheme(): 'light' | 'dark' {
-  let appStore: any = localStorage.getItem('appStore')
+  let appStore: any = localStorage.getItem('zai-appStore')
   if (!appStore) {
     return isDarkMode() ? 'dark' : 'light'
   }
 
-  let theme: 'light' | 'dark' = 'light'
   appStore = JSON.parse(appStore)
+  let theme: 'light' | 'dark' = 'dark'
 
   if (appStore.autoTheme) {
     theme = isBetweenSevenAndFivePM() ? 'dark' : 'light'
   } else {
-    theme = 'dark'
+    theme = appStore.theme ?? 'dark'
   }
 
   return theme

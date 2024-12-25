@@ -183,7 +183,10 @@ const densitySelect = (key: 'small' | 'medium' | 'large') => {
 
 const { columns, scrollautoX, paginationReactive } = createTableContext(props)
 
-const { dropdownXY, showDropdownRef, rowProps, dropdownOptions, onClickoutside, handleSelect } = useKoutSide(emits)
+const { dropdownXY, showDropdownRef, rowProps, dropdownOptions, onClickoutside, handleSelect } = useKoutSide(
+  emits,
+  props.DropdownOption
+)
 
 let rowKeyList: DataTableRowKey[] = []
 const handleCheck = (rowKeys: DataTableRowKey[]) => {

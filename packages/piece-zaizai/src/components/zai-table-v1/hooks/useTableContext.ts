@@ -53,7 +53,16 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
   let cacheColumns = []
   const columns = shallowRef<ZaiTableColumn[]>([])
 
+
+  watch(
+    () => optinos.columns,
+    () => {
+      initColumns()
+    }
+  )
+
   const initColumns = () => {
+    columns.value = []
     let isselection = true
     optinos.columns.forEach((item, index) => {
       columns.value.push({
@@ -214,8 +223,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
 }
 
 const getWidth = (item: DataTableColumn) => {
-  let { minWidth, width, maxWidth } = item
-  let w = minWidth || width || maxWidth
+  let w = item?.minWidth || item?.width || item?.maxWidth
   w = Number(w)
   return Number.isNaN(w) ? columnDefulatWidth : w
 }

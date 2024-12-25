@@ -149,12 +149,13 @@ import { useTableContext, type ZaiTableColumn } from '../hooks/useTableContext'
 import { isFunction, isString } from 'lodash-es'
 import { VueDraggable, type DraggableEvent } from 'vue-draggable-plus'
 import { ColumnUID } from '../enum'
+import { c } from 'naive-ui'
 
 const cssVars = useCssVars(['primaryColor'])
 const columnList = ref([])
 const spin = ref(false)
 const popoverShow = ref(false)
-const { getCacheColumns, setfixed, setColumnShow, columnsSort, columnsome } = useTableContext()
+const { columns, getCacheColumns, setfixed, setColumnShow, columnsSort, columnsome } = useTableContext()
 
 const shitchValues = reactive({
   selection: false,
@@ -267,6 +268,10 @@ const resetColumn = () => {
     shitchValues[key] = columnsome(uid)
   }
 }
+
+watch(columns, () => {
+  resetColumn()
+})
 
 onMounted(() => {
   resetColumn()

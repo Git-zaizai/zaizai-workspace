@@ -18,22 +18,29 @@ const getOtherViewHeight = () => {
   return h
 }
 
-type CreateColunm = <T, U>(value: T) => DataTableColumns<U>
-
-interface Options {
-  refresh: (...args: any[]) => any | Promise<any>
+interface Options<T> {
+  refresh?: (...args: any[]) => any | Promise<any>
   mount?: boolean
   heigthAuto?: boolean
-  data?: any[]
-  createColunm: CreateColunm
+  data?: T[]
+  createColunms?: () => DataTableColumns<any> | Promise<DataTableColumns<any>>
 }
 
-export const useTable = <T>(options: Options): ReturnType<typeof useTable> => {
+export const useTable = <T extends object>(options: Options<T>) => {
   const { mount = true, heigthAuto = true } = options
 
   const [loading, toggleLoading] = useToggle(false)
-  const data = ref<T[]>(options.data ?? [])
-  const colunms = shallowRef([])
+  const data = ref(options.data ?? [])
+
+  let columns = shallowRef()
+  // let columns = []
+
+  const initColumns = async () => {
+    if (options.createColunms) {
+      columns.value = await options.createColunms()
+      // columns = await options.createColunms()
+    }
+  }
 
   const initRefresh = async () => {
     toggleLoading(true)
@@ -42,7 +49,6 @@ export const useTable = <T>(options: Options): ReturnType<typeof useTable> => {
       const response = await options.refresh()
       if (response) {
         data.value = response.data as T[]
-        colunms.value = options.createColunm(data.value)
       } else {
         window.$message.error(msg)
       }
@@ -62,6 +68,7 @@ export const useTable = <T>(options: Options): ReturnType<typeof useTable> => {
   const debouncedResize = useDebounceFn(resize, 50)
 
   onMounted(() => {
+    initColumns()
     mount && options.refresh && initRefresh()
     if (heigthAuto) {
       resize()
@@ -80,5 +87,6 @@ export const useTable = <T>(options: Options): ReturnType<typeof useTable> => {
     toggleLoading,
     data,
     refresh: initRefresh,
+    columns,
   }
 }

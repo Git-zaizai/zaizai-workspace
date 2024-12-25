@@ -2,10 +2,12 @@
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "nodenext",
     "moduleDetection": "force",
+    "moduleResolution": "nodenext",
     "jsx": "react-jsx",
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,

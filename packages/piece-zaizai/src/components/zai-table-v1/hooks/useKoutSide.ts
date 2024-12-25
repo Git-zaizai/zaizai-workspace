@@ -40,7 +40,7 @@ const options: DropdownOption[] = [
   },
 ]
 
-export const useKoutSide = (emits: EmitFn<ZaiTableEmitType>) => {
+export const useKoutSide = (emits: EmitFn<ZaiTableEmitType>, dropdownOptions: DropdownOption[]) => {
   const showDropdownRef = ref(false)
   const dropdownXY = reactive({ x: 0, y: 0 })
 
@@ -73,7 +73,7 @@ export const useKoutSide = (emits: EmitFn<ZaiTableEmitType>) => {
     showDropdownRef,
     dropdownXY,
     rowProps,
-    dropdownOptions: options,
+    dropdownOptions: dropdownOptions.length > 0 ? dropdownOptions : options,
     onClickoutside,
     handleSelect,
   }

@@ -28,3 +28,5 @@ interface ImportMeta {
 }
 
 type CssStyle = import('vue').CSSProperties
+
+type TagType = 'default' | 'success' | 'error' | 'warning' | 'primary' | 'info'

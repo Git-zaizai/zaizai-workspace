@@ -5,7 +5,7 @@ export const isComponent = (component: any) => {
 }
 
 export function fullscreen(element) {
-  if (document.fullscreenEnabled) {
+  if (!document.fullscreenEnabled) {
     return Promise.reject(new Error('全屏模式被禁用'))
   }
   let result = null
@@ -36,5 +36,43 @@ export function cancelFullscreen() {
   } else if (document.webkitExitFullscreen) {
     // @ts-ignore
     document.webkitExitFullscreen()
+  }
+}
+
+export function copyStr(value: string): void {
+  if (!value){
+    window.$message.info('没有内容')
+    return
+  }
+  const execCommand = (): void => {
+    const el = document.createElement('input')
+    el.value = value
+    document.body.appendChild(el)
+    if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+      el.setSelectionRange(0, value.length)
+      el.focus()
+    } else {
+      el.select()
+    }
+    if (document.execCommand('copy')) {
+      window.$message.success('复制成功')
+    } else {
+      window.$message.error('复制失败')
+    }
+    el.blur()
+    el.remove()
+  }
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(value).then(
+      function () {
+        window.$message.success('复制成功')
+      },
+      function () {
+        execCommand()
+      }
+    )
+  } else {
+    execCommand()
   }
 }

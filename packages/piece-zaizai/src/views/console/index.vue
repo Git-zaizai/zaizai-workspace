@@ -3,6 +3,8 @@
     <ZaiTableV1
       :data="data"
       :columns="columns"
+      :row-key="row => row._id"
+      :loading="loading"
       @add="bindAddShow"
       @action-update="bandUpdateShow"
     />
@@ -195,22 +197,11 @@
 <script setup lang="tsx">
 import { ZaiTableV1, useTable, useDialog, drawerFormButton } from '@/components/zai-table-v1'
 import type { DataTableColumns } from 'naive-ui'
-import { useClipboard } from '@vueuse/core'
+import { copyStr } from '@/utils'
 import { NTag, NSpace } from 'naive-ui'
 import dayjs from 'dayjs'
 import { random } from 'lodash-es'
-
-interface RowData {
-  key: number
-  name: string
-  age: number
-  address: string
-}
-
-interface Link {
-  linkName: string
-  url: string
-}
+import { getLinkTabs, getTableData } from '@/api'
 
 interface Row {
   _id: string
@@ -224,7 +215,10 @@ interface Row {
   link: string
   linkback: string
   beizhu: string
-  links: Link[]
+  links: Array<{
+    linkName: string
+    url: string
+  }>
   addDate: string
   update: string
   finishtime: string
@@ -232,9 +226,9 @@ interface Row {
   id: number
 }
 
-function randTagType(): any {
+function randTagType() {
   const list = ['default', 'success', 'error', 'warning', 'primary', 'info']
-  return list[random(0, list.length)]
+  return list[random(0, list.length)] as TagType
 }
 
 const rule = {
@@ -251,35 +245,26 @@ const rule = {
   },
 }
 
-const { copy } = useClipboard()
-
-const tabOptions = [
-  { label: '爽文', value: '爽文' },
-  { label: '古文', value: '古文' },
-]
-
-const formData = ref({
-  _id: '',
-  title: '',
-  start: 0,
-  finish: 0,
-  duwan: 1,
-  tabs: [],
-  wanjie: 1,
-  isdel: 1,
-  link: '',
-  linkback: '',
-  beizhu: '',
-  links: [],
-  addDate: null,
-  update: null,
-  finishtime: null,
-  rate: '',
-  id: 0,
-})
-
-const { show, action, bindAddShow, bandUpdateShow, actionTitle } = useDialog({
-  formData: formData.value,
+const { show, action, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
+  formData: {
+    _id: '',
+    title: '',
+    start: 0,
+    finish: 0,
+    duwan: 1,
+    tabs: [],
+    wanjie: 1,
+    isdel: 1,
+    link: '',
+    linkback: '',
+    beizhu: '',
+    links: [],
+    addDate: null,
+    update: null,
+    finishtime: null,
+    rate: '',
+    id: 0,
+  },
   addCallback: form => {
     formData.value = form
   },
@@ -288,243 +273,244 @@ const { show, action, bindAddShow, bandUpdateShow, actionTitle } = useDialog({
   },
 })
 
-const { data } = useTable({
-  data: Array.from({ length: 100 }).map((_, index) => ({
-    key: index,
-    name: `Edward King ${index}`,
-    age: 32,
-    address: `London, Park Lane no. ${index}`,
-  })),
-})
+const { loading, data, columns } = useTable<Row>({
+  refresh: async () => {
+    const { data } = await getTableData()
+    return data.value
+  },
+  createColunms: async () => {
+    const { data } = await getLinkTabs()
+    const tabOptions = data.value.map(item => ({ label: item, value: item }))
 
-const columns: DataTableColumns<Row> = [
-  {
-    title: '小说名',
-    key: 'title',
-    width: 200,
-    fixed: 'left',
-  },
-  {
-    title: '首页链接',
-    key: 'link',
-    render(row) {
-      return (
-        <n-button
-          strong
-          tertiary
-          size={'small'}
-          onClick={() => copy(row.link as string)}
-        >
-          {row.link ? '复制' : '无'}
-        </n-button>
-      )
-    },
-    width: 90,
-  },
-  {
-    title: '备注',
-    key: 'beizhu',
-    ellipsis: {
-      tooltip: true,
-    },
-    width: 120,
-  },
-  {
-    title: '读完',
-    key: 'duwan',
-    render(row) {
-      let tagType = 'success',
-        txt = '读完'
-      if (row.duwan == '0') {
-        tagType = 'warning'
-        txt = '未读完'
-      }
+    const columns: DataTableColumns<Row> = [
+      {
+        title: '小说名',
+        key: 'title',
+        width: 200,
+        fixed: 'left',
+      },
+      {
+        title: '首页链接',
+        key: 'link',
+        render(row) {
+          return (
+            <n-button
+              strong
+              tertiary
+              size={'small'}
+              onClick={() => copyStr(row.link as string)}
+            >
+              {row.link ? '复制' : '无'}
+            </n-button>
+          )
+        },
+        width: 90,
+      },
+      {
+        title: '备注',
+        key: 'beizhu',
+        ellipsis: {
+          tooltip: true,
+        },
+        width: 120,
+      },
+      {
+        title: '读完',
+        key: 'duwan',
+        render(row) {
+          let tagType = 'success',
+            txt = '读完'
+          if (row.duwan == '0') {
+            tagType = 'warning'
+            txt = '未读完'
+          }
 
-      return (
-        // @ts-ignore
-        <NTag
-          bordered={false}
-          type={tagType}
-        >
-          {txt}
-        </NTag>
-      )
-    },
-    width: 90,
-    // @ts-ignore
-    sorter: 'default',
-  },
-
-  {
-    title: '标签',
-    key: 'tabs',
-    render(row: any) {
-      return (
-        <NSpace>
-          {row.tabs.map(item => (
+          return (
+            // @ts-ignore
             <NTag
               bordered={false}
-              type={randTagType()}
+              type={tagType}
+            >
+              {txt}
+            </NTag>
+          )
+        },
+        width: 90,
+        // @ts-ignore
+        sorter: 'default',
+      },
+
+      {
+        title: '标签',
+        key: 'tabs',
+        render(row: any) {
+          return (
+            <NSpace>
+              {row.tabs.map(item => (
+                <NTag
+                  bordered={false}
+                  type={randTagType()}
+                >
+                  {item}
+                </NTag>
+              ))}
+            </NSpace>
+          )
+        },
+        minWidth: 500,
+        filterOptions: tabOptions,
+        filter(
+          value: string,
+          {
+            tabs,
+          }: {
+            tabs: string[]
+          }
+        ) {
+          return tabs.includes(value)
+        },
+      },
+
+      {
+        title: '完结/连载',
+        key: 'wanjie',
+        render(row) {
+          return (
+            <NTag
+              bordered={false}
+              type="info"
+            >
+              {row.wanjie == 1 ? '完结' : '连载'}
+            </NTag>
+          )
+        },
+        width: 110,
+        // @ts-ignore
+        sorter: 'default',
+      },
+      {
+        title: '删除状态',
+        key: 'isdel',
+        render(row, index) {
+          return (
+            <n-button
+              type={row.isdel ? 'success' : 'warning'}
+              strong
+              secondary
+              size={'small'}
+              onClick={() => updateDel(row, index)}
+            >
+              {row.isdel ? '显示' : '隐藏'}
+            </n-button>
+          )
+        },
+        width: 110,
+        // @ts-ignore
+        sorter: 'default',
+      },
+      {
+        title: '读到那章',
+        key: 'start-finish',
+        render: row => `${row.start} - ${row.finish}`,
+        width: 90,
+      },
+      {
+        title: '后续链接',
+        key: 'linkback',
+        render(row) {
+          return (
+            <n-button
+              strong
+              tertiary
+              size={'small'}
+              onClick={() => copyStr(row.linkback as string)}
+            >
+              {row.linkback ? '复制' : '无'}
+            </n-button>
+          )
+        },
+        width: 90,
+      },
+
+      {
+        title: '其他链接',
+        key: 'links',
+        render(row: any) {
+          if (!row.links.length) {
+            return (
+              <NTag
+                bordered={false}
+                type={'default'}
+              >
+                无
+              </NTag>
+            )
+          }
+          return row.links.map(item => (
+            <n-button
+              strong
+              tertiary
+              size={'small'}
+              onClick={() => copyStr(item.urli)}
+            >
+              {item.linkName}
+            </n-button>
+          ))
+        },
+        width: 90,
+      },
+
+      {
+        title: '添加时间',
+        key: 'addDate',
+        render: row => dayjs(row.addDate).format('YYYY-MM-DD HH:mm:ss'),
+        width: 160,
+      },
+      {
+        title: '修改时间',
+        key: 'update',
+        render: row => dayjs(row.update).format('YYYY-MM-DD HH:mm:ss'),
+        width: 160,
+      },
+      {
+        title: '看完时间',
+        key: 'finishtime',
+        render: row => dayjs(row.finishtime).format('YYYY-MM-DD HH:mm:ss'),
+        width: 160,
+      },
+      {
+        title: '评分',
+        key: 'rate',
+        render: (row: any) => {
+          if (!row.rate.length) {
+            return (
+              <NTag
+                bordered={false}
+                type={'default'}
+              >
+                无
+              </NTag>
+            )
+          }
+          return row.rate.map(item => (
+            <NTag
+              bordered={false}
+              type={'default'}
             >
               {item}
             </NTag>
-          ))}
-        </NSpace>
-      )
-    },
-    minWidth: 500,
-    filterOptions: tabOptions,
-    filter(
-      value: string,
-      {
-        tabs,
-      }: {
-        tabs: string[]
-      }
-    ) {
-      return tabs.includes(value)
-    },
+          ))
+        },
+      },
+    ]
+    return columns
   },
-
-  {
-    title: '完结/连载',
-    key: 'wanjie',
-    render(row) {
-      let reco = '完结'
-      if (row.wanjie == 1) {
-        reco = '连载'
-      }
-      return (
-        <NTag
-          bordered={false}
-          type="info"
-        >
-          {row.wanjie == 1 ? '完结' : '连载'}
-        </NTag>
-      )
-    },
-    width: 110,
-    // @ts-ignore
-    sorter: 'default',
-  },
-  {
-    title: '删除状态',
-    key: 'isdel',
-    render(row, index) {
-      return (
-        <n-button
-          type={row.isdel ? 'success' : 'warning'}
-          strong
-          secondary
-          size={'small'}
-          onClick={() => updateDel(row, index)}
-        >
-          {row.isdel ? '显示' : '隐藏'}
-        </n-button>
-      )
-    },
-    width: 110,
-    // @ts-ignore
-    sorter: 'default',
-  },
-  {
-    title: '读到那章',
-    key: 'start-finish',
-    render: row => `${row.start} - ${row.finish}`,
-    width: 90,
-  },
-  {
-    title: '后续链接',
-    key: 'linkback',
-    render(row) {
-      return (
-        <n-button
-          strong
-          tertiary
-          size={'small'}
-          onClick={() => copy(row.linkback as string)}
-        >
-          {row.linkback ? '复制' : '无'}
-        </n-button>
-      )
-    },
-    width: 90,
-  },
-
-  {
-    title: '其他链接',
-    key: 'links',
-    render(row: any) {
-      if (!row.links.length) {
-        return (
-          <NTag
-            bordered={false}
-            type={'default'}
-          >
-            无
-          </NTag>
-        )
-      }
-      return row.links.map(item => (
-        <n-button
-          strong
-          tertiary
-          size={'small'}
-          onClick={() => copy(item.urli)}
-        >
-          {item.linkName}
-        </n-button>
-      ))
-    },
-    width: 90,
-  },
-
-  {
-    title: '添加时间',
-    key: 'addDate',
-    render: row => dayjs(row.addDate).format('YYYY-MM-DD HH:mm:ss'),
-    width: 160,
-  },
-  {
-    title: '修改时间',
-    key: 'update',
-    render: row => dayjs(row.update).format('YYYY-MM-DD HH:mm:ss'),
-    width: 160,
-  },
-  {
-    title: '看完时间',
-    key: 'finishtime',
-    render: row => dayjs(row.finishtime).format('YYYY-MM-DD HH:mm:ss'),
-    width: 160,
-  },
-  {
-    title: '评分',
-    key: 'rate',
-    render: (row: any) => {
-      if (!row.rate.length) {
-        return (
-          <NTag
-            bordered={false}
-            type={'default'}
-          >
-            无
-          </NTag>
-        )
-      }
-      return row.rate.map(item => (
-        <NTag
-          bordered={false}
-          type={'default'}
-        >
-          {item}
-        </NTag>
-      ))
-    },
-  },
-]
+})
 
 function bindRemoveLink(index) {}
+
 function updateDel(row: Row, index: number) {}
+
 const handleActionUpdate = row => {
   window.$message.success(`Update ${row.name}`)
 }

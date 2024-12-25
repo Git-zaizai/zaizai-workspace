@@ -17,6 +17,11 @@ const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
   let menu: MenuOption[] = []
   list.forEach(item => {
     let to = (item.name as string) ?? routePath + '/' + item.path
+    console.log("🚀 ~ initMenu ~ routePath + '/' + item.path:", routePath + '/' + item.path)
+
+
+
+    
     let label = item.meta?.title ?? to
     let icon: any
 
