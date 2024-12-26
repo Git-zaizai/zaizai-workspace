@@ -178,9 +178,9 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     if (isBoolean(optinos.pagination) && optinos.pagination) {
       paginationReactive = reactive({
         page: 1,
-        pageSize: 10,
+        pageSize: 20,
         showSizePicker: true,
-        pageSizes: [10, 20, 30, 50, 100],
+        pageSizes: [20, 30, 50, 100, 200],
         showQuickJumper: true,
         onChange: (page: number) => {
           // @ts-ignore

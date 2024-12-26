@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "bun --watch index.ts"
+    "dev": "bun --watch index.ts",
+    "install": "bun install"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +15,5 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@koa/router": "^13.1.0",
-    "koa": "^2.15.3"
   }
 }

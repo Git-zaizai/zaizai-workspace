@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--zai-loading-bg, rgb(24, 24, 28));
+  background-color: var(--zai-loading-bg, #fff);
 }
 
 .truck {

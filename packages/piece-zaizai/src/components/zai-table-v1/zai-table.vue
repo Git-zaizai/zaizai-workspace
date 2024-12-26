@@ -222,6 +222,9 @@ const bandcancelFullscreen = () => {
 </script>
 
 <style scoped>
+.zai-table{
+  background-color: var(--n-color);
+}
 .header-left__button :deep(.n-button__border) {
   border: none;
 }

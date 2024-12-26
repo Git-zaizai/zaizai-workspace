@@ -7,6 +7,7 @@
       :loading="loading"
       @add="bindAddShow"
       @action-update="bandUpdateShow"
+      @refresh="refresh"
     />
 
     <n-drawer
@@ -273,7 +274,7 @@ const { show, action, bindAddShow, bandUpdateShow, actionTitle, formData } = use
   },
 })
 
-const { loading, data, columns } = useTable<Row>({
+const { loading, data, columns, refresh } = useTable<Row>({
   refresh: async () => {
     const { data } = await getTableData()
     return data.value

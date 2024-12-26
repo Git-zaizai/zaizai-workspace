@@ -4,6 +4,10 @@ import Iconify from '@/components/Iconify.vue'
 import { type RouteRecordRaw, RouterLink } from 'vue-router'
 import { isComponent } from '@/utils'
 
+defineOptions({
+  name:'zai-menu',
+})
+
 interface Props extends MenuProps {
   routeName?: string
   routePath?: string
@@ -16,12 +20,7 @@ const MenuIcon = (c: string) => () => h(Iconify, { class: c })
 const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
   let menu: MenuOption[] = []
   list.forEach(item => {
-    let to = (item.name as string) ?? routePath + '/' + item.path
-    console.log("🚀 ~ initMenu ~ routePath + '/' + item.path:", routePath + '/' + item.path)
-
-
-
-    
+    let to = routePath + '/' + item.path
     let label = item.meta?.title ?? to
     let icon: any
 
@@ -30,7 +29,7 @@ const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
     } else if (typeof item.meta.icon === 'string') {
       icon = MenuIcon(item.meta.icon)
     } else if (isComponent(item.meta.icon)) {
-      icon = h(item.meta.icon)
+      icon = () => h(item.meta.icon)
     } else {
       icon = DefaultMenuIcon
     }
@@ -69,7 +68,6 @@ if (props.router) {
 
 <template>
   <n-menu
-    v-bind="props"
     :collapsed-width="collapsedWidth"
     :collapsed-icon-size="collapsedIconSize"
     :options="menuOptions"

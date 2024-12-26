@@ -14,6 +14,8 @@ const getOtherViewHeight = () => {
 
   if (document.querySelector('.console-content-view')) {
     h += 10 * 2
+  }else if (document.querySelector('.demo-content-view')) {
+    h += 10 * 3
   }
   return h
 }

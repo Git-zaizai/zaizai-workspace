@@ -24,7 +24,7 @@
         mode="horizontal"
       />
 
-      <div>
+      <div class="ml-auto">
         <setting-drawer />
       </div>
     </n-layout-header>
