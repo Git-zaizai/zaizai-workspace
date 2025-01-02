@@ -30,6 +30,7 @@ export default defineConfig(configEnv => {
       vue(),
       Components({
         resolvers: [
+          // 自动导入 icons
           IconsResolver({
             // 自动引入的Icon组件统一前缀，默认为icon，设置false为不需要前缀
             prefix: 'i',
@@ -86,7 +87,9 @@ export default defineConfig({
   },
   presets: [
     presetUno({ dark: 'class' }),
+    // 下面就是关键配置
     presetIcons({
+      // 设置全局配置
       customizations: {
         customize(props) {
           props.width = '12px'
@@ -168,7 +171,7 @@ if (typeof attr.class === 'string' && !attr.class.startsWith('i-')) {
 <style scoped></style>
 ```
 
-使用： 
+## 使用：
 
 ```vue
 <template>

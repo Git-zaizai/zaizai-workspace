@@ -34,13 +34,13 @@ export const useTable = <T extends object>(options: Options<T>) => {
   const [loading, toggleLoading] = useToggle(false)
   const data = ref(options.data ?? [])
 
-  let columns = shallowRef()
-  // let columns = []
+  // let columns = shallowRef()
+  let columns = []
 
   const initColumns = async () => {
     if (options.createColunms) {
-      columns.value = await options.createColunms()
-      // columns = await options.createColunms()
+      // columns.value = await options.createColunms()
+      columns = await options.createColunms()
     }
   }
 
@@ -67,7 +67,7 @@ export const useTable = <T extends object>(options: Options<T>) => {
     const zaiTable: HTMLDivElement = document.querySelector('.zai-table .n-data-table')
     zaiTable.style.height = `${height}px`
   }
-  const debouncedResize = useDebounceFn(resize, 50)
+  const debouncedResize = useDebounceFn(resize, 300)
 
   onMounted(() => {
     initColumns()
