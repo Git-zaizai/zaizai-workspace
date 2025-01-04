@@ -8,7 +8,7 @@
  * @api public
  */
 
-function compose(middleware) {
+export default function compose(middleware) {
   if (!Array.isArray(middleware)) throw new TypeError('Middleware stack must be an array!')
   for (const fn of middleware) {
     if (typeof fn !== 'function') throw new TypeError('Middleware must be composed of functions!')
@@ -20,7 +20,7 @@ function compose(middleware) {
    * @api public
    */
 
-  return function (context, next) {
+  return function (req, server, next) {
     // last called middleware #
     let index = -1
     return dispatch(0)
@@ -31,7 +31,7 @@ function compose(middleware) {
       if (i === middleware.length) fn = next
       if (!fn) return Promise.resolve()
       try {
-        return Promise.resolve(fn(context, dispatch.bind(null, i + 1)))
+        return Promise.resolve(fn(req, server, dispatch.bind(null, i + 1)))
       } catch (err) {
         return Promise.reject(err)
       }

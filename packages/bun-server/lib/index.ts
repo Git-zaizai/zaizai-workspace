@@ -1,25 +1,154 @@
-import { serve, fetch } from 'bun'
+import { type Server } from 'bun'
+import compose from './compose'
+import { parse, pathToRegexp } from 'path-to-regexp'
+
+import type { methodsType, Req, Next } from './type'
 
 const methods = ['HEAD', 'OPTIONS', 'GET', 'PUT', 'PATCH', 'POST', 'DELETE'].map(v => v.toLowerCase())
-type methodsType = typeof methods
+
+type MethodsCallback = (req: object, serve: Server, next: Next) => any | Promise<any>
+
+type MethodsFun = (namePath: string, middleware: MethodsCallback | MethodsCallback[]) => Router
 
 class Router {
-  stack: Array<Function>
-  opts: any
+  private stack: Array<any>
+  private middleware: Array<MethodsCallback>
   methods: Array<methodsType>
   host: string
-  constructor(opts) {
+  prefix: string
+  opts: any
+
+  head: MethodsFun
+  options: MethodsFun
+  get: MethodsFun
+  put: MethodsFun
+  patch: MethodsFun
+  post: MethodsFun
+  delele: MethodsFun
+
+  constructor(opts?: any) {
     this.opts = opts
     this.stack = []
-    this.methods = this.opts.methods || [...methods]
+    this.methods = opts?.methods || [...methods]
     this.host = ''
+    this.prefix = ''
+    this.middleware = []
+
+    for (const method of methods) {
+      this[method] = this.createMethod(method as methodsType)
+    }
   }
 
-  createLayer() {
-    return {}
+  private createLayer(path, method, middleware) {
+    const layer = {
+      path: path,
+      methods: method.map(v => v.toUpperCase()),
+      stack: Array.isArray(middleware) ? middleware : [middleware],
+      regexp: pathToRegexp(this.prefix + path),
+      name: '',
+      match(path) {
+        return this.regexp.regexp.test(path)
+      },
+    }
+    return layer
   }
 
-  register(path: string, methods: methodsType, middleware: Array<Function>, opts = {}) {}
+  private register(path: string, methods: methodsType | methodsType[], middleware: MethodsCallback[], opts = {}) {
+    const { stack } = this
 
-  callback(request, server) {}
+    /**
+     * 注册路由可以已数组的方式
+     */
+    if (Array.isArray(path)) {
+      for (const curPath of path) {
+        this.register.call(this, curPath, methods, middleware, opts)
+      }
+      return this
+    }
+
+    const route = this.createLayer(path, methods, middleware)
+    stack.push(route)
+
+    return route
+  }
+
+  private match(path, method) {
+    const layers = this.stack
+    let layer
+    const matched = {
+      path: [],
+      pathAndMethod: [],
+      route: false,
+    }
+
+    for (let len = layers.length, i = 0; i < len; i++) {
+      layer = layers[i]
+      // eslint-disable-next-line unicorn/prefer-regexp-test
+      if (layer.match(path)) {
+        matched.path.push(layer)
+        if (layer.methods.length === 0 || layer.methods.includes(method)) {
+          matched.pathAndMethod.push(layer)
+          if (layer.methods.length > 0) matched.route = true
+        }
+      }
+    }
+
+    return matched
+  }
+
+  callback(req: Req, server: Server) {
+    const { pathname, method } = req
+    const dispatch = async (req: Req, server: Server, next?: Next) => {
+      const route = this.match(pathname, method)
+      if (!route.route) {
+        if (next) {
+          return await next()
+        }
+        return
+      }
+
+      const layerChain = route.pathAndMethod.map(stack => stack.stack).flat(Infinity)
+      return compose([...this.middleware, ...layerChain])(req, server, next)
+    }
+
+    dispatch.router = this
+
+    return dispatch
+  }
+
+  private createMethod(method: methodsType): MethodsFun {
+    return (namePath: string, middleware: MethodsCallback | MethodsCallback[]) => {
+      middleware = Array.isArray(middleware) ? middleware : [middleware]
+      this.register(namePath, [method], middleware, { name: '' })
+      return this
+    }
+  }
+
+  use(...fu: MethodsCallback[]) {
+    const { middleware } = this
+    middleware.push(...fu)
+    return this
+  }
 }
+/* 
+for (const method of methods) {
+  Router.prototype[method] = function (name: string, path, middleware) {
+    if (typeof path === 'string' || path instanceof RegExp) {
+      middleware = Array.prototype.slice.call(arguments, 2)
+    } else {
+      middleware = Array.prototype.slice.call(arguments, 1)
+      path = name
+      name = null
+    }
+
+    // Sanity check to ensure we have a viable path candidate (eg: string|regex|non-empty array)
+    if (typeof path !== 'string' && !(path instanceof RegExp) && (!Array.isArray(path) || path.length === 0))
+      throw new Error(`You have to provide a path when adding a ${method} handler`)
+
+    this.register(path, [method], middleware, { name })
+
+    return this
+  }
+} */
+
+export default Router

@@ -1,40 +1,24 @@
-import { route } from './routes'
-import { parse, pathToRegexp } from 'path-to-regexp'
+import Router from './lib'
+import { createReq } from './lib/createReq'
+import { useResponse } from './lib/useResponse'
 
-type Req = {
+const router = new Router()
+
+router.use(useResponse)
+
+router.get('/', () => {
+  console.log('路由');
   
-} & URL & Request
+  return 'Hello, Bun!'
+})
 
 Bun.serve({
   port: 7379,
   async fetch(request, server) {
-    const url = new URL(request.url)
-    const req = {
-      method: request.method,
-      url: request.url,
-      headers: request.headers,
-      origin: url.origin,
-      href: url.href,
-      protocol: url.protocol,
-      username: url.username,
-      password: url.password,
-      host: url.host,
-      hostname: url.hostname,
-      port: url.port,
-      pathname: url.pathname,
-      hash: url.hash,
-      search: url.search,
-      searchParams: url.searchParams,
-      toJSON: url.toJSON,
-      toString: url.toString,
-      request,
-      server,
-    }
-
-    if (route[url.pathname]) {
-      return route[url.pathname]?.()
-    }
-    return new Response('bun server')
+    const req = createReq(request, server)
+    const dispatch = router.callback(req, server)
+    const rsep = await dispatch(req, server)
+    return rsep
   },
 })
 
