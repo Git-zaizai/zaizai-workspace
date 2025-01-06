@@ -5,7 +5,7 @@ export function createReq(request: Request, server: Server): Req {
   const url = new URL(request.url)
   const res = createRes()
   const req = {
-    method: request.method as methodsType,
+    method: request.method.toLowerCase(),
     url: request.url,
     headers: request.headers,
     origin: url.origin,

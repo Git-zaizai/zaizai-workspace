@@ -42,7 +42,7 @@ class Router {
   private createLayer(path, method, middleware) {
     const layer = {
       path: path,
-      methods: method.map(v => v.toUpperCase()),
+      methods: method.map(v => v.toLowerCase()),
       stack: Array.isArray(middleware) ? middleware : [middleware],
       regexp: pathToRegexp(this.prefix + path),
       name: '',
@@ -100,15 +100,21 @@ class Router {
     const { pathname, method } = req
     const dispatch = async (req: Req, server: Server, next?: Next) => {
       const route = this.match(pathname, method)
-      if (!route.route) {
+      /* if (!route.route) {
         if (next) {
           return await next()
         }
-        return
+        return await next()
+      } */
+      const layerChain = []
+     
+      if (route && route.pathAndMethod.length > 0) {
+        route.pathAndMethod.forEach(stack => {
+          layerChain.push(...stack.stack)
+        })
       }
-
-      const layerChain = route.pathAndMethod.map(stack => stack.stack).flat(Infinity)
-      return compose([...this.middleware, ...layerChain])(req, server, next)
+      const middleware = this.middleware.reverse()
+      return compose([].concat(middleware, layerChain))(req, server, next)
     }
 
     dispatch.router = this
@@ -124,31 +130,29 @@ class Router {
     }
   }
 
-  use(...fu: MethodsCallback[]) {
-    const { middleware } = this
-    middleware.push(...fu)
-    return this
-  }
-}
-/* 
-for (const method of methods) {
-  Router.prototype[method] = function (name: string, path, middleware) {
-    if (typeof path === 'string' || path instanceof RegExp) {
-      middleware = Array.prototype.slice.call(arguments, 2)
-    } else {
-      middleware = Array.prototype.slice.call(arguments, 1)
-      path = name
-      name = null
+  use(...fu: any[]) {
+    const { middleware, stack } = this
+
+    for (const item of fu) {
+      if (typeof item === 'function') {
+        middleware.push(...fu)
+      }
+
+      if (Array.isArray(fu[0])) {
+        for (const route of fu[0]) {
+          if (route.stack) {
+            stack.push(route)
+          }
+        }
+      }
     }
 
-    // Sanity check to ensure we have a viable path candidate (eg: string|regex|non-empty array)
-    if (typeof path !== 'string' && !(path instanceof RegExp) && (!Array.isArray(path) || path.length === 0))
-      throw new Error(`You have to provide a path when adding a ${method} handler`)
-
-    this.register(path, [method], middleware, { name })
-
     return this
   }
-} */
+
+  routes() {
+    return this.stack
+  }
+}
 
 export default Router

@@ -1,5 +1,9 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
+public/img
+public/uploads
+public/uploads_file
+
 # Logs
 
 logs

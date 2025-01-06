@@ -3,8 +3,11 @@ import type { Req, Server, Next } from './type'
 export async function useResponse(req: Req, server: Server, next: Next) {
   const responseData = await next()
   let body = responseData || req.body
-  console.log("🚀 ~ useResponse ~ body:", body)
-
+  
+  if (body instanceof Response) {
+    return body
+  }
+  
   const headers = new Headers(req.headers)
 
   if (body === null) {
@@ -15,8 +18,9 @@ export async function useResponse(req: Req, server: Server, next: Next) {
   }
 
   const response = { code: 200, msg: 'OK', data: body }
+
   return new Response(JSON.stringify(response), {
     status: req.status,
-    headers
+    headers,
   })
 }
