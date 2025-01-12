@@ -76,6 +76,7 @@ export default defineConfig({
       collections: {
         ph: () => import('@iconify-json/ph/icons.json').then(i => i.default as any),
         'line-md': () => import('@iconify-json/line-md/icons.json').then(i => i.default),
+        vs: () => import('@iconify-json/vscode-icons').then(i => i.default as any)
       },
     }),
     preset,

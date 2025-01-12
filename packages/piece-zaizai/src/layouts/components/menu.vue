@@ -5,7 +5,7 @@ import { type RouteRecordRaw, RouterLink } from 'vue-router'
 import { isComponent } from '@/utils'
 
 defineOptions({
-  name:'zai-menu',
+  name: 'zai-menu',
 })
 
 interface Props extends MenuProps {
@@ -20,7 +20,8 @@ const MenuIcon = (c: string) => () => h(Iconify, { class: c })
 const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
   let menu: MenuOption[] = []
   list.forEach(item => {
-    let to = routePath + '/' + item.path
+    let to = item.name ? { name: item.name } : routePath + '/' + item.path
+
     let label = item.meta?.title ?? to
     let icon: any
 
@@ -35,7 +36,7 @@ const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
     }
 
     let menuItem: MenuOption = {
-      key: to,
+      key: typeof to === 'string' ? to : to.name as string,
       label: () => h(RouterLink, { to }, { default: () => label }),
       icon,
     }
@@ -61,13 +62,14 @@ if (props.router) {
   route = useRoute()
   menuOptions = initMenu(router.getRoutes().find(v => v.name === props.routeName).children, props.routePath)
   watchEffect(() => {
-    movdelValue.value = (route.name as string) ?? route.fullPath
+    movdelValue.value = (route.name as string) || route.fullPath + '/' + route.path
   })
 }
 </script>
 
 <template>
   <n-menu
+    v-bind="props"
     :collapsed-width="collapsedWidth"
     :collapsed-icon-size="collapsedIconSize"
     :options="menuOptions"

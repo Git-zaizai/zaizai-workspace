@@ -2,6 +2,9 @@
   <div
     class="zai-table"
     ref="zaiTableRef"
+    :style="{
+      padding: outIn ? '10px' : '0',
+    }"
   >
     <div
       class="flex-y-center justify-between pb-3"
@@ -37,8 +40,10 @@
             </n-button>
           </n-input-group>
         </slot>
+        <slot name="tableHeaderLeftTail"></slot>
       </div>
       <div class="flex-y-center gap-4">
+        <slot name="tableHeaderRightPrefix"></slot>
         <n-tooltip trigger="hover">
           <template #trigger>
             <Iconify
@@ -222,7 +227,7 @@ const bandcancelFullscreen = () => {
 </script>
 
 <style scoped>
-.zai-table{
+.zai-table {
   background-color: var(--n-color);
 }
 .header-left__button :deep(.n-button__border) {

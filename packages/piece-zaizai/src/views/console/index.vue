@@ -281,9 +281,8 @@ const { loading, data, columns, refresh } = useTable<Row>({
   },
   createColunms: async () => {
     const { data } = await getLinkTabs()
-    const tabOptions = data.value.map(item => ({ label: item, value: item }))
-
-    const columns: DataTableColumns<Row> = [
+    const tabOptions = data.value.data.map(item => ({ label: item, value: item }))
+    const columns: DataTableColumns<Row > = [
       {
         title: '小说名',
         key: 'title',

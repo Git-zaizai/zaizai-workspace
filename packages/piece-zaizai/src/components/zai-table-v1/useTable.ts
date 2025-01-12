@@ -6,7 +6,7 @@ const getOtherViewHeight = () => {
   const zaiTable: HTMLDivElement = document.querySelector('.zai-table')
   let h = 0
 
-  if (header) {
+  if (header && !document.fullscreenElement) {
     h += header.offsetHeight
   }
   // @ts-ignore
@@ -14,7 +14,7 @@ const getOtherViewHeight = () => {
 
   if (document.querySelector('.console-content-view')) {
     h += 10 * 2
-  }else if (document.querySelector('.demo-content-view')) {
+  } else if (document.querySelector('.demo-content-view')) {
     h += 10 * 3
   }
   return h
@@ -34,13 +34,13 @@ export const useTable = <T extends object>(options: Options<T>) => {
   const [loading, toggleLoading] = useToggle(false)
   const data = ref(options.data ?? [])
 
-  // let columns = shallowRef()
-  let columns = []
+  let columns = shallowRef()
+  // let columns = []
 
   const initColumns = async () => {
     if (options.createColunms) {
-      // columns.value = await options.createColunms()
-      columns = await options.createColunms()
+      columns.value = await options.createColunms()
+      // columns = await options.createColunms()
     }
   }
 
@@ -50,7 +50,11 @@ export const useTable = <T extends object>(options: Options<T>) => {
     try {
       const response = await options.refresh()
       if (response) {
-        data.value = response.data as T[]
+        if (Array.isArray(response)) {
+          data.value = response as T[]
+        } else if (response.data) {
+          data.value = response.data as T[]
+        }
       } else {
         window.$message.error(msg)
       }
@@ -66,6 +70,7 @@ export const useTable = <T extends object>(options: Options<T>) => {
     const height = window.innerHeight - getOtherViewHeight()
     const zaiTable: HTMLDivElement = document.querySelector('.zai-table .n-data-table')
     zaiTable.style.height = `${height}px`
+    console.log('debouncedResize')
   }
   const debouncedResize = useDebounceFn(resize, 300)
 

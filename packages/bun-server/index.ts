@@ -1,24 +1,25 @@
-import Router from './router'
-import { createReq } from './router/createReq'
-import { useResponse } from './router/useResponse'
-import staticSend from './router/static-send'
-
+import { Router, createReq, useResponse, staticSend, cors } from './router'
+import routrs from './router/routes'
 const router = new Router()
 
-router.use(staticSend()).use(useResponse)
+// 查看log的执行顺序
+router.use(cors()).use(useResponse).use(staticSend()).use(routrs.routes())
 
-staticSend()
 Bun.serve({
   port: 7379,
   async fetch(request, server) {
+    console.log('\n请求开始')
+
     const req = createReq(request, server)
     const dispatch = router.callback(req, server)
-    const rsep = await dispatch(req, server)
-    console.log("🚀 ~ fetch ~ rsep:", rsep)
-    return rsep
+    const body = await dispatch(req, server)
+
+    if (request.method !== 'OPTIONS') {
+      console.log('结束请求')
+    }
+
+    return body
   },
 })
-
-
 
 console.log('Bun server is running at http://localhost:7379')

@@ -2,7 +2,13 @@ import path from 'node:path'
 import fs from 'node:fs'
 import type { Req, Server, Next } from './type'
 
-export default (pathName: string = './public') => {
+export const staticSend = (
+  pathName: string = './public',
+  options = {
+    // 如有在录下有index.html，请求 / 没有被占用旧返回index.html
+    indexHtml: true,
+  }
+) => {
   const fileList = []
   // @ts-ignore
   const filePath = path.join(path.resolve(), pathName)
@@ -20,7 +26,10 @@ export default (pathName: string = './public') => {
   }
 
   return async (req: Req, server: Server, next: Next) => {
+    console.log('staticSend ===>')
     const responseData = await next()
+    console.log('staticSend <===');
+
     let body = responseData || req.body
 
     let urlPath
@@ -28,7 +37,7 @@ export default (pathName: string = './public') => {
       return body
     }
 
-    if (!body && req.pathname === '/') {
+    if (options.indexHtml && !body && req.pathname === '/') {
       return new Response(Bun.file(path.join(filePath, 'index.html')))
     }
 

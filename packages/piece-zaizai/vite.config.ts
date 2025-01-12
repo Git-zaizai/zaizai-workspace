@@ -12,6 +12,8 @@ import IconsResolver from 'unplugin-icons/resolver'
 // icon 加载 loader 自定义 icon 图标
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 
+import monacoEditorEsmPlugin from 'vite-plugin-monaco-editor-esm'
+
 import { URL, fileURLToPath } from 'node:url'
 import { getConfigEnv } from './build/index'
 
@@ -51,7 +53,7 @@ export default defineConfig(configEnv => {
             //   ph: 'ph',
             //   md: 'line-md',
             // },
-            customCollections:['local']
+            customCollections: ['local'],
           }),
         ],
       }),
@@ -63,10 +65,11 @@ export default defineConfig(configEnv => {
           props.width = '1.5em'
           props.height = '1.5em'
         },
-        customCollections:{
-          "local": FileSystemIconLoader('./src/assets/icons')
-        }
+        customCollections: {
+          local: FileSystemIconLoader('./src/assets/icons'),
+        },
       }),
+      monacoEditorEsmPlugin({}),
     ],
     resolve: {
       alias: {

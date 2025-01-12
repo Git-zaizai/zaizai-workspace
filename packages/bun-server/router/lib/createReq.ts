@@ -4,8 +4,9 @@ import { createRes } from './createRes'
 export function createReq(request: Request, server: Server): Req {
   const url = new URL(request.url)
   const res = createRes()
+
   const req = {
-    method: request.method.toLowerCase(),
+    method: request.method.toLowerCase() as methodsType,
     url: request.url,
     headers: request.headers,
     origin: url.origin,
@@ -23,7 +24,14 @@ export function createReq(request: Request, server: Server): Req {
     request,
     server,
     res,
-    body: null,
+
+    get body() {
+      return this.res.body
+    },
+
+    set body(value) {
+      this.res.body = value
+    },
 
     get status() {
       return res.status

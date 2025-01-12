@@ -27,9 +27,10 @@ export type Req = {
   toString: () => string
   request: Request
   server: Server
-  body: any
   res: Res
   status: number
+  body: any
+  setHeader: (key: string, value: string) => void
 }
 
 export type Next = () => any | Promise<any>

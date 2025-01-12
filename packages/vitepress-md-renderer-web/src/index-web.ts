@@ -5,7 +5,7 @@ import {
   type MarkdownRenderer,
 } from './markdown/markdown-web'
 
-type BundledTheme =
+export type BundledTheme =
   | 'andromeeda'
   | 'aurora-x'
   | 'ayu-dark'
@@ -58,7 +58,7 @@ type BundledTheme =
   | 'vitesse-dark'
   | 'vitesse-light'
 
-type BundledLanguage =
+export type BundledLanguage =
   | 'angular-html'
   | 'angular-ts'
   | 'astro'
@@ -170,6 +170,26 @@ export async function createMarkdownRenderer(options: Options): Promise<Markdown
   }
 
   return createMdRenderer(options)
+}
+
+import { createHighlighterCore, type HighlighterCore } from 'shiki/core'
+import { bundledThemesInfo, bundledLanguages } from 'shiki/bundle-web.mjs'
+
+export function shikiHighlighter(
+  theme: BundledTheme | BundledTheme[],
+  Langs: string[] | BundledLanguage[]
+): Promise<HighlighterCore> {
+  let currentTheme = Array.isArray(theme) ? theme : [theme]
+  const themesFilter = bundledThemesInfo.filter(v => {
+    // @ts-ignore
+    return currentTheme.includes(v.id)
+  })
+  const themes = themesFilter.map(v => v.import)
+  return createHighlighterCore({
+    themes: themes,
+    langs: Langs.map((key: any) => bundledLanguages[key as keyof typeof bundledLanguages]),
+    loadWasm: import('shiki/wasm'),
+  })
 }
 
 export { default as VPDocView } from './VPDocView/VPDocView.vue'

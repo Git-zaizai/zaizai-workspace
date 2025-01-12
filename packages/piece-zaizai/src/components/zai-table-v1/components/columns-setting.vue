@@ -149,13 +149,12 @@ import { useTableContext, type ZaiTableColumn } from '../hooks/useTableContext'
 import { isFunction, isString } from 'lodash-es'
 import { VueDraggable, type DraggableEvent } from 'vue-draggable-plus'
 import { ColumnUID } from '../enum'
-import { c } from 'naive-ui'
 
 const cssVars = useCssVars(['primaryColor'])
 const columnList = ref([])
 const spin = ref(false)
 const popoverShow = ref(false)
-const { columns, getCacheColumns, setfixed, setColumnShow, columnsSort, columnsome } = useTableContext()
+const { columns, getCacheColumns, setfixed, setColumnShow, columnsSort, columnsome, initColumns } = useTableContext()
 
 const shitchValues = reactive({
   selection: false,
@@ -206,12 +205,14 @@ const Pinto = (value: 'left' | 'right', item, index: number) => {
   setfixed(item.uid, columnList.value[index].fixed)
 }
 
+// 列开关
 const itemCheckbox = (value: boolean, index: number) => {
   columnList.value[index].checked = value
   setCheckboxAllFn()
   setColumnShow(columnList.value[index].uid as number, value, index)
 }
 
+// 用于判断总开关状态
 const setCheckboxAllFn = () => {
   let indeterminate = 0
 
@@ -235,13 +236,19 @@ const setCheckboxAllFn = () => {
   }
 }
 
+// 多选列 序号列 操作列 开关
 const columnSwitch = (e: boolean, uid: number, key: string) => {
   const index = columnList.value.findIndex(fv => fv.uid === uid)
   itemCheckbox(e, index)
   shitchValues[key] = e
 }
 
-const resetColumn = () => {
+// 重置
+const resetColumn = (e?: Event) => {
+  // 判断是点击的重置
+  if (e) {
+    initColumns()
+  }
   let list = getCacheColumns().map((item, i) => {
     let checked = columnsome(item.uid)
     return {
@@ -269,13 +276,17 @@ const resetColumn = () => {
   }
 }
 
-watch(columns, () => {
-  resetColumn()
-})
+watch(
+  columns,
+  () => {
+    resetColumn()
+  },
+  { once: true }
+)
 
-onMounted(() => {
-  resetColumn()
-})
+// onMounted(() => {
+//   resetColumn()
+// })
 </script>
 
 <style scoped>

@@ -11,6 +11,14 @@ function convertToKebabCase(str: string): string {
     .toLowerCase() // 转换为小写
 }
 
+/**
+ *
+ * @param keys
+ * @param style [暗色，亮色]
+ * @param style2 使用 naive的颜色在自定义名字，防止与 naive的冲突
+ * @param css
+ * @returns
+ */
 export const useCssVars = (keys: CssKey[], style?: Style | null, style2?: Style2 | null, css?: CssStyle) => {
   const { theme } = appStore()
   const naiveTheme = useThemeVars()

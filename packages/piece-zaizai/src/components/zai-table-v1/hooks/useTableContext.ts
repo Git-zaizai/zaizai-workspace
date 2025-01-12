@@ -53,7 +53,6 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
   let cacheColumns = []
   const columns = shallowRef<ZaiTableColumn[]>([])
 
-
   watch(
     () => optinos.columns,
     () => {
@@ -101,6 +100,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     }
 
     cacheColumns = cloneDeep(columns.value)
+    console.log('cacheColumns', cacheColumns)
 
     columnHides.forEach(key => {
       if (!optinos.columnHides.includes(key)) {
@@ -216,6 +216,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     paginationReactive,
     deletePopconfirmShow: optinos.deletePopconfirmShow,
     columnsome,
+    initColumns
   }
   provide(zaiTableProvideKey, result)
 
