@@ -6,12 +6,14 @@ export async function useResponse(req: Req, server: Server, next: Next) {
   console.log('useResponse <===')
 
   let body = responseData || req.body
+  const headers = new Headers(req.res.headers)
 
   if (body instanceof Response) {
+    headers.forEach((value, key) => {
+      body.headers.set(key, value)
+    })
     return body
   }
-
-  const headers = new Headers(req.res.headers)
 
   if (body === null) {
     headers.delete('Content-Type')
@@ -21,8 +23,6 @@ export async function useResponse(req: Req, server: Server, next: Next) {
   }
 
   const status = req.status === 204 ? 200 : req.status
-  const response = { code: 200, msg: 'OK', data: body }
-
   if (body instanceof Blob) {
     return new Response(body, {
       status,
@@ -31,6 +31,7 @@ export async function useResponse(req: Req, server: Server, next: Next) {
   }
 
   headers.set('Content-Type', 'application/json; charset=utf-8')
+  const response = { code: 200, msg: 'OK', data: body }
 
   return new Response(JSON.stringify(response), {
     status,

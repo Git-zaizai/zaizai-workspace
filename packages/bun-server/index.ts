@@ -5,15 +5,16 @@ const router = new Router()
 // 查看log的执行顺序
 router.use(cors()).use(useResponse).use(staticSend()).use(routrs.routes())
 
+const port = 7379
 Bun.serve({
-  port: 7379,
+  port: port,
   async fetch(request, server) {
     console.log('\n请求开始')
 
     const req = createReq(request, server)
     const dispatch = router.callback(req, server)
     const body = await dispatch(req, server)
-
+    
     if (request.method !== 'OPTIONS') {
       console.log('结束请求')
     }
@@ -22,4 +23,4 @@ Bun.serve({
   },
 })
 
-console.log('Bun server is running at http://localhost:7379')
+console.log(`Bun server is running at http://localhost:${port}`)

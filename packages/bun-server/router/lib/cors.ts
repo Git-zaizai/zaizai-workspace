@@ -3,7 +3,7 @@ import type { Req, Server, Next } from './type'
 export const cors = (headers: object = {}) => {
   return async (req: Req, server: Server, next: Next) => {
     console.log(`cors ===> req.method: ${req.method}`)
-    
+
     req.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,PATCH')
     req.setHeader('Access-Control-Allow-Origin', '*')
 

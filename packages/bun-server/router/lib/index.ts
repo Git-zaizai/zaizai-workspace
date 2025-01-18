@@ -1,7 +1,7 @@
 import { type Server } from 'bun'
 import compose from './compose'
-import { parse, pathToRegexp } from 'path-to-regexp'
-
+import { parse, pathToRegexp, match as pathToMatch, type MatchResult } from 'path-to-regexp'
+import { safeDecodeURIComponent } from './utils'
 import type { methodsType, Req, Next } from './type'
 
 const methods = ['HEAD', 'OPTIONS', 'GET', 'PUT', 'PATCH', 'POST', 'DELETE'].map(v => v.toLowerCase())
@@ -46,9 +46,18 @@ class Router {
       stack: Array.isArray(middleware) ? middleware : [middleware],
       regexp: pathToRegexp(this.prefix + path),
       name: '',
+      pathToMatch: pathToMatch(path),
       match(path) {
         // 在这里 pathToRegexp() 返回了一个对象，然后正则在regexp.regexp上
         return this.regexp.regexp.test(path)
+      },
+      params(captures: MatchResult<any>) {
+        let params = {}
+        for (const key in captures.params) {
+          let c = captures.params[key]
+          params[key] = c ? safeDecodeURIComponent(c) : c
+        }
+        return params
       },
     }
     return layer
@@ -110,9 +119,11 @@ class Router {
       const layerChain = []
 
       if (route && route.pathAndMethod.length > 0) {
-        route.pathAndMethod.forEach(stack => {
+        for (let i = 0, len = route.pathAndMethod.length; i < len; i++) {
+          const stack = route.pathAndMethod[i]
+          req.params = stack.params(stack.pathToMatch(req.pathname))
           layerChain.push(...stack.stack)
-        })
+        }
       }
       const middleware = this.middleware
       const composeFns = [].concat(middleware, layerChain)

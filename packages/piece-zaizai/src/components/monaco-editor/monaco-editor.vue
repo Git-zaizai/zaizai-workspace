@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import * as monaco from 'monaco-editor'
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
+// import * as monaco from 'monaco-editor'
 import { shikiToMonaco } from '@shikijs/monaco'
 import ZaiLoading from '@/components/zai-loading.vue'
 import { shikiHighlighter, type BundledTheme } from 'vitepress-md-renderer-web'
@@ -8,10 +8,12 @@ import { shikiHighlighter, type BundledTheme } from 'vitepress-md-renderer-web'
 import { useCssVars } from '@/hooks/useCssVars'
 import { useToggle } from '@vueuse/core'
 
-// import 'monaco-editor/esm/vs/editor/contrib/contextmenu/browser/contextmenu';
-// import 'monaco-editor/esm/vs/language/json/monaco.contribution'
-// import 'monaco-editor/ems/vs/language/json/jsonMode.js'
-// import 'monaco-editor/ems/vs/language/json/json.worker.js?worker'
+import 'monaco-editor/esm/vs/editor/editor.main.js'
+import 'monaco-editor/esm/vs/editor/contrib/contextmenu/browser/contextmenu'
+import 'monaco-editor/esm/vs/language/json/monaco.contribution'
+import 'monaco-editor/esm/vs/language/json/jsonMode.js'
+
+import { asynchronousImportOfLanguagePacks } from './monaco-editor-import'
 
 const props = withDefaults(
   defineProps<{
@@ -60,15 +62,16 @@ const createMonacoEditor = async () => {
     return
   }
 
-  nextTick(() => {
+  nextTick(async () => {
+    // await asynchronousImportOfLanguagePacks(props.leng)
+
     setTimeout(async () => {
       // 首先注册你需要的语言的 IDs
       /* langs.forEach(lang => {
         monaco.languages.register({ id: lang })
       }) */
-
-      // 配置 Monaco Editor 的 Web Worker 路径
       monaco.languages.register({ id: props.leng })
+
       monacoEditor = monaco.editor.create(monacoEditorRef.value, {
         language: props.leng,
         theme: props.theme, // 这里填的就是上面注册的主题
@@ -94,14 +97,15 @@ const createMonacoEditor = async () => {
         wordWrap: 'on', // 开启自动换行
       })
 
-      monacoIoadingtoggle(false)
-
       // 创建完成后, monacoEditor会引入 一个jsonMode文件,然后使用 worker 引入了两个文件,然后才能进行格式化
       // 所以这里的定时器是一个不稳定的状态
       setTimeout(() => {
+        monacoIoadingtoggle(false)
         monacoEditor.trigger('anyString', 'editor.action.formatDocument')
         monacoEditor.setValue(props.value)
-      }, 700)
+        console.log('aslkdjhalksjd');
+        
+      }, 500)
     }, 700)
   })
 }
@@ -117,14 +121,6 @@ watch(show, value => {
   }
 })
 
-watch(
-  () => props.value,
-  value => {
-    monacoEditor.trigger('editor', 'editor.action.formatDocument')
-    monacoEditor.setValue(value)
-  }
-)
-
 onMounted(async () => {
   const highlighter = await shikiHighlighter([props.theme], [props.leng])
   // 注册 Shiki 主题，并为 Monaco 提供语法高亮
@@ -133,49 +129,53 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   if (monacoEditor) {
-    monacoEditor.editor.getModels().at(0).dispose()
+    monacoEditor.dispose()
   }
 })
 </script>
 
 <template>
-  <div
+  <Teleport
+    to="body"
     v-if="show"
-    :style="cssVars"
-    class="fixed w-90vw h-85vh left-5vw top-10vh rounded-t-2 border border-solid border-[--zai-border-color] bg-[--zai-body-color]"
   >
-    <div class="w-full h-50px flex flex-justify-between mt--1px">
-      <div>
-        <div
-          class="w-50px h-35px flex-col-center hover:bg-[#fff]/20 rounded-tl-lg text-[--zai-text-color] cursor-pointer"
-          @click="emits('save')"
-        >
-          <i-line-md-circle-twotone-to-confirm-circle-transition />
+    <div
+      :style="cssVars"
+      class="fixed z-10 w-90vw h-85vh left-5vw top-10vh rounded-t-2 border border-solid border-[--zai-border-color] bg-[--zai-body-color]"
+    >
+      <div class="w-full h-50px flex flex-justify-between mt--1px">
+        <div>
+          <div
+            class="w-50px h-35px flex-col-center hover:bg-[#fff]/20 rounded-tl-lg text-[--zai-text-color] cursor-pointer"
+            @click="emits('save')"
+          >
+            <i-line-md-circle-twotone-to-confirm-circle-transition />
+          </div>
+        </div>
+        <div class="flex">
+          <div
+            class="w-50px h-35px flex-col-center hover:bg-[#fff]/20 text-[--zai-text-color] cursor-pointer"
+            @click="dispose"
+          >
+            <i-line-md-minus />
+          </div>
+          <div
+            class="w-50px h-35px flex-col-center hover:bg-[#fff]/20 rounded-tr-lg text-[--zai-text-color] cursor-pointer"
+            @click="dispose"
+          >
+            <i-line-md-close-small />
+          </div>
         </div>
       </div>
-      <div class="flex">
-        <div
-          class="w-50px h-35px flex-col-center hover:bg-[#fff]/20 text-[--zai-text-color] cursor-pointer"
-          @click="dispose"
-        >
-          <i-line-md-minus />
-        </div>
-        <div
-          class="w-50px h-35px flex-col-center hover:bg-[#fff]/20 rounded-tr-lg text-[--zai-text-color] cursor-pointer"
-          @click="dispose"
-        >
-          <i-line-md-close-small />
-        </div>
-      </div>
-    </div>
 
-    <zai-loading v-model:show="monacoIoading">
-      <div
-        ref="monacoEditorRef"
-        class="w-full h-75vh"
-      ></div>
-    </zai-loading>
-  </div>
+      <zai-loading v-model:show="monacoIoading">
+        <div
+          ref="monacoEditorRef"
+          class="w-full h-75vh"
+        ></div>
+      </zai-loading>
+    </div>
+  </Teleport>
 </template>
 
 <style lang="scss" scoped></style>

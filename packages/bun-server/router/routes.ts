@@ -38,20 +38,37 @@ router.get('/api/table', async () => {
 })
 
 const JSONPATH = path.join(path.resolve(), './public/json')
-console.log('🚀 ~ JSONPATH:', JSONPATH)
-router.get('/json/:file', async req => {
+
+router.get('/json/list', async req => {
   const files = await fs.readdir(JSONPATH)
   let list = []
   for (const file of files) {
-    let stat = await fs.stat(path.join(JSONPATH, file))
-    list.push({
-      name: file,
-      birthtime: stat.birthtime,
-      mtime: stat.mtime,
-      size: stat.size,
-    })
+    const filePath = path.join(JSONPATH, file)
+    const is = await fs.exists(filePath)
+    if (is) {
+      let stat = await fs.stat(filePath)
+      list.push({
+        name: file,
+        birthtime: stat.birthtime,
+        mtime: stat.mtime,
+        size: stat.size,
+      })
+    }
   }
   return list
+})
+
+router.get('/json/:fileName', async req => {
+  const fileName = req.params.fileName
+  const filePath = path.join(JSONPATH, fileName)
+  const is = await fs.exists(filePath)
+  if (is) {
+    return Bun.file(path.join(JSONPATH, fileName))
+  }
+  return {
+    msg: '文件不存在',
+    code: 500,
+  }
 })
 
 export default router

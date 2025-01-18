@@ -1,6 +1,8 @@
 import type { Server } from 'bun'
 export { Server }
 
+export type Params = Record<string, string>
+
 export type methodsType = 'head' | 'options' | 'get' | 'put' | 'patch' | 'post' | 'delete'
 
 export type Res = {
@@ -31,6 +33,8 @@ export type Req = {
   status: number
   body: any
   setHeader: (key: string, value: string) => void
+  params: Params | null
+  query: Params | null
 }
 
 export type Next = () => any | Promise<any>

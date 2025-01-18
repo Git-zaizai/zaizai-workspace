@@ -44,6 +44,10 @@ export function createReq(request: Request, server: Server): Req {
     setHeader(key: string, value: string) {
       this.res.headers.set(key, value)
     },
+
+    params: null,
+
+    query: null,
   }
 
   return req

@@ -1,4 +1,50 @@
-import metadata from 'monaco-editor/esm/metadata'
+import fs from 'fs'
+import path from 'path'
+
+const dirs = fs.readdirSync(
+  path.join(import.meta.dirname, '../../../node_modules/monaco-editor/esm/vs/basic-languages')
+)
+dirs.pop()
+dirs.map(v => {
+  console.log(`import('monaco-editor/esm/vs/basic-languages/${v}/${v}.contribution')`)
+})
+console.log('🚀 ~ dirs:', dirs)
+/***
+ * 
+ * [
+  'abap',        'apex',              'azcli',
+  'bat',         'bicep',             'cameligo',
+  'clojure',     'coffee',            'cpp',
+  'csharp',      'csp',               'css',
+  'cypher',      'dart',              'dockerfile',
+  'ecl',         'elixir',            'flow9',
+  'freemarker2', 'fsharp',            'go',
+  'graphql',     'handlebars',        'hcl',
+  'html',        'ini',               'java',
+  'javascript',  'julia',             'kotlin',
+  'less',        'lexon',             'liquid',
+  'lua',         'm3',                'markdown',
+  'mdx',         'mips',              'monaco.contribution.js',
+  'msdax',       'mysql',             'objective-c',
+  'pascal',      'pascaligo',         'perl',
+  'pgsql',       'php',               'pla',
+  'postiats',    'powerquery',        'powershell',
+  'protobuf',    'pug',               'python',
+  'qsharp',      'r',                 'razor',
+  'redis',       'redshift',          'restructuredtext',
+  'ruby',        'rust',              'sb',
+  'scala',       'scheme',            'scss',
+  'shell',       'solidity',          'sophia',
+  'sparql',      'sql',               'st',
+  'swift',       'systemverilog',     'tcl',
+  'twig',        'typescript',        'typespec',
+  'vb',          'wgsl',              'xml',
+  'yaml',        '_.contribution.js'
+]
+ */
+
+// 在web使用
+/* import metadata from 'monaco-editor/esm/metadata'
 const prefix = 'monaco-editor/esm/'
 const autoImport = metadata.features.map((feat) => {
   let entry =
@@ -9,8 +55,10 @@ const autoImport = metadata.features.map((feat) => {
   return `// ${feat.label}
 ${entry.join('\n')}`
 })
-console.log(autoImport.join('\n'))
+console.log(autoImport.join('\n')) */
 
+/* 
+monaco-editor 配置文件
 // anchorSelect
 import 'monaco-editor/esm/vs/editor/contrib/anchorSelect/browser/anchorSelect'
 // bracketMatching
@@ -140,4 +188,4 @@ import 'monaco-editor/esm/vs/editor/contrib/wordHighlighter/browser/wordHighligh
 // wordOperations
 import 'monaco-editor/esm/vs/editor/contrib/wordOperations/browser/wordOperations'
 // wordPartOperations
-import 'monaco-editor/esm/vs/editor/contrib/wordPartOperations/browser/wordPartOperations'
+import 'monaco-editor/esm/vs/editor/contrib/wordPartOperations/browser/wordPartOperations' */

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import monacoEditor from '@/components/monaco-editor/monaco-editor.vue'
+import monacoEditor from '@/components/monaco-editor'
 import { useToggle } from '@vueuse/core'
 import { ZaiTableV1, useTable, useDialog } from '@/components/zai-table-v1'
 import type { DataTableColumns } from 'naive-ui'
-import { getJsonFile } from '@/api'
+import { getJsonFile, getJosnList } from '@/api'
 import dayjs from 'dayjs'
+import { isString } from 'lodash-es'
 
 interface Row {
   name: string
@@ -13,9 +14,12 @@ interface Row {
   size: string
 }
 
+const [monacoShow, monacoShowToggle] = useToggle()
+const monacoValue = ref('')
+
 const { loading, data, columns } = useTable({
   refresh: async () => {
-    const data = await getJsonFile('tabs')
+    const data = await getJosnList()
     return data.data.value.data.map(v => {
       v.birthtime = dayjs(v.birthtime).format('YYYY-MM-DD HH:mm:ss')
       v.mtime = dayjs(v.mtime).format('YYYY-MM-DD HH:mm:ss')
@@ -44,6 +48,16 @@ const { loading, data, columns } = useTable({
     return columns
   },
 })
+
+const actionUpdate = async row => {
+  const resp = await getJsonFile(row.name)
+  if (resp.data.value?.code === 500) {
+    window.$message.error(resp.data.value.msg)
+  } else {
+    monacoValue.value = isString(resp.data.value) ? resp.data.value : JSON.stringify(resp.data.value)
+    monacoShowToggle()
+  }
+}
 </script>
 
 <template>
@@ -53,6 +67,12 @@ const { loading, data, columns } = useTable({
       :data="data"
       :columns="columns"
       :row-key="row => row.name"
+      @action-update="actionUpdate"
+    />
+
+    <monacoEditor
+      v-model:show="monacoShow"
+      :value="monacoValue"
     />
   </div>
 </template>

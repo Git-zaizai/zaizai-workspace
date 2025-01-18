@@ -15,3 +15,5 @@ export const getJsonFile = async (name: string) => {
   return readBlobAsText(response.data as unknown as Blob) */
   return http(`/json/${name}`).get().json()
 }
+
+export const getJosnList = ()=> http('/json/list').get().json()

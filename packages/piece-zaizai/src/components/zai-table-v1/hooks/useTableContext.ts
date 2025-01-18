@@ -100,7 +100,6 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     }
 
     cacheColumns = cloneDeep(columns.value)
-    console.log('cacheColumns', cacheColumns)
 
     columnHides.forEach(key => {
       if (!optinos.columnHides.includes(key)) {

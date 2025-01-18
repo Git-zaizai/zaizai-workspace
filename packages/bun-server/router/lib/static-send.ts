@@ -25,10 +25,12 @@ export const staticSend = (
     }
   }
 
+  console.log('fileList', fileList)
+
   return async (req: Req, server: Server, next: Next) => {
     console.log('staticSend ===>')
     const responseData = await next()
-    console.log('staticSend <===');
+    console.log('staticSend <===')
 
     let body = responseData || req.body
 
@@ -38,7 +40,10 @@ export const staticSend = (
     }
 
     if (options.indexHtml && !body && req.pathname === '/') {
-      return new Response(Bun.file(path.join(filePath, 'index.html')))
+      const html = path.join(filePath, 'index.html')
+      if (fs.existsSync(html)) {
+        return new Response(Bun.file(html))
+      }
     }
 
     try {
@@ -47,6 +52,10 @@ export const staticSend = (
       return body
     }
     urlPath = urlPath.replace('/public/', '')
+    // 移除路径中的第一个斜杠
+    if (urlPath.startsWith('/')) {
+      urlPath = urlPath.substring(1)
+    }
 
     if (!fileList.includes(urlPath)) {
       return body
