@@ -190,7 +190,7 @@ const { columns, scrollautoX, paginationReactive } = createTableContext(props)
 
 const { dropdownXY, showDropdownRef, rowProps, dropdownOptions, onClickoutside, handleSelect } = useKoutSide(
   emits,
-  props.DropdownOption
+  props.dropdownOption,
 )
 
 let rowKeyList: DataTableRowKey[] = []

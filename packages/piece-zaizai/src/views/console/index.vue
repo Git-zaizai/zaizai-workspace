@@ -239,14 +239,14 @@ const rule = {
     if (val === '') {
       return new Error('不能为空')
     }
-    if (action === 'add' && data.value.some(v => v.title === val)) {
+    if (getAction() === 'add' && data.value.some(v => v.title === val)) {
       return new Error('小说名不能相同')
     }
     return true
   },
 }
 
-const { show, action, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
+const { show, getAction, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
   formData: {
     _id: '',
     title: '',
@@ -282,7 +282,7 @@ const { loading, data, columns, refresh } = useTable<Row>({
   createColunms: async () => {
     const { data } = await getLinkTabs()
     const tabOptions = data.value.data.map(item => ({ label: item, value: item }))
-    const columns: DataTableColumns<Row > = [
+    const columns: DataTableColumns<Row> = [
       {
         title: '小说名',
         key: 'title',

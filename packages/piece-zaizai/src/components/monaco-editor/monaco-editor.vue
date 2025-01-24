@@ -20,16 +20,18 @@ const props = withDefaults(
     theme?: BundledTheme
     leng?: string
     value?: string
+    fileName?: string
   }>(),
   {
     leng: 'json',
     theme: 'andromeeda',
     value: '',
+    fileName: '',
   }
 )
 
 const emits = defineEmits<{
-  save: []
+  save: [string]
 }>()
 
 const show = defineModel('show', {
@@ -103,8 +105,6 @@ const createMonacoEditor = async () => {
         monacoIoadingtoggle(false)
         monacoEditor.trigger('anyString', 'editor.action.formatDocument')
         monacoEditor.setValue(props.value)
-        console.log('aslkdjhalksjd');
-        
       }, 500)
     }, 700)
   })
@@ -120,6 +120,10 @@ watch(show, value => {
     createMonacoEditor()
   }
 })
+
+const onSave = () => {
+  emits('save', monacoEditor.getValue())
+}
 
 onMounted(async () => {
   const highlighter = await shikiHighlighter([props.theme], [props.leng])
@@ -144,13 +148,14 @@ onBeforeUnmount(() => {
       class="fixed z-10 w-90vw h-85vh left-5vw top-10vh rounded-t-2 border border-solid border-[--zai-border-color] bg-[--zai-body-color]"
     >
       <div class="w-full h-50px flex flex-justify-between mt--1px">
-        <div>
+        <div class="flex">
           <div
             class="w-50px h-35px flex-col-center hover:bg-[#fff]/20 rounded-tl-lg text-[--zai-text-color] cursor-pointer"
-            @click="emits('save')"
+            @click="onSave"
           >
             <i-line-md-circle-twotone-to-confirm-circle-transition />
           </div>
+          <div class="ml-20px text-#abb2a1 text-18px leading-35px">{{ props.fileName }}</div>
         </div>
         <div class="flex">
           <div

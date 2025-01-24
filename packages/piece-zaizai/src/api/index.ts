@@ -16,4 +16,6 @@ export const getJsonFile = async (name: string) => {
   return http(`/json/${name}`).get().json()
 }
 
-export const getJosnList = ()=> http('/json/list').get().json()
+export const getJosnList = () => http('/json/list').get().json()
+export const setJsonFile = (name, value) => http(`/json/set/${name}`).post(value).json()
+export const delJsonFile = (name) => http(`/delete/${name}`).get().json()

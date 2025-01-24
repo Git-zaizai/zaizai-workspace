@@ -125,6 +125,11 @@ class Router {
           layerChain.push(...stack.stack)
         }
       }
+
+      if (layerChain.length === 0) {
+        req.status = 404
+      }
+
       const middleware = this.middleware
       const composeFns = [].concat(middleware, layerChain)
       return compose(composeFns)(req, server, next)

@@ -189,3 +189,9 @@ import 'monaco-editor/esm/vs/editor/contrib/wordHighlighter/browser/wordHighligh
 import 'monaco-editor/esm/vs/editor/contrib/wordOperations/browser/wordOperations'
 // wordPartOperations
 import 'monaco-editor/esm/vs/editor/contrib/wordPartOperations/browser/wordPartOperations' */
+
+fetch('http://localhost:7379/json/set', {
+  method: 'POST',
+}).then(res => {
+  console.log(res)
+})

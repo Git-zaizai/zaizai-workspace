@@ -40,6 +40,8 @@ const options: DropdownOption[] = [
   },
 ]
 
+export const defaultDropdownOption = options
+
 export const useKoutSide = (emits: EmitFn<ZaiTableEmitType>, dropdownOptions: DropdownOption[]) => {
   const showDropdownRef = ref(false)
   const dropdownXY = reactive({ x: 0, y: 0 })

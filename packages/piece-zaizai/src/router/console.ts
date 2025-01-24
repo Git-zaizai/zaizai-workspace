@@ -26,6 +26,15 @@ const consoleRoute: RouteRecordRaw = {
       },
       component: () => import('@/views/console/json.vue'),
     },
+    {
+      path: 'ws',
+      name: 'ws',
+      meta: {
+        title: 'ws',
+        icon: VscodeIconsFileTypeLightJson,
+      },
+      component: () => import('@/views/console/ws.vue'),
+    },
   ],
 }
 

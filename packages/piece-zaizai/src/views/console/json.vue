@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import monacoEditor from '@/components/monaco-editor'
-import { useToggle } from '@vueuse/core'
 import { ZaiTableV1, useTable, useDialog } from '@/components/zai-table-v1'
 import type { DataTableColumns } from 'naive-ui'
-import { getJsonFile, getJosnList } from '@/api'
+import { getJsonFile, getJosnList, setJsonFile, delJsonFile } from '@/api'
 import dayjs from 'dayjs'
 import { isString } from 'lodash-es'
 
@@ -14,10 +13,26 @@ interface Row {
   size: string
 }
 
-const [monacoShow, monacoShowToggle] = useToggle()
-const monacoValue = ref('')
+const { show, showToggle, bindAddShow, bandUpdateShow, formData, getAction } = useDialog({
+  formData: {
+    monacoValue: '',
+    name: '',
+  },
+  addCallback: form => {
+    formData.value = form
+  },
+  updateCallback: async row => {
+    const resp = await getJsonFile(row.name)
+    if (resp.data.value?.code === 500) {
+      window.$message.error(resp.data.value.msg)
+    } else {
+      formData.value.monacoValue = isString(resp.data.value) ? resp.data.value : JSON.stringify(resp.data.value)
+      formData.value.name = row.name
+    }
+  },
+})
 
-const { loading, data, columns } = useTable({
+const { loading, data, columns, refresh } = useTable({
   refresh: async () => {
     const data = await getJosnList()
     return data.data.value.data.map(v => {
@@ -49,14 +64,48 @@ const { loading, data, columns } = useTable({
   },
 })
 
-const actionUpdate = async row => {
-  const resp = await getJsonFile(row.name)
-  if (resp.data.value?.code === 500) {
-    window.$message.error(resp.data.value.msg)
-  } else {
-    monacoValue.value = isString(resp.data.value) ? resp.data.value : JSON.stringify(resp.data.value)
-    monacoShowToggle()
+const saveJson = async (value: string) => {
+  const str = value.replaceAll('\n', '').replaceAll(' ', '')
+  let fileName = formData.value.name
+  fileName = fileName.endsWith('.json') ? fileName.replace('.json', '') : fileName
+  if (getAction() === 'add') {
+    fileName = dayjs().format('YYYY-MM-DD-HH-mm-ss')
   }
+
+  const { data } = await setJsonFile(fileName, str)
+  if (data.value?.code === 200) {
+    window.$message.success('保存成功')
+    refresh()
+  } else {
+    window.$message.error('保存失败')
+  }
+}
+
+const bandDelete = async (value: Row, index: number) => {
+  const d = window.$dialog.warning({
+    title: '警告',
+    content: '你确定？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      d.loading = true
+      const { data, error } = await delJsonFile(
+        value.name.endsWith('.json') ? value.name.replace('.json', '') : value.name
+      )
+      if (error.value) {
+        d.loading = false
+        return false
+      }
+      if (data.value?.code === 200) {
+        window.$message.success(data.value.msg)
+        d.loading = false
+        refresh()
+      } else {
+        window.$message.error(data.value.msg)
+        d.loading = false
+      }
+    },
+  })
 }
 </script>
 
@@ -67,12 +116,17 @@ const actionUpdate = async row => {
       :data="data"
       :columns="columns"
       :row-key="row => row.name"
-      @action-update="actionUpdate"
+      @action-update="bandUpdateShow"
+      @add="bindAddShow"
+      @action-delete="bandDelete"
+      @refresh="refresh"
     />
 
     <monacoEditor
-      v-model:show="monacoShow"
-      :value="monacoValue"
+      v-model:show="show"
+      :value="formData.monacoValue"
+      :file-name="formData.name"
+      @save="saveJson"
     />
   </div>
 </template>

@@ -1,4 +1,4 @@
-import type { DataTableColumn, DataTableColumns, DataTableProps, DropdownOption } from 'naive-ui'
+import type { DataTableColumn, DataTableColumns, DataTableProps, DropdownOption, DropdownProps } from 'naive-ui'
 import { dataTableProps } from 'naive-ui'
 import { ExtractPropTypes, PropType } from 'vue'
 import { type columnHidesType } from './enum'
@@ -41,7 +41,7 @@ export const zaiTableProps = {
     type: Boolean,
     default: true,
   },
-  DropdownOption: {
+  dropdownOption: {
     type: Array as PropType<DropdownOption[]>,
     default: () => [],
   },

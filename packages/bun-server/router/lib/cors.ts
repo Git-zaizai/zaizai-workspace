@@ -10,6 +10,7 @@ export const cors = (headers: object = {}) => {
     if (req.method === 'options') {
       req.setHeader('Access-Control-Allow-Credentials', 'true')
       req.setHeader('Access-Control-Allow-Headers', 'info')
+
       return new Response(null, {
         status: 204,
         headers: req.res.headers,

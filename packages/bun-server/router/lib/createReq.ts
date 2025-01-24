@@ -1,9 +1,14 @@
 import { type Server } from 'bun'
 import type { Req, methodsType } from './type'
 import { createRes } from './createRes'
-export function createReq(request: Request, server: Server): Req {
+export async function createReq(request: Request, server: Server): Promise<Req> {
   const url = new URL(request.url)
   const res = createRes()
+
+  let form = null
+  if (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH') {
+    form = await request.json()
+  }
 
   const req = {
     method: request.method.toLowerCase() as methodsType,
@@ -48,6 +53,8 @@ export function createReq(request: Request, server: Server): Req {
     params: null,
 
     query: null,
+
+    form,
   }
 
   return req

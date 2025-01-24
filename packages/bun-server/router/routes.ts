@@ -71,4 +71,53 @@ router.get('/json/:fileName', async req => {
   }
 })
 
+router.post('/json/set/:fileName', req => {
+  const form = req.form
+  const fileName = req.params.fileName
+
+  if (!fileName) {
+    return {
+      code: 400,
+      msg: '请传入文件名',
+    }
+  }
+
+  if (!form) {
+    return {
+      code: 400,
+      msg: '内容不能为空',
+    }
+  }
+
+  const filePath = path.join(JSONPATH, fileName + '.json')
+  if (typeof form === 'string') {
+    Bun.write(filePath, form)
+  } else {
+    try {
+      let value = JSON.stringify(form)
+      Bun.write(filePath, value)
+      return 'ok'
+    } catch (error) {
+      return {
+        code: 500,
+        errMsg: error.toString(),
+      }
+    }
+  }
+})
+
+router.get('/delete/:name', async req => {
+  try {
+    const name = req.params.name
+    await fs.rm(path.join(__dirname, '../public/json/' + name + '.json'))
+    return 'ok'
+  } catch (e) {
+    console.log(e)
+    return {
+      code: 500,
+      msg: e.toString(),
+    }
+  }
+})
+
 export default router

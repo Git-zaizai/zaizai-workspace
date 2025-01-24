@@ -3,6 +3,8 @@ export { Server }
 
 export type Params = Record<string, string>
 
+export type Form = Record<string, string>
+
 export type methodsType = 'head' | 'options' | 'get' | 'put' | 'patch' | 'post' | 'delete'
 
 export type Res = {
@@ -35,6 +37,7 @@ export type Req = {
   setHeader: (key: string, value: string) => void
   params: Params | null
   query: Params | null
+  form: Form | null
 }
 
 export type Next = () => any | Promise<any>

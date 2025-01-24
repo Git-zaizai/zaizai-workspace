@@ -1,4 +1,6 @@
 import type { Req, Server, Next } from './type'
+// @ts-ignore
+import { isNull, isUndefined } from 'lodash-es'
 
 export async function useResponse(req: Req, server: Server, next: Next) {
   console.log('useResponse ===>')
@@ -15,11 +17,11 @@ export async function useResponse(req: Req, server: Server, next: Next) {
     return body
   }
 
-  if (body === null) {
+  if (isUndefined(body) || isNull(body)) {
     headers.delete('Content-Type')
     headers.delete('Content-Length')
     headers.delete('Transfer-Encoding')
-    return new Response(null, { headers, status: 204 })
+    return new Response(null, { headers, status: req.status || 204 })
   }
 
   const status = req.status === 204 ? 200 : req.status
