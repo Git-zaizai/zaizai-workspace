@@ -10,6 +10,11 @@ export async function createReq(request: Request, server: Server): Promise<Req> 
     form = await request.json()
   }
 
+  let query = null
+  if (request.method === 'GET' || request.method === 'DELETE' || request.method === 'HEAD') {
+    query = url.searchParams
+  }
+
   const req = {
     method: request.method.toLowerCase() as methodsType,
     url: request.url,
@@ -52,7 +57,7 @@ export async function createReq(request: Request, server: Server): Promise<Req> 
 
     params: null,
 
-    query: null,
+    query,
 
     form,
   }

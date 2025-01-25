@@ -3,7 +3,7 @@ import routrs from './router/routes'
 // @ts-ignore
 import { nanoid } from 'nanoid'
 import { DATA_PATH } from './config'
-import { wsMap } from './data/ws'
+import { wsMap } from './ws/ws'
 
 const router = new Router()
 
@@ -16,6 +16,8 @@ Bun.serve({
   async fetch(request, server) {
     console.log('\n请求开始')
 
+    const req = await createReq(request, server)
+    console.log("🚀 ~ fetch ~ req:", req.query)
     const websocket = server.upgrade(request, {
       data: {
         socketId: nanoid(),
@@ -27,7 +29,7 @@ Bun.serve({
       return
     }
 
-    const req = await createReq(request, server)
+
     const dispatch = router.callback(req, server)
     const body = await dispatch(req, server)
 
@@ -39,15 +41,19 @@ Bun.serve({
   },
   websocket: {
     open(ws: { data: { socketId: string } }) {
-      
+
     },
     async message(ws, message) {
-      console.log(ws)
+      console.log(ws, message)
 
       // the contextual dta is available as the `data` property
       // on the WebSocket instance
       console.log(`Received ${message} from ${ws.data}}`)
-      ws.send(new Uint8Array([1, 2, 3, 4]))
+      if (message === '1') {
+        ws.send(JSON.stringify({ message: 'hello' }))
+      } else {
+        ws.send(JSON.stringify({ message: '2' }))
+      }
     },
   },
 })
