@@ -16,8 +16,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@koa/router": "^13.1.0",
-    "koa": "^2.15.3",
     "nanoid": "^5.0.7",
     "path-to-regexp": "^8.2.0"
   }

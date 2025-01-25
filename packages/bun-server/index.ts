@@ -3,7 +3,6 @@ import routrs from './router/routes'
 // @ts-ignore
 import { nanoid } from 'nanoid'
 import { DATA_PATH } from './config'
-import { wsMap } from './ws/ws'
 
 const router = new Router()
 
