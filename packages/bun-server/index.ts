@@ -1,8 +1,9 @@
 import { Router, createReq, useResponse, staticSend, cors } from './router'
 import routrs from './router/routes'
+
 // @ts-ignore
 import { nanoid } from 'nanoid'
-import { DATA_PATH } from './config'
+import webSocketHandler from './ws'
 
 const router = new Router()
 
@@ -16,7 +17,7 @@ Bun.serve({
     console.log('\n请求开始')
 
     const req = await createReq(request, server)
-    console.log("🚀 ~ fetch ~ req:", req.query)
+    console.log('🚀 ~ fetch ~ req:', req.query)
     const websocket = server.upgrade(request, {
       data: {
         socketId: nanoid(),
@@ -28,7 +29,6 @@ Bun.serve({
       return
     }
 
-
     const dispatch = router.callback(req, server)
     const body = await dispatch(req, server)
 
@@ -38,23 +38,7 @@ Bun.serve({
 
     return body
   },
-  websocket: {
-    open(ws: { data: { socketId: string } }) {
-
-    },
-    async message(ws, message) {
-      console.log(ws, message)
-
-      // the contextual dta is available as the `data` property
-      // on the WebSocket instance
-      console.log(`Received ${message} from ${ws.data}}`)
-      if (message === '1') {
-        ws.send(JSON.stringify({ message: 'hello' }))
-      } else {
-        ws.send(JSON.stringify({ message: '2' }))
-      }
-    },
-  },
+  websocket: webSocketHandler,
 })
 
 console.log(`Bun server is running at http://localhost:${port}`)
