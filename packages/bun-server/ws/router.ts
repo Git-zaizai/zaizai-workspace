@@ -6,5 +6,10 @@ use('1', () => {
 
 import { wsMap } from './const'
 use('save', (ws, data) => {
-  let socketId = ws.data
+  let socketId = ws.data.socketId
+  if (wsMap.has(socketId)) {
+    return {
+      msg: '请先获取身份 socketId'
+    }
+  }
 })

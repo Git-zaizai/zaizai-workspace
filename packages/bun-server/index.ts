@@ -1,6 +1,5 @@
 import { Router, createReq, useResponse, staticSend, cors } from './router'
 import routrs from './router/routes'
-
 // @ts-ignore
 import { nanoid } from 'nanoid'
 import webSocketHandler from './ws'

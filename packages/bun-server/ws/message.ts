@@ -1,6 +1,6 @@
 import { pathToRegexp, type Keys } from 'path-to-regexp'
-
 import { RouteServerWebSocket } from '../global'
+import compose from '../router/lib/compose'
 
 type RouteFn = (ws: RouteServerWebSocket, msg?: string) => Promise<any> | any
 interface Layer {
@@ -20,6 +20,12 @@ export function getRouters() {
 }
 
 export function match(path: string) {
+  if (!path) {
+    return {
+      path: [],
+    }
+  }
+
   const matched = {
     path: [],
   }
@@ -34,25 +40,38 @@ export function match(path: string) {
   return matched.path
 }
 
-export function use(path: string, fn: RouteFn) {
+export function use(path: string, ...fns: RouteFn[]) {
+  if (fns.some(fn => typeof fn !== 'function')) {
+    throw new TypeError('Middleware must be composed of functions.')
+  }
   const layer = {
     path,
     regexp: pathToRegexp(path),
-    fns: [fn],
-    match() {
-      return this.regexp.regexp.test(path)
+    fns,
+    match(matchPath: string) {
+      return this.regexp.regexp.test(matchPath)
     },
   }
   routers.push(layer)
 }
 
 export async function getMessage(ws: RouteServerWebSocket, message) {
-  const matched = match(message)
-  const res = []
-  for (let i = 0; i < matched.length; i++) {
-    const element = matched[i]
-    const result = await Promise.all(element.fns.map(fn => fn(ws, message)))
-    res.push(...result)
+  let messageData
+  try {
+    messageData = JSON.parse(message)
+  } catch {
+    messageData = message
   }
-  return res
+
+  let matched = null
+
+  if (typeof messageData === 'object' && 'route' in messageData) {
+    matched = match(messageData.tyep)
+  } else {
+    matched = match(messageData)
+  }
+  if (matched.length === 0) {
+    return []
+  }
+  return compose(matched[0].fns)(ws, message, matched[0].fns[0])
 }
