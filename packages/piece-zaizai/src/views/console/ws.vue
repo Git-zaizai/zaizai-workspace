@@ -35,6 +35,9 @@ const bandclose = () => {
     webSocket.close()
   }
 }
+const bandlog = () => {
+  webSocket.send('log-json')
+}
 </script>
 
 <template>
@@ -58,6 +61,7 @@ const bandclose = () => {
       <p v-for="item in state.serverStr">{{ item }}</p>
     </div>
     <n-button @click="bandclose">断开链接</n-button>
+    <n-button @click="bandlog">logjson</n-button>
   </div>
 </template>
 

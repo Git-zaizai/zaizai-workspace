@@ -20,12 +20,17 @@ const webSocketHandler: WebSocketHandler<{ socketId: string }> = {
     }
   },
   async message(ws, message) {
+    if (ws.data.socketId) {
+      console.log(`id:${ws.data.socketId}  message:${message} `)
+    }else{
+      console.log(`id: null  message:${message} `)
+    }
+
     if (message instanceof Buffer) {
       message = message.toString()
     }
     const messageRes = await getMessage(ws, message)
-    console.log("🚀 ~ message ~ messageRes:", messageRes)
-    if (messageRes) {
+    if (messageRes !== undefined && messageRes !== null) {
       if (typeof messageRes === 'string') {
         ws.send(messageRes)
       } else {
@@ -42,6 +47,7 @@ const webSocketHandler: WebSocketHandler<{ socketId: string }> = {
     if (wsMap.has(socketId)) {
       wsMap.delete(socketId)
     }
+    console.log(`有链接断开 ${socketId ? socketId : '无 socketId'} ---date: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`)
     logger.log(`有链接断开 ${socketId ? socketId : '无 socketId'} ---date: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`)
   },
 }

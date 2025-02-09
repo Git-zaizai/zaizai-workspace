@@ -2,7 +2,7 @@ import { pathToRegexp, type Keys } from 'path-to-regexp'
 import { RouteServerWebSocket } from '../global'
 import compose from '../router/lib/compose'
 
-type RouteFn = (ws: RouteServerWebSocket, msg?: string) => Promise<any> | any
+type RouteFn = (ws: RouteServerWebSocket, msg?: any, next?: () => any) => Promise<any> | any
 interface Layer {
   path: string
   regexp: {
@@ -62,16 +62,17 @@ export async function getMessage(ws: RouteServerWebSocket, message) {
   } catch {
     messageData = message
   }
-
   let matched = null
 
   if (typeof messageData === 'object' && 'route' in messageData) {
-    matched = match(messageData.tyep)
+    matched = match(messageData.route)
   } else {
     matched = match(messageData)
   }
+
   if (matched.length === 0) {
-    return []
+    return ''
   }
-  return compose(matched[0].fns)(ws, message, matched[0].fns[0])
+
+  return compose(matched[0].fns)(ws, messageData.data, matched[0].fns[0])
 }
