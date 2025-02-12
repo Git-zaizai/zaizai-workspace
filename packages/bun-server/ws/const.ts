@@ -3,9 +3,14 @@ import { LOG_PATH } from '../config'
 import path from 'node:path'
 import fs from 'node:fs'
 import dayjs from 'dayjs'
+import { existsFile } from '../utils'
 
-export const logfile = path.join(LOG_PATH, '/ws/log.txt')
-export const errorfile = path.join(LOG_PATH, '/ws/error.txt')
+export const logfile = path.join(LOG_PATH, '/ws/log.log')
+export const errorfile = path.join(LOG_PATH, '/ws/error.log')
+
+existsFile(logfile)
+existsFile(errorfile)
+
 export const logger = new Console({
   stdout: fs.createWriteStream(logfile),
   stderr: fs.createWriteStream(errorfile),

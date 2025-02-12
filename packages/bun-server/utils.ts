@@ -1,3 +1,6 @@
+import path from 'node:path'
+import fs from 'node:fs'
+
 export const wait = (time: number = 1000) => {
   return new Promise<void>(resolve => {
     setTimeout(() => {
@@ -26,4 +29,10 @@ export function jwtVerify(token) {
     issuer: 'zaizai',
     algorithms: ['HS384'],
   })
+}
+
+export async function existsFile(ph: string) {
+  if (!fs.existsSync(ph)) {
+    return fs.writeFileSync(ph, '', { flush: true })
+  }
 }
