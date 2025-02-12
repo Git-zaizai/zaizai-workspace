@@ -2,6 +2,8 @@
 import { consoleLayout } from './constant'
 import type { RouteRecordRaw } from 'vue-router'
 import VscodeIconsFileTypeLightJson from '~icons/vscode-icons/file-type-light-json'
+import PhTwitterLogoFill from '~icons/ph/twitter-logo-fill'
+import PhBackpackDuotone from '~icons/ph/backpack-duotone'
 
 const consoleRoute: RouteRecordRaw = {
   path: '/console',
@@ -31,9 +33,18 @@ const consoleRoute: RouteRecordRaw = {
       name: 'ws',
       meta: {
         title: 'ws',
-        icon: VscodeIconsFileTypeLightJson,
+        icon: PhTwitterLogoFill,
       },
       component: () => import('@/views/console/ws.vue'),
+    },
+    {
+      path: 'link',
+      name: 'link',
+      meta: {
+        title: 'novel',
+        icon: PhBackpackDuotone,
+      },
+      component: () => import('@/views/console/novel/index.vue'),
     },
   ],
 }

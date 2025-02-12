@@ -16,6 +16,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "cheerio": "^1.0.0",
+    "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.0.7",
     "path-to-regexp": "^8.2.0"
   }

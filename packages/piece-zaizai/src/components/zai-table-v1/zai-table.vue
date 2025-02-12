@@ -159,7 +159,7 @@
 <script setup lang="ts">
 import columnsSetting from './components/columns-setting.vue'
 
-import { zaiTableProps } from './props'
+import { zaiTableProps, type TableRowKey } from './props'
 import { createTableContext } from './hooks/useTableContext'
 import { useCssVars } from '@/hooks/useCssVars'
 import { tableDensity } from './enum'
@@ -190,7 +190,7 @@ const { columns, scrollautoX, paginationReactive } = createTableContext(props)
 
 const { dropdownXY, showDropdownRef, rowProps, dropdownOptions, onClickoutside, handleSelect } = useKoutSide(
   emits,
-  props.dropdownOption,
+  props.dropdownOption
 )
 
 let rowKeyList: DataTableRowKey[] = []

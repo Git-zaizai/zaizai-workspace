@@ -4,3 +4,5 @@ import path from 'path'
 export const DATA_PATH = path.join(import.meta.dirname, './data')
 // @ts-ignore
 export const LOG_PATH = path.join(import.meta.dirname, './logs')
+
+export const cert = 'ONE_PIECE_ZAIZAI'

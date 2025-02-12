@@ -10,6 +10,8 @@ const PickDataTableProps = (key: Array<keyof DataTableProps>) => {
   }, {} as Record<string, any>)
 }
 
+export type TableRowKey = DataTableProps['rowKey']
+
 export const zaiTableProps = {
   // 继承 naive-ui 的 table props  需要开启
   ...dataTableProps,
@@ -44,7 +46,7 @@ export const zaiTableProps = {
   dropdownOption: {
     type: Array as PropType<DropdownOption[]>,
     default: () => [],
-  },
+  }
 }
 
 export type ZaiTablePropsType = ExtractPropTypes<typeof zaiTableProps>

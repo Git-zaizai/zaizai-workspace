@@ -38,6 +38,8 @@ export type Req = {
   params: Params | null
   query: Params | null
   form: Form | null
+
+  mate: Params
 }
 
 export type Next = () => any | Promise<any>

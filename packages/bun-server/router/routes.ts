@@ -120,4 +120,36 @@ router.get('/delete/:name', async req => {
   }
 })
 
+import { getUserinfo } from '../data/user'
+import { jwtVerify, jwtSign } from '../utils'
+router.post('/secretkey', req => {
+  const pwd = req.form.pwd
+  if (!pwd) {
+    req.status = 400
+    return '请输入密钥'
+  }
+  const userinfo = getUserinfo(pwd)
+  if (!userinfo) {
+    req.status = 400
+    return '密钥错误'
+  }
+  const token = jwtSign({ name: userinfo.username }, { expiresIn: '7d' })
+  req.setHeader('Authorization', token)
+  return token
+})
+
+router.get('/verify', req => {
+  const token = req.headers.get('Authorization')
+  if (!token) {
+    req.status = 401
+    return '请获取密钥'
+  }
+  const userinfo = jwtVerify(token)
+  if (!userinfo) {
+    req.status = 401
+    return '请获取密钥'
+  }
+  return 1
+})
+
 export default router

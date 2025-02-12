@@ -1,7 +1,7 @@
 <template>
   <n-layout>
     <n-layout-header
-      class="h-67px flex-center justify-between pr-30px"
+      class="h-67px flex-y-center justify-between pr-30px"
       bordered
       :inverted="app.Layoutinverted"
     >

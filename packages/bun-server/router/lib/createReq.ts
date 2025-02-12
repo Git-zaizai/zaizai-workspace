@@ -60,6 +60,8 @@ export async function createReq(request: Request, server: Server): Promise<Req> 
     query,
 
     form,
+
+    mate: {},
   }
 
   return req

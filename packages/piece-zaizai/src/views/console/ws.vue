@@ -1,67 +1,74 @@
 <script setup lang="ts">
-let webSocket: WebSocket = null
+import { ZaiTableV1, useTable, useDialog } from '@/components/zai-table-v1'
+import type { DataTableColumns } from 'naive-ui'
+import { NButton } from 'naive-ui'
+import dayjs from 'dayjs'
 
-const state = reactive({
-  url: 'ws://localhost:7379?name=123',
-  content: '',
-  serverStr: [],
+interface Row {
+  userid: string
+  socketid: string
+  messages: string
+  createDate: string
+}
+
+const { data, columns } = useTable({
+  refresh: async () => {
+    return new Array(10).fill(0).map((_, index) => {
+      return {
+        userid: index,
+        socketid: 'socketid' + index,
+        messages: 'messages',
+        createDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      }
+    })
+  },
+  createColunms: async () => {
+    const columns: DataTableColumns<Row> = [
+      {
+        type: 'expand',
+        renderExpand: rowData => {
+          return rowData.userid
+        },
+      },
+      {
+        title: '用户自定义名称',
+        key: 'userid',
+      },
+      {
+        title: 'Socket ID',
+        key: 'socketid',
+      },
+      {
+        title: '消息列表',
+        key: 'messages',
+        render: (row, index) => {
+          return h(
+            NButton,
+            {},
+            {
+              default: () => '查看',
+            }
+          )
+        },
+      },
+      {
+        title: '创建时间',
+        key: 'createDate',
+      },
+    ]
+    return columns
+  },
 })
-
-const errorStr = ref([])
-
-const opws = () => {
-  webSocket = new WebSocket(state.url)
-  webSocket.onopen = () => {
-    console.log('打开')
-  }
-  webSocket.onmessage = MessageEvent => {
-    if (typeof MessageEvent.data === 'string') {
-      state.serverStr.push(MessageEvent.data)
-    }
-  }
-  webSocket.onerror = () => {
-    errorStr.value.push('webscoket 断开')
-  }
-}
-
-const bandSend = () => {
-  if (webSocket) {
-    webSocket.send(state.content)
-  }
-}
-
-const bandclose = () => {
-  if (!webSocket) {
-    webSocket.close()
-  }
-}
-const bandlog = () => {
-  webSocket.send('log-json')
-}
 </script>
 
 <template>
   <div class="console-content-view">
-    <div class="mb-10">
-      <h5>日志：</h5>
-      <p v-for="item in errorStr">{{ item }}</p>
-    </div>
-    <n-input
-      v-model:value="state.url"
-      placeholder="链接url"
-    ></n-input>
-    <n-button @click="opws">打开WebSocket</n-button>
-    <n-input
-      v-model:value="state.content"
-      placeholder="内容"
-    ></n-input>
-    <n-button @click="bandSend">发送内容</n-button>
-    <div class="mb-10">
-      <h5>服务端返回内容：</h5>
-      <p v-for="item in state.serverStr">{{ item }}</p>
-    </div>
-    <n-button @click="bandclose">断开链接</n-button>
-    <n-button @click="bandlog">logjson</n-button>
+    <ZaiTableV1
+      :data="data"
+      :columns="columns"
+      :row-key="row => row.socketid"
+      default-expand-all
+    />
   </div>
 </template>
 
