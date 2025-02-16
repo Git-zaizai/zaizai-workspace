@@ -1,3 +1,4 @@
+import './env'
 import { Router, createReq, useResponse, staticSend, cors } from './router'
 import routrs from './router/routes'
 // @ts-ignore
@@ -10,9 +11,8 @@ const router = new Router()
 // 查看log的执行顺序
 router.use(cors()).use(useResponse).use(staticSend()).use(usePriveartRoute()).use(routrs.routes())
 
-const port = 7379
 Bun.serve({
-  port: port,
+  port: process.env.ZAI_PORT,
   async fetch(request, server) {
     console.log('\n请求开始')
 
@@ -42,4 +42,4 @@ Bun.serve({
   websocket: webSocketHandler,
 })
 
-console.log(`Bun server is running at http://localhost:${port}`)
+console.log(`Bun server is running at http://localhost:${process.env.ZAI_PORT}`)
