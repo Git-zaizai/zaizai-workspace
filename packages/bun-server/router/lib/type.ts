@@ -1,9 +1,9 @@
 import type { Server } from 'bun'
 export { Server }
 
-export type Params = Record<string, string>
+export type Params = Record<string, any>
 
-export type Form = Record<string, string>
+export type Form = Record<string, any>
 
 export type methodsType = 'head' | 'options' | 'get' | 'put' | 'patch' | 'post' | 'delete'
 
@@ -37,8 +37,8 @@ export type Req = {
   setHeader: (key: string, value: string) => void
   params: Params | null
   query: Params | null
-  form: Form | null
-
+  form: Form
+  // 自定义内容 比如 req.meta.token
   mate: Params
 }
 

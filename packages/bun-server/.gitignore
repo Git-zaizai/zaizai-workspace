@@ -4,6 +4,7 @@ public/img
 public/uploads
 public/uploads_file
 public/json
+data/json/*.json
 
 # Logs
 

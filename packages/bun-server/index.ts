@@ -17,7 +17,7 @@ Bun.serve({
     console.log('\n请求开始')
 
     const req = await createReq(request, server)
-    console.log('🚀 ~ fetch ~ req:', req.query)
+
     const websocket = server.upgrade(request, {
       data: {
         socketId: nanoid(),
@@ -32,10 +32,11 @@ Bun.serve({
     const dispatch = router.callback(req, server)
     const body = await dispatch(req, server)
 
-    if (request.method !== 'OPTIONS') {
+    /* if (request.method !== 'OPTIONS') {
       console.log('结束请求')
     }
-
+ */
+    console.log('结束请求\n')
     return body
   },
   websocket: webSocketHandler,

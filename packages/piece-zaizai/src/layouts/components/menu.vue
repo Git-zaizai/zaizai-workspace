@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { MenuProps, MenuOption } from 'naive-ui'
+import type { MenuOption } from 'naive-ui'
+import { menuProps } from 'naive-ui'
 import Iconify from '@/components/Iconify.vue'
 import { type RouteRecordRaw, RouterLink } from 'vue-router'
 import { isComponent } from '@/utils'
@@ -7,12 +8,6 @@ import { isComponent } from '@/utils'
 defineOptions({
   name: 'zai-menu',
 })
-
-interface Props extends MenuProps {
-  routeName?: string
-  routePath?: string
-  router?: boolean
-}
 
 const DefaultMenuIcon = () => h(Iconify, { class: 'i-ph:app-store-logo-bold' })
 const MenuIcon = (c: string) => () => h(Iconify, { class: c })
@@ -36,7 +31,7 @@ const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
     }
 
     let menuItem: MenuOption = {
-      key: typeof to === 'string' ? to : to.name as string,
+      key: typeof to === 'string' ? to : (to.name as string),
       label: () => h(RouterLink, { to }, { default: () => label }),
       icon,
     }
@@ -48,7 +43,30 @@ const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
   return menu
 }
 
-const { collapsedWidth = 64, collapsedIconSize = 22, ...props } = defineProps<Props>()
+const props = defineProps({
+  ...menuProps,
+  routeName: {
+    type: String,
+    default: '',
+  },
+  routePath: {
+    type: String,
+    default: '',
+  },
+  router: {
+    type: Boolean,
+    default: false,
+  },
+  collapsedWidth: {
+    type: Number,
+    default: 64,
+  },
+  collapsedIconSize: {
+    type: Number,
+    default: 22,
+  },
+})
+
 let router = useRouter()
 let route = useRoute()
 let menuOptions = props.options
@@ -70,8 +88,8 @@ if (props.router) {
 <template>
   <n-menu
     v-bind="props"
-    :collapsed-width="collapsedWidth"
-    :collapsed-icon-size="collapsedIconSize"
+    :collapsed-width="props.collapsedWidth"
+    :collapsed-icon-size="props.collapsedIconSize"
     :options="menuOptions"
     v-model:value="movdelValue"
   />

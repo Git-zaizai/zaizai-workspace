@@ -48,7 +48,7 @@ export const useTableContext = (): ReturnType<typeof createTableContext> => {
 }
 
 export const createTableContext = (optinos: ZaiTablePropsType) => {
-  let scrollautoX = 0
+  let scrollautoX = ref(0)
 
   let cacheColumns = []
   const columns = shallowRef<ZaiTableColumn[]>([])
@@ -69,7 +69,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
         uid: index,
       })
       if (item.type === 'selection') isselection = false
-      scrollautoX += getWidth(item)
+      scrollautoX.value += getWidth(item)
     })
 
     if (isBoolean(optinos.defaultActionColumn) && optinos.defaultActionColumn) {
@@ -78,11 +78,11 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
         default_index_column.width = w
       }
       columns.value.unshift(default_index_column)
-      scrollautoX += default_index_column.width as number
+      scrollautoX.value += default_index_column.width as number
     } else {
       let assign = Object.assign(defaultActionColumn, optinos.defaultActionColumn)
       columns.value.push(assign)
-      scrollautoX += getWidth(assign)
+      scrollautoX.value += getWidth(assign)
     }
 
     if (isBoolean(optinos.defaultActionColumn) && optinos.defaultActionColumn) {
@@ -96,7 +96,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
 
     if (isselection) {
       columns.value.unshift(defulat_selection)
-      scrollautoX += defulat_selection.width as number
+      scrollautoX.value += defulat_selection.width as number
     }
 
     cacheColumns = cloneDeep(columns.value)
@@ -207,7 +207,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
 
   const result = {
     columns,
-    scrollautoX,
+    scrollautoX: optinos.scrollX ? optinos.scrollX : scrollautoX,
     getCacheColumns,
     setfixed,
     setColumnShow,
@@ -215,7 +215,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     paginationReactive,
     deletePopconfirmShow: optinos.deletePopconfirmShow,
     columnsome,
-    initColumns
+    initColumns,
   }
   provide(zaiTableProvideKey, result)
 

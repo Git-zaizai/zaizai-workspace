@@ -1,7 +1,5 @@
-import http from './request'
+import http, { queryParams } from './request'
 
-export const getLinkTabs = () => http('/api/tabs').get().json()
-export const getTableData = () => http('/api/table').get().json()
 export const getJsonFile = async (name: string) => {
   /* const response = await http(`/json/${name}`).get().blob()
   function readBlobAsText(blob: Blob): Promise<string> {
@@ -15,7 +13,13 @@ export const getJsonFile = async (name: string) => {
   return readBlobAsText(response.data as unknown as Blob) */
   return http(`/json/${name}`).get().json()
 }
-
-export const getJosnList = () => http('/json/list').get().json()
 export const setJsonFile = (name, value) => http(`/json/set/${name}`).post(value).json()
-export const delJsonFile = (name) => http(`/delete/${name}`).get().json()
+export const delJsonFile = name => http(`/delete/${name}`).get().json()
+export const getJosnList = () => http('/json/list').get().json()
+
+export const secretkey = (data: { un: string; pwd: string }) => http('/secretkey').post(data).json()
+export const verifyTest = () => http('/verify').get().json()
+
+export const getLinkTabs = () => http('/link/tags').get().json()
+export const getLinkTable = () => http('/link/table').get().json()
+export const setLinkItem = (data: any) => http('/link/update-item').post(data).json()

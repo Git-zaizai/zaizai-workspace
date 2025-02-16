@@ -62,6 +62,14 @@ const demoRoutes: RouteRecordRaw[] = [
     },
     component: () => import('@/views/demo/icons.vue'),
   },
+  {
+    path: 'login',
+    meta: {
+      title: 'login',
+      icon: 'i-ph:intersect-duotone',
+    },
+    component: () => import('@/views/components/login.vue'),
+  },
 ]
 
 export default demoRoutes

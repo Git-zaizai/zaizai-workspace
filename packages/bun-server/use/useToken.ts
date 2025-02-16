@@ -2,7 +2,7 @@ import { pathToRegexp } from 'path-to-regexp'
 import type { Req, Server, Next } from '../router/index'
 import { jwtVerify } from '../utils'
 
-const privateRoutes: string[] = []
+const privateRoutes: string[] = ['/verify', '/link/tags', '/link/table', '/link/detele']
 
 export const PRIVATE_ROUTES = privateRoutes.map(item => pathToRegexp(item))
 
@@ -20,26 +20,32 @@ const matchRoute = (pathname: string) => {
 
 export const usePriveartRoute = (routers?: string[]) => {
   return async (req: Req, server: Server, next: Next) => {
+    console.log('usePriveartRoute ===>')
     if (PRIVATE_ROUTES.length === 0) {
+      console.log('usePriveartRoute <===')
       return next()
     }
     const { pathname } = req
 
     if (!matchRoute(pathname)) {
+      console.log('usePriveartRoute <===')
       return next()
     }
 
     const Authorization = req.headers.get('Authorization')
     if (!Authorization) {
       req.status = 401
+      console.log('usePriveartRoute <===')
       return '请先获取令牌'
     }
 
     try {
       const token = jwtVerify(Authorization)
       req.mate.token = token
+      console.log('usePriveartRoute <===')
       return next()
     } catch (e) {
+      console.log('usePriveartRoute <===')
       if (e.name === 'TokenExpiredError') {
         req.status = 401
         return '令牌已过期'

@@ -129,6 +129,7 @@
         <columnsSetting />
       </div>
     </div>
+
     <n-data-table
       v-bind="props"
       :columns="columns"
@@ -136,7 +137,7 @@
       :pagination="paginationReactive"
       :loading="loading"
       :bordered="tablebordered"
-      :scroll-x="scrollX ?? scrollautoX"
+      :scroll-x="scrollautoX"
       :striped="tablestriped"
       :row-key="rowKey"
       :row-props="rowProps"

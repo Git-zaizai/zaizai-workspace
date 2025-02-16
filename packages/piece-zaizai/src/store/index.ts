@@ -80,7 +80,7 @@ export const appStore = defineStore('appStore', {
     },
   },
   persist: {
-    key: 'zai-appStore',
+    key: 'zai-app-store',
     pick: ['theme', 'transition', 'themeColor', 'autoTheme'],
   },
 })

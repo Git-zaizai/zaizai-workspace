@@ -5,10 +5,12 @@
       mode="out-in"
       appear
     >
-      <component
-        :is="Component"
-        :key="route.fullPath"
-      />
+      <Suspense>
+        <component
+          :is="Component"
+          :key="route.fullPath"
+        />
+      </Suspense>
     </transition>
   </RouterView>
 </template>

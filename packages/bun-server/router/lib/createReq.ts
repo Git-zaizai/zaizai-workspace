@@ -7,7 +7,18 @@ export async function createReq(request: Request, server: Server): Promise<Req> 
 
   let form = null
   if (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH') {
-    form = await request.json()
+    const contentType = request.headers.get('Content-Type') || ''
+    try {
+      if (contentType.includes('application/json')) {
+        form = await request.json()
+      } else if (contentType.includes('multipart/form-data')) {
+        form = await request.formData()
+      } else {
+        form = await request.text()
+      }
+    } catch (error) {
+      form = {}
+    }
   }
 
   let query = null

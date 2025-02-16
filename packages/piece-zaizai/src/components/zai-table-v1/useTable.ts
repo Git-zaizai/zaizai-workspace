@@ -46,7 +46,6 @@ export const useTable = <T extends object>(options: Options<T>) => {
 
   const initRefresh = async () => {
     toggleLoading(true)
-    let msg: any
     try {
       const response = await options.refresh()
       if (response) {
@@ -55,12 +54,9 @@ export const useTable = <T extends object>(options: Options<T>) => {
         } else if (response.data) {
           data.value = response.data as T[]
         }
-      } else {
-        window.$message.error(msg)
       }
     } catch (error) {
       console.log(error)
-      window.$message.error(msg)
     } finally {
       toggleLoading(false)
     }

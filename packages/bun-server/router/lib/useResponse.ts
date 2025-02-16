@@ -1,6 +1,16 @@
+import { val } from 'node_modules/cheerio/dist/commonjs/api/attributes'
 import type { Req, Server, Next } from './type'
 // @ts-ignore
-import { isNull, isUndefined } from 'lodash-es'
+import { isNull, isUndefined, isObject } from 'lodash-es'
+
+function isPrimitive(value: any): boolean {
+  return (
+    value === undefined ||
+    value === null ||
+    Array.isArray(val) ||
+    (typeof value !== 'object' && typeof value !== 'function')
+  )
+}
 
 export async function useResponse(req: Req, server: Server, next: Next) {
   console.log('useResponse ===>')
@@ -15,6 +25,10 @@ export async function useResponse(req: Req, server: Server, next: Next) {
       body.headers.set(key, value)
     })
     return body
+  }
+
+  if (req.status === 401) {
+    return new Response(body, { headers, status: req.status })
   }
 
   if (isUndefined(body) || isNull(body)) {
@@ -33,7 +47,14 @@ export async function useResponse(req: Req, server: Server, next: Next) {
   }
 
   headers.set('Content-Type', 'application/json; charset=utf-8')
-  const response = { code: 200, msg: 'OK', data: body }
+
+  let response
+  
+  if (isPrimitive(body)) {
+    response = { code: 200, msg: 'OK', data: body }
+  } else {
+    response = Object.assign({ code: 200, msg: 'OK', data: null }, body)
+  }
 
   return new Response(JSON.stringify(response), {
     status,

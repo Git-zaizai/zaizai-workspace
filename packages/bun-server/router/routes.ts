@@ -1,41 +1,8 @@
-import dayjs from 'dayjs'
-import { Router } from '../router'
-import { wait } from '../utils'
+import { Router } from './index'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 
 const router = new Router()
-
-router.get('/api/tabs', () => {
-  return ['tab1', 'tab2', 'tab3', 'tab4']
-})
-
-router.get('/api/table', async () => {
-  const res = new Array(100).fill(null).map((_, i) => {
-    return {
-      _id: i,
-      title: 'title' + i,
-      start: 0,
-      finish: 0,
-      duwan: 1,
-      tabs: [],
-      wanjie: 1,
-      isdel: 1,
-      link: '',
-      linkback: '',
-      beizhu: '',
-      links: [],
-      addDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      update: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      finishtime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      rate: '',
-      id: 0,
-    }
-  })
-
-  await wait()
-  return res
-})
 
 const JSONPATH = path.join(path.resolve(), './public/json')
 
@@ -122,18 +89,19 @@ router.get('/delete/:name', async req => {
 
 import { getUserinfo } from '../data/user'
 import { jwtVerify, jwtSign } from '../utils'
+
 router.post('/secretkey', req => {
   const pwd = req.form.pwd
   if (!pwd) {
     req.status = 400
-    return '请输入密钥'
+    return { msg: '请输入密钥' }
   }
   const userinfo = getUserinfo(pwd)
   if (!userinfo) {
     req.status = 400
-    return '密钥错误'
+    return { msg: '密钥错误' }
   }
-  const token = jwtSign({ name: userinfo.username }, { expiresIn: '7d' })
+  const token = jwtSign({ name: userinfo.username }, { expiresIn: '30d' })
   req.setHeader('Authorization', token)
   return token
 })
@@ -142,14 +110,18 @@ router.get('/verify', req => {
   const token = req.headers.get('Authorization')
   if (!token) {
     req.status = 401
-    return '请获取密钥'
+    return { msg: '请获取密钥' }
   }
   const userinfo = jwtVerify(token)
   if (!userinfo) {
     req.status = 401
-    return '请获取密钥'
+    return { msg: '请获取密钥' }
   }
   return 1
 })
+
+import linkRoute from './link'
+
+router.use(linkRoute.routes())
 
 export default router

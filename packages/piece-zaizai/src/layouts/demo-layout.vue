@@ -26,7 +26,11 @@
         </n-button>
         <setting-drawer :setting-button-props="{ class: 'flex-1 my-5px' }" />
       </div>
-      <Menu router route-path="/demo" route-name="demo-layout" />
+      <Menu
+        router
+        route-path="/demo"
+        route-name="demo-layout"
+      />
     </n-layout-sider>
     <n-layout-content :embedded="app.Layoutinverted">
       <default-layout-view />

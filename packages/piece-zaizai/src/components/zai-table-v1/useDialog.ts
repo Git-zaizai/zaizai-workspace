@@ -17,8 +17,8 @@ interface Optinos<T> {
   }
   formData: T
   // resetFormData?: () => T
-  addCallback: (value: T) => void
-  updateCallback: (row: any, formData: T) => void
+  addCallback: (value: T) => void | T | Promise<T>
+  updateCallback: (row: any, formData: T) => void | T | Promise<T>
 }
 
 export const useDialog = <T>(options: Optinos<T>) => {
@@ -31,21 +31,31 @@ export const useDialog = <T>(options: Optinos<T>) => {
   const getInitFormData = () => cloneDeep(isRef(options.formData) ? options.formData.value : options.formData) as T
   const formData = ref(getInitFormData())
 
-  const bindAddShow = () => {
+  const bindAddShow = async () => {
     action = 'add'
     actionTitle.value = cacheCationTitle[action]
-    options.addCallback && options.addCallback(getInitFormData())
+    if (options.addCallback) {
+      const resp = await options.addCallback(getInitFormData())
+      if (resp) {
+        formData.value = resp
+      }
+    }
     showToggle()
   }
 
-  const bandUpdateShow = (value: any) => {
+  const bandUpdateShow = async (value: any) => {
     action = 'update'
     actionTitle.value = cacheCationTitle[action]
-    options.updateCallback && options.updateCallback(value, getInitFormData())
+    if (options.updateCallback) {
+      const resp = await options.updateCallback(value, getInitFormData())
+      if (resp) {
+        formData.value = cloneDeep(resp)
+      }
+    }
     showToggle()
   }
 
-  const getAction = ()=> action
+  const getAction = () => action
 
   return {
     show,
