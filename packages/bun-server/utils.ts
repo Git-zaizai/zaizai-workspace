@@ -31,8 +31,20 @@ export function jwtVerify(token) {
   })
 }
 
+export function normalizePath(inputPath) {
+  // 检测是否为 Windows 风格路径
+  if (path.sep === '\\') {
+    return inputPath.replace(/\\/g, '/')
+  }
+  return inputPath // 已经是 Unix/Linux 风格，无需转换
+}
+
 export async function existsFile(ph: string) {
+  ph = normalizePath(ph)
   if (!fs.existsSync(ph)) {
-    return fs.writeFileSync(ph, '', { flush: true })
+    const phs = ph.split('/')
+    phs.pop()
+    fs.mkdirSync(path.join(...phs), { recursive: true })
+    return fs.writeFileSync(ph, '')
   }
 }
