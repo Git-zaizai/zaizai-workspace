@@ -12,7 +12,7 @@ const router = new Router()
 router.use(cors()).use(useResponse).use(staticSend()).use(usePriveartRoute()).use(routrs.routes())
 
 Bun.serve({
-  port: process.env.ZAI_PORT,
+  port: Number(process.env.ZAI_PORT),
   async fetch(request, server) {
     console.log('\n请求开始')
 
