@@ -1,6 +1,8 @@
 import http, { queryParams } from './request'
+import { wait } from '@/utils'
+import dayjs from 'dayjs'
 
-export const getJsonFile = async (name: string) => {
+export const getJsonFile = async (value: { name: string; code?: string }) => {
   /* const response = await http(`/json/${name}`).get().blob()
   function readBlobAsText(blob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -11,7 +13,11 @@ export const getJsonFile = async (name: string) => {
     })
   }
   return readBlobAsText(response.data as unknown as Blob) */
-  return http(`/json/${name}`).get().json()
+  let url = `/json/${value.name}`
+  if (value.code) {
+    url += '?code=' + value.code
+  }
+  return http(url).get().json()
 }
 export const setJsonFile = (name, value) => http(`/json/set/${name}`).post(value).json()
 export const delJsonFile = name => http(`/delete/${name}`).get().json()
@@ -23,3 +29,30 @@ export const verifyTest = () => http('/verify').get().json()
 export const getLinkTabs = () => http('/link/tags').get().json()
 export const getLinkTable = () => http('/link/table').get().json()
 export const setLinkItem = (data: any) => http('/link/update-item').post(data).json()
+
+export const getTableData = async () => {
+  await wait()
+  const resp = new Array(100).fill(0).map((v, i) => {
+    return {
+      title: 'title' + i,
+      start: 0,
+      finish: 0,
+      duwan: 1,
+      tabs: [],
+      wanjie: 1,
+      isdel: 1,
+      link: '',
+      linkback: '',
+      beizhu: '',
+      links: [],
+      addDate: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+      update: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+      finishtime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+      rate: '',
+      id: i,
+    }
+  })
+  return {
+    value: resp,
+  }
+}

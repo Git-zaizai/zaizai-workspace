@@ -34,3 +34,12 @@ docker run \
 -v /root/nginx/log:/var/log/nginx \
 -v /root/nginx/html:/usr/share/nginx/html \
 -d nginx
+
+
+启动
+sudo systemctl start nginx
+sudo systemctl stop nginx
+重启
+sudo systemctl reload nginx
+Nginx服务的当前状态
+sudo systemctl status nginx

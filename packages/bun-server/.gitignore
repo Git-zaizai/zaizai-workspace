@@ -1,10 +1,10 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
-public/img
-public/uploads
-public/uploads_file
-public/json
-public/js
+public/img/
+public/uploads/
+public/uploads_file/
+public/json/
+public/js/
 data/json/*.json
 # Logs
 

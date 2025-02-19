@@ -30,14 +30,15 @@ const http = createFetch({
     },
     onFetchError: async error => {
       const errStatus = error?.response?.status ?? 500
-      let text = null
-      try {
-        text = await error.response.json()
-      } catch {
+      let text = '网络错误'
+
+      if (error.response) {
+        let resp = await error.response.text()
         try {
-          text = await error.response.text()
+          resp = JSON.parse(resp).msg
         } catch {
-          text = '网络错误'
+        } finally {
+          text = resp
         }
       }
 

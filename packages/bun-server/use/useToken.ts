@@ -1,8 +1,8 @@
 import { pathToRegexp } from 'path-to-regexp'
 import type { Req, Server, Next } from '../router/index'
-import { jwtVerify } from '../utils'
+import { jwtVerify } from '../data/user'
 
-const privateRoutes: string[] = ['/verify', '/link/tags', '/link/table', '/link/detele']
+const privateRoutes: string[] = ['/link/tags', '/link/table', '/link/detele']
 
 export const PRIVATE_ROUTES = privateRoutes.map(item => pathToRegexp(item))
 
@@ -39,7 +39,16 @@ export const usePriveartRoute = (routers?: string[]) => {
       return '请先获取令牌'
     }
 
-    try {
+    const isjwt = jwtVerify(Authorization)
+    if (isjwt.code === 200) {
+      req.mate.token = { code: isjwt.code, msg: isjwt.msg, ...isjwt.data }
+      console.log('usePriveartRoute <===')
+      return next()
+    } else {
+      req.status = isjwt.code
+      return isjwt.msg
+    }
+    /* try {
       const token = jwtVerify(Authorization)
       req.mate.token = token
       console.log('usePriveartRoute <===')
@@ -59,6 +68,6 @@ export const usePriveartRoute = (routers?: string[]) => {
         req.status = 401
         return '未知错误，请重新获取'
       }
-    }
+    } */
   }
 }

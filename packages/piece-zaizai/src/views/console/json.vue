@@ -5,6 +5,7 @@ import type { DataTableColumns } from 'naive-ui'
 import { getJsonFile, getJosnList, setJsonFile, delJsonFile } from '@/api'
 import dayjs from 'dayjs'
 import { isString } from 'lodash-es'
+import { useUserStore } from '@/store/user'
 
 interface Row {
   name: string
@@ -13,6 +14,7 @@ interface Row {
   size: string
 }
 
+const userStore = useUserStore()
 const { show, showToggle, bindAddShow, bandUpdateShow, formData, getAction } = useDialog({
   formData: {
     monacoValue: '',
@@ -22,12 +24,18 @@ const { show, showToggle, bindAddShow, bandUpdateShow, formData, getAction } = u
     formData.value = form
   },
   updateCallback: async row => {
-    const resp = await getJsonFile(row.name)
+    const resp = await getJsonFile({
+      name: row.name,
+      code: row.code,
+    })
     if (resp.data.value?.code === 500) {
       window.$message.error(resp.data.value.msg)
     } else {
-      formData.value.monacoValue = isString(resp.data.value) ? resp.data.value : JSON.stringify(resp.data.value)
-      formData.value.name = row.name
+      const updatedFormData = {
+        monacoValue: isString(resp.data.value) ? resp.data.value : JSON.stringify(resp.data.value),
+        name: row.name,
+      }
+      return updatedFormData
     }
   },
 })
@@ -60,6 +68,13 @@ const { loading, data, columns, refresh } = useTable({
         key: 'size',
       },
     ]
+
+    if (userStore.info.secretkey) {
+      columns.push({
+        title: 'code',
+        key: 'code',
+      })
+    }
     return columns
   },
 })

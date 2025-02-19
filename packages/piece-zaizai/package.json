@@ -1,10 +1,11 @@
 {
   "name": "piece-zaizai",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "devpro":"vite --mode devpro",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },

@@ -40,7 +40,7 @@ export function cancelFullscreen() {
 }
 
 export function copyStr(value: string): void {
-  if (!value){
+  if (!value) {
     window.$message.info('没有内容')
     return
   }
@@ -75,4 +75,10 @@ export function copyStr(value: string): void {
   } else {
     execCommand()
   }
+}
+
+export function wait(time = 1000) {
+  return new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
 }

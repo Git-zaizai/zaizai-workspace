@@ -222,7 +222,6 @@ import { getLinkTabs, getLinkTable, setLinkItem } from '@/api'
 import Iconify from '@/components/Iconify.vue'
 
 interface Row {
-  _id: string
   title: string
   start: number
   finish: number
@@ -241,7 +240,7 @@ interface Row {
   update: string
   finishtime: string
   rate: string
-  id: number
+  id: string
 }
 
 function randTagType() {
@@ -265,7 +264,6 @@ const rule = {
 
 const { show, showToggle, getAction, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
   formData: {
-    _id: '',
     title: '',
     start: 0,
     finish: 0,
@@ -281,7 +279,7 @@ const { show, showToggle, getAction, bindAddShow, bandUpdateShow, actionTitle, f
     update: null,
     finishtime: null,
     rate: '',
-    id: 0,
+    id: '',
   },
   addCallback: form => {
     formData.value = form
@@ -300,13 +298,15 @@ const {
   refresh,
 } = useTable<Row>({
   refresh: async () => {
-    const { data } = await getLinkTable()
-    return data.value.reverse()
+    const { data, error } = await getLinkTable()
+    if (!error) {
+      return data.value.reverse()
+    }
   },
   createColunms: async () => {
     const { data } = await getLinkTabs()
 
-    const tabOptions = data.value.map(item => ({ label: item, value: item }))
+    const tabOptions = data.value?.map(item => ({ label: item, value: item }))
     tags.value = tabOptions
     const columns: DataTableColumns<Row> = [
       {
