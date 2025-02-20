@@ -1,8 +1,10 @@
 import { Router } from './index'
 import path from 'node:path'
 import fs from 'node:fs/promises'
-import { DATA_PATH } from '../config'
+import { DATA_PATH, UPLOAD_PATH } from '../config'
 import { getUserinfo, jwtVerify, jwtSign } from '../data/user'
+import { mkdirRecursive } from '../utils'
+import dayjs from 'dayjs'
 
 const router = new Router()
 
@@ -176,9 +178,36 @@ router.get('/verify', req => {
   return 1
 })
 
-import linkRoute from './link'
-import dayjs from 'dayjs'
+router.post('/upload-web', async req => {
+  const form = req.form
+  const file = form.get('file')
 
-router.use(linkRoute.routes())
+  if (!file) {
+    return {
+      code: 400,
+      msg: '请选择文件',
+    }
+  }
+
+  const current = dayjs().format('YYYY-MM-DD')
+  const mkdir = path.join(UPLOAD_PATH, current)
+  mkdirRecursive(mkdir)
+
+  try {
+    // console.log(file instanceof File); // true
+    await Bun.write(path.join(mkdir, file.name), file)
+    return 1
+  } catch (err) {
+    return {
+      code: 500,
+      msg: '写入文件',
+    }
+  }
+})
+
+import linkRoute from './link'
+import { wsRouter } from '../ws/router'
+
+router.use(linkRoute.routes()).use(wsRouter.routes())
 
 export default router

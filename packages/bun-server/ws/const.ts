@@ -4,6 +4,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import dayjs from 'dayjs'
 import { existsFile } from '../utils'
+import type { ServerWebSocket } from 'bun'
 
 export const logfile = path.join(LOG_PATH, '/ws/log.log')
 export const errorfile = path.join(LOG_PATH, '/ws/error.log')
@@ -20,7 +21,14 @@ export const logger = new Console({
  * @var {Map<string, { ws: RouteServerWebSocket, messages: any[], createDate: number }>} wsMap
  *
  */
-export const wsMap = new Map()
+export const wsMap = new Map<
+  string,
+  {
+    ws: ServerWebSocket
+    messages: any[]
+    createDate: number
+  }
+>()
 
 export const loggerAppend = msg => {
   const heartbeatfliePath = () => {

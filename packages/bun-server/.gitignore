@@ -5,6 +5,7 @@ public/uploads/
 public/uploads_file/
 public/json/
 public/js/
+public/upload/
 data/json/*.json
 # Logs
 

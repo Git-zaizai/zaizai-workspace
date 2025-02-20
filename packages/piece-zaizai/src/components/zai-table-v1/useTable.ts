@@ -65,8 +65,10 @@ export const useTable = <T extends object>(options: Options<T>) => {
   const resize = () => {
     const height = window.innerHeight - getOtherViewHeight()
     const zaiTable: HTMLDivElement = document.querySelector('.zai-table .n-data-table')
-    zaiTable.style.height = `${height}px`
-    console.log('debouncedResize')
+    if (zaiTable) {
+      zaiTable.style.height = `${height}px`
+      console.log('debouncedResize')
+    }
   }
   const debouncedResize = useDebounceFn(resize, 300)
 

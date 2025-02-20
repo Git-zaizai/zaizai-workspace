@@ -3,6 +3,14 @@ import type { RouteRecordRaw } from 'vue-router'
 
 const demoRoutes: RouteRecordRaw[] = [
   {
+    path: 'test',
+    meta: {
+      title: '测试页面',
+      icon: 'i-ph-finn-the-human-fill',
+    },
+    component: () => import('@/views/demo/test.vue'),
+  },
+  {
     path: '404',
     component: () => import('@/views/common/404.vue'),
   },
@@ -69,6 +77,14 @@ const demoRoutes: RouteRecordRaw[] = [
       icon: 'i-ph:intersect-duotone',
     },
     component: () => import('@/views/components/login.vue'),
+  },
+  {
+    path: 'upload-web',
+    meta: {
+      title: 'upload-web端',
+      icon: 'i-ph-file-arrow-up-duotone',
+    },
+    component: () => import('@/views/demo/upload-web.vue'),
   },
 ]
 

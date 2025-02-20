@@ -1,5 +1,7 @@
 import { use } from './message'
 import { loggerAppend } from './const'
+import { Router } from '../router'
+const router = new Router()
 
 const detectingSocketId = (ws, data, next) => {
   if (!ws.data.socketId) {
@@ -64,3 +66,61 @@ use('heartbeat', (ws, data) => {
   loggerAppend(`${dayjs().format('YYYY-MM-DD-HH-mm-ss')} ${socketId} 心跳 : ${data} \n`)
   return ''
 })
+
+use('reply-message', (ws, data) => {
+  const wsi = wsMap.get(ws.data.socketId)
+  const newData = JSON.parse(data)
+  const index = wsi.messages.findIndex(fv => fv.id === newData.id)
+  wsi.messages[index].replymsg = newData.msg
+})
+
+router.post('/ws/test-msg', req => {
+  const { socketId, msg } = req.form
+
+  if (!msg) {
+    return { code: 400, msg: '请填写消息' }
+  }
+
+  if (!wsMap.has(socketId)) {
+    return { code: 404, msg: '连接找不到了 ws' }
+  }
+
+  const ws = wsMap.get(socketId)
+  console.log('🚀 ~ ws:', ws)
+
+  ws.ws.send(
+    JSON.stringify({
+      type: 'wol-app',
+      code: 'reply-message',
+      data: msg,
+    })
+  )
+
+  ws.messages.push({
+    id: msg,
+    replymsg: null,
+  })
+
+  return 1
+})
+
+router.post('/ws/get-test-msg', req => {
+  const { socketId, msg } = req.form
+  if (!wsMap.has(socketId)) {
+    return { code: 400, msg: '连接找不到了 ws' }
+  }
+  const ws = wsMap.get(socketId)
+  const find = ws.messages.find(fv => fv.id === msg)
+  if (find.replymsg) {
+    return {
+      code: 200,
+      data: find.replymsg,
+    }
+  } else {
+    return {
+      code: 204,
+    }
+  }
+})
+
+export const wsRouter = router
