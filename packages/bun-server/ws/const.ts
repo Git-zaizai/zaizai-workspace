@@ -24,7 +24,7 @@ export const logger = new Console({
 export const wsMap = new Map<
   string,
   {
-    ws: ServerWebSocket
+    ws: ServerWebSocket<{ socketId: string }>
     messages: any[]
     createDate: number
   }

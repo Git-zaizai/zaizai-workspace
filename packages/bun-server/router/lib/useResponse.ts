@@ -7,7 +7,7 @@ function isPrimitive(value: any): boolean {
   return (
     value === undefined ||
     value === null ||
-    Array.isArray(val) ||
+    Array.isArray(value) ||
     (typeof value !== 'object' && typeof value !== 'function')
   )
 }

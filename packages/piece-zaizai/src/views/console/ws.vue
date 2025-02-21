@@ -4,12 +4,13 @@ import { Fragment } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 import { NButton } from 'naive-ui'
 import dayjs from 'dayjs'
-import { wsSendMessage, wsGetReplyMsg } from '@/api'
+import { wsSendMessage, wsGetReplyMsg, wsGetList } from '@/api'
 import { wait } from '@/utils'
+import { useToggle } from '@vueuse/core'
 
 interface Row {
   userid: string
-  socketid: string
+  socketId: string
   messages: string
   createDate: string
   testMsg: string
@@ -19,18 +20,12 @@ interface Row {
   }>
 }
 
-const { data, columns } = useTable({
+const [showModal, showModalToggle] = useToggle()
+
+const { data, columns, refresh } = useTable({
   refresh: async () => {
-    return new Array(10).fill(0).map((_, index) => {
-      return {
-        userid: index,
-        socketid: 'socketid' + index,
-        messages: 'messages',
-        createDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        testMsg: '',
-        testMsgs: [],
-      }
-    })
+    const { data } = await wsGetList()
+    return data.value && data.value.data.map(v => ({ ...v, testMsg: [], testMsgs: [] }))
   },
   createColunms: async () => {
     const columns: DataTableColumns<Row> = [
@@ -84,7 +79,7 @@ const { data, columns } = useTable({
       },
       {
         title: 'Socket ID',
-        key: 'socketid',
+        key: 'socketId',
       },
       {
         title: '消息列表',
@@ -93,7 +88,7 @@ const { data, columns } = useTable({
           return h(
             NButton,
             {
-              onClick: () => (showModal3.value = true),
+              onClick: () => showModalToggle(),
             },
             {
               default: () => '查看',
@@ -110,17 +105,15 @@ const { data, columns } = useTable({
   },
 })
 
-const showModal3 = ref(false)
-
-async function getReplyMsg(msg: string) {
+async function getReplyMsg(form: { socketId: string; msg: string }) {
   let i = 0
   const run = async () => {
-    const { data } = await wsGetReplyMsg(msg)
+    const { data } = await wsGetReplyMsg(form)
     if (data.value && data.value.code === 200) {
       return data.value.data
     } else {
       await wait(1000)
-      if (i < 10) {
+      if (i < 9) {
         i++
         return run()
       }
@@ -136,7 +129,7 @@ async function bandSendMessage(row: Row) {
   }
 
   const { data } = await wsSendMessage({
-    socketid: row.socketid,
+    socketId: row.socketId,
     msg: row.testMsg,
   })
 
@@ -149,8 +142,10 @@ async function bandSendMessage(row: Row) {
     replyMessage: '等待回复...',
   })
 
-  const reply = await getReplyMsg(row.testMsg)
-  console.log('🚀 ~ bandSendMessage ~ reply:', reply)
+  const reply = await getReplyMsg({
+    msg: row.testMsg,
+    socketId: row.socketId,
+  })
   if (!reply) {
     row.testMsgs.at(-1).replyMessage = '无回复'
   } else {
@@ -164,12 +159,13 @@ async function bandSendMessage(row: Row) {
     <ZaiTableV1
       :data="data"
       :columns="columns"
-      :row-key="row => row.socketid"
+      :row-key="row => row.socketId"
       default-expand-all
+      @refresh="refresh"
     />
 
     <n-modal
-      v-model:show="showModal3"
+      v-model:show="showModal"
       title="无预设拖拽"
       draggable
       :style="{ width: '800px' }"

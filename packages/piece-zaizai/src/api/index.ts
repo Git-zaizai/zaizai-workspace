@@ -30,8 +30,9 @@ export const getLinkTabs = () => http('/link/tags').get().json()
 export const getLinkTable = () => http('/link/table').get().json()
 export const setLinkItem = (data: any) => http('/link/update-item').post(data).json()
 
-export const wsSendMessage = (data: { socketid: string; msg: string }) => http('/ws/test-msg').post(data).json()
-export const wsGetReplyMsg = (msg: string) => http('/ws/get-test-msg').post({ msg }).json()
+export const wsGetList = () => http('/ws/list').get().json()
+export const wsSendMessage = (data: { socketId: string; msg: string }) => http('/ws/test-msg').post(data).json()
+export const wsGetReplyMsg = (data: { socketId: string; msg: string }) => http('/ws/get-test-msg').post(data).json()
 
 export const getTableData = async () => {
   await wait()

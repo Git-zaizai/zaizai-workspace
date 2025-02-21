@@ -2,7 +2,14 @@ import { pathToRegexp } from 'path-to-regexp'
 import type { Req, Server, Next } from '../router/index'
 import { jwtVerify } from '../data/user'
 
-const privateRoutes: string[] = ['/link/tags', '/link/table', '/link/detele']
+const privateRoutes: string[] = [
+  '/link/tags',
+  '/link/table',
+  '/link/detele',
+  '/ws/test-msg',
+  '/ws/get-test-msg',
+  '/ws/list',
+]
 
 export const PRIVATE_ROUTES = privateRoutes.map(item => pathToRegexp(item))
 

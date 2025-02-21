@@ -21,15 +21,17 @@ const webSocketHandler: WebSocketHandler<{ socketId: string }> = {
   },
   async message(ws, message) {
     if (ws.data.socketId) {
-      console.log(`id:${ws.data.socketId}  message:${message} `)
-    }else{
-      console.log(`id: null  message:${message} `)
+      console.log(`webSocketHandler:message => id:${ws.data.socketId}  message:${message} `)
+    } else {
+      console.log(`webSocketHandler:message => id: null  message:${message} `)
     }
 
     if (message instanceof Buffer) {
       message = message.toString()
     }
+
     const messageRes = await getMessage(ws, message)
+
     if (messageRes !== undefined && messageRes !== null) {
       if (typeof messageRes === 'string') {
         ws.send(messageRes)

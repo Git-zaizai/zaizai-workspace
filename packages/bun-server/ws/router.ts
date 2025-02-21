@@ -40,7 +40,7 @@ use('wol-windows', detectingSocketId, (ws, data) => {
   return {
     type: 'wol-app',
     code: 'wol-windows',
-    data: data,
+    data: data.message,
   }
 })
 
@@ -57,7 +57,7 @@ use('test-socket-message', (ws, data) => {
   return {
     type: 'wol-app',
     code: 'test-socket-message',
-    data: '服务器收到，' + data,
+    data: '服务器收到，' + data.message,
   }
 })
 
@@ -69,9 +69,14 @@ use('heartbeat', (ws, data) => {
 
 use('reply-message', (ws, data) => {
   const wsi = wsMap.get(ws.data.socketId)
-  const newData = JSON.parse(data)
-  const index = wsi.messages.findIndex(fv => fv.id === newData.id)
-  wsi.messages[index].replymsg = newData.msg
+
+  const find = wsi.messages.find(fv => {
+    return fv.id === data.id
+  })
+
+  if (find) {
+    find.replymsg = data.replymsg
+  }
 })
 
 router.post('/ws/test-msg', req => {
@@ -80,14 +85,11 @@ router.post('/ws/test-msg', req => {
   if (!msg) {
     return { code: 400, msg: '请填写消息' }
   }
-
   if (!wsMap.has(socketId)) {
     return { code: 404, msg: '连接找不到了 ws' }
   }
 
   const ws = wsMap.get(socketId)
-  console.log('🚀 ~ ws:', ws)
-
   ws.ws.send(
     JSON.stringify({
       type: 'wol-app',
@@ -121,6 +123,19 @@ router.post('/ws/get-test-msg', req => {
       code: 204,
     }
   }
+})
+
+router.get('/ws/list', () => {
+  const list = []
+  for (const [key, value] of wsMap) {
+    list.push({
+      socketId: key,
+      userid: '暂空',
+      createDate: value.createDate,
+      messages: value.messages,
+    })
+  }
+  return list
 })
 
 export const wsRouter = router
