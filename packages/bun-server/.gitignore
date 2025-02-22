@@ -1,8 +1,6 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
-public/img/*
-public/uploads/*
-public/uploads_file/*
+public/img/
 public/json/*
 public/js/*
 public/upload/*
