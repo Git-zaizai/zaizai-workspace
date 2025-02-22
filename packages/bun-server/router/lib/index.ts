@@ -4,18 +4,42 @@ import { parse, pathToRegexp, match as pathToMatch, type MatchResult } from 'pat
 import { safeDecodeURIComponent } from './utils'
 import type { methodsType, Req, Next } from './type'
 
-const methods = ['HEAD', 'OPTIONS', 'GET', 'PUT', 'PATCH', 'POST', 'DELETE'].map(v => v.toLowerCase())
+const methods = ['HEAD', 'OPTIONS', 'GET', 'PUT', 'PATCH', 'POST', 'DELETE'].map(v => v.toLowerCase() as methodsType)
 
 type MethodsCallback = (req: Req, serve: Server, next: Next) => any | Promise<any>
 
 type MethodsFun = (namePath: string, middleware: MethodsCallback | MethodsCallback[]) => Router
 
+interface RouterOptions {
+  methods?: methodsType[]
+  prefix?: string
+  proxy?: string
+}
+
 class Router {
   private stack: Array<any>
   private middleware: Array<MethodsCallback>
   methods: Array<methodsType>
-  host: string
-  prefix: string
+  host: string // 暂时没用
+  prefix: string // 路由前缀
+  /***
+   * 
+   * 反向代理路由前缀 
+   * 比如 nginx 反向代理为 
+   * location /bun-server {
+        proxy_pass http://127.0.0.1:7379;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-PORT $remote_port;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    nginx 反向代理会变成 http://127.0.0.1:7379/bun-server/xxxx
+    一般都是 / 开始，设置了路径反向代理就是不是从 / 开始
+    所以设置这个去除 /bun-server
+   */
+  proxy: string
   opts: any
 
   head: MethodsFun
@@ -26,12 +50,13 @@ class Router {
   post: MethodsFun
   delele: MethodsFun
 
-  constructor(opts?: any) {
+  constructor(opts?: RouterOptions) {
     this.opts = opts
     this.stack = []
     this.methods = opts?.methods || [...methods]
     this.host = ''
     this.prefix = ''
+    this.proxy = opts?.proxy ?? ''
     this.middleware = []
 
     for (const method of methods) {
@@ -45,7 +70,7 @@ class Router {
       methods: method.map(v => v.toLowerCase()),
       stack: Array.isArray(middleware) ? middleware : [middleware],
       regexp: pathToRegexp(this.prefix + path),
-      name: '',
+      name: '', // 暂时没用
       pathToMatch: pathToMatch(path),
       match(path) {
         // 在这里 pathToRegexp() 返回了一个对象，然后正则在regexp.regexp上
@@ -108,7 +133,12 @@ class Router {
 
   callback(req: Req, server: Server) {
     const { pathname, method } = req
+
     const dispatch = async (req: Req, server: Server, next?: Next) => {
+      if (this.proxy && req.pathname.includes(this.proxy)) {
+        req.pathname = req.pathname.replace(this.proxy, '/')
+      }
+
       const route = this.match(pathname, method)
       /* if (!route.route) {
         if (next) {
@@ -132,6 +162,7 @@ class Router {
 
       const middleware = this.middleware
       const composeFns = [].concat(middleware, layerChain)
+
       return compose(composeFns)(req, server, next)
     }
 

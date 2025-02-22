@@ -6,7 +6,9 @@ import { nanoid } from 'nanoid'
 import webSocketHandler from './ws'
 import { usePriveartRoute } from './use/useToken'
 
-const router = new Router()
+const router = new Router({
+  proxy: '/bun-server',
+})
 
 // 查看log的执行顺序
 router.use(cors()).use(useResponse).use(staticSend()).use(usePriveartRoute()).use(routrs.routes())
