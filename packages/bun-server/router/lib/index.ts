@@ -132,7 +132,11 @@ class Router {
   }
 
   callback(req: Req, server: Server) {
-    const { pathname, method } = req
+    let { pathname, method } = req
+    
+    if (this.proxy && pathname.includes(this.proxy)) {
+      pathname = pathname.replace(this.proxy, '/')
+    }
 
     const dispatch = async (req: Req, server: Server, next?: Next) => {
       if (this.proxy && req.pathname.includes(this.proxy)) {
