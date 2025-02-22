@@ -17,9 +17,22 @@ import monacoEditorEsmPlugin from 'vite-plugin-monaco-editor-esm'
 import { URL, fileURLToPath } from 'node:url'
 import { getConfigEnv } from './build/index'
 
+import { visualizer } from 'rollup-plugin-visualizer'
+
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
   const env = getConfigEnv(configEnv.mode)
+
+  const plugins = []
+  if (env.VITE_VISUZLIZER) {
+    plugins.push(
+      visualizer({
+        filename: './dist/stats.html',
+        gzipSize: true,
+        brotliSize: true,
+      })
+    )
+  }
 
   return {
     plugins: [
@@ -70,6 +83,7 @@ export default defineConfig(configEnv => {
         },
       }),
       monacoEditorEsmPlugin({}),
+      ...plugins,
     ],
     resolve: {
       alias: {

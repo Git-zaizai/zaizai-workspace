@@ -20,6 +20,7 @@ declare namespace Env {
     readonly VITE_BASE_URL: string //项目 base
     readonly VITE_GITHUB: string //
     readonly VITE_GLOB_ROUTER_FN: 'history' | 'hash'
+    readonly VITE_VISUZLIZER: boolean
   }
 }
 

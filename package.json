@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "rimraf": "^6.0.1"
+    "node-ssh": "^13.2.0",
+    "ora": "^8.2.0",
+    "rimraf": "^6.0.1",
+    "ssh2-sftp-client": "^11.0.0"
   },
   "dependencies": {
     "@types/lodash-es": "^4.17.12",
