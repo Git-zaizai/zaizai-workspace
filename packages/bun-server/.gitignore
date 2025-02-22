@@ -1,15 +1,16 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
-public/img/
-public/uploads/
-public/uploads_file/
-public/json/
-public/js/
-public/upload/
+public/img/*
+public/uploads/*
+public/uploads_file/*
+public/json/*
+public/js/*
+public/upload/*
 data/json/*.json
+logs/*
+
 # Logs
 
-logs
 _.log
 npm-debug.log_
 yarn-debug.log*
