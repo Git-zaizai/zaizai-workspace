@@ -112,12 +112,12 @@ export default defineConfig(configEnv => {
           drop_debugger: true,
         },
       },
-      cssCodeSplit: false, //禁用 CSS 代码拆分
+      cssCodeSplit: true, //禁用 CSS 代码拆分
       rollupOptions: {
         output: {
           entryFileNames: 'assets/js/[name].[hash].js',
           chunkFileNames: 'assets/js/[name].[hash].js',
-          assetFileNames: 'assets/[name].[hash].[ext]',
+          assetFileNames: 'assets/[ext]/[name].[hash].[ext]',
         },
       },
     },

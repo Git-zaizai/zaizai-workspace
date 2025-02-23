@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "devpro": "vite --mode devpro",
+    "build-dev": "rimraf dist && vite build --mode devprolocal && bun ./build/build-ftp-liunx.ts",
     "build": "rimraf dist && vite build && bun ./build/build-linux.ts",
     "build-tsc": "vue-tsc -b && vite build",
     "preview": "vite preview"

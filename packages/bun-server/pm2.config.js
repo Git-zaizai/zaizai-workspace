@@ -7,15 +7,16 @@ module.exports = {
     {
       name: 'bun-server',
       interpreter: "~/.bun/bin/bun", // Path to the Bun interpreter
-      script: '/home/ubuntu/www/zaizai-workspace/packages/bun-server',
-      cwd: '/home/ubuntu/www/zaizai-workspace/packages/bun-server', // 如果配置文件不是在项目目录下就是要加 cwd 工作目录
-      watch: ['/home/ubuntu/www/zaizai-workspace/packages/bun-server'],
+      script: '/www/zaizai-workspace/packages/bun-server',
+      cwd: '/www/zaizai-workspace/packages/bun-server', // 如果配置文件不是在项目目录下就是要加 cwd 工作目录
+      watch: ['/www/zaizai-workspace/packages/bun-server'],
       ignore_watch: [
         // 忽视这些目录的变化
-        '/home/ubuntu/www/zaizai-workspace/packages/bun-server/node_modules',
-        '/home/ubuntu/www/zaizai-workspace/packages/bun-server/public',
-        '/home/ubuntu/www/zaizai-workspace/packages/bun-server/logs',
-        '/home/ubuntu/www/zaizai-workspace/packages/bun-server/data',
+        '/www/zaizai-workspace/packages/bun-server/node_modules',
+        '/www/zaizai-workspace/packages/bun-server/public',
+        '/www/zaizai-workspace/packages/bun-server/logs',
+        '/www/zaizai-workspace/packages/bun-server/data',
+        '/www/zaizai-workspace/packages/bun-server/cache'
       ],
       autorestart: true, //自动重启
       env_development: {
@@ -27,8 +28,8 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 4399,
       },
-      error_file: '/home/ubuntu/www/logs/err.log',
-      out_file: '/home/ubuntu/www/logs/out.log',
+      error_file: '/www/logs/err.log',
+      out_file: '/www/logs/out.log',
     },
   ],
 }
