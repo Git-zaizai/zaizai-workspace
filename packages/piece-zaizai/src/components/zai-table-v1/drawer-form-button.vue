@@ -2,6 +2,7 @@
 const emits = defineEmits<{
   submit: []
   close: []
+  reset: []
 }>()
 </script>
 
@@ -26,6 +27,18 @@ const emits = defineEmits<{
         <Iconify class="i-line-md-close" />
       </template>
       取消
+    </n-button>
+    <n-button
+      block
+      class="mt-3"
+      type="warning"
+      ghost
+      @click="emits('reset')"
+    >
+      <template #icon>
+        <Iconify class="i-ph-arrows-counter-clockwise-light" />
+      </template>
+      重置
     </n-button>
   </div>
 </template>

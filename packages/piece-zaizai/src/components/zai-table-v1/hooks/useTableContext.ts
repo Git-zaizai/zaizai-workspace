@@ -213,7 +213,6 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
     setColumnShow,
     columnsSort,
     paginationReactive,
-    deletePopconfirmShow: optinos.deletePopconfirmShow,
     columnsome,
     initColumns,
   }

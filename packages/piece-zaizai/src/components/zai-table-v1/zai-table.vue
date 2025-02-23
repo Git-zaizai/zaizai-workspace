@@ -31,6 +31,8 @@
             <n-input
               clearable
               v-model:value="selectValue"
+              @clear="emits('selectChanga', '')"
+              @keyup.enter="emits('selectChanga', selectValue)"
             />
             <n-button
               ghost
@@ -169,6 +171,7 @@ import { useKoutSide } from './hooks/useKoutSide'
 import type { DataTableRowKey } from 'naive-ui'
 import { useToggle } from '@vueuse/core'
 import { fullscreen, cancelFullscreen } from '@/utils'
+import type { Ref } from 'vue'
 
 const props = defineProps(zaiTableProps)
 const emits = defineEmits<ZaiTableEmitType>()

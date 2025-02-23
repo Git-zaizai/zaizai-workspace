@@ -1,5 +1,5 @@
 import { useToggle, useDebounceFn } from '@vueuse/core'
-import type { DataTableColumns } from 'naive-ui'
+import { type DataTableColumns } from 'naive-ui'
 
 const getOtherViewHeight = () => {
   const header: HTMLDivElement = document.querySelector('.n-layout-header')
@@ -33,6 +33,7 @@ export const useTable = <T extends object>(options: Options<T>) => {
 
   const [loading, toggleLoading] = useToggle(false)
   const data = ref(options.data ?? [])
+  let cache_data = null
 
   let columns = shallowRef()
   // let columns = []
@@ -44,6 +45,8 @@ export const useTable = <T extends object>(options: Options<T>) => {
     }
   }
 
+  const getCacheData = () => cache_data
+
   const initRefresh = async () => {
     toggleLoading(true)
     try {
@@ -51,8 +54,10 @@ export const useTable = <T extends object>(options: Options<T>) => {
       if (response) {
         if (Array.isArray(response)) {
           data.value = response as T[]
+          cache_data = JSON.parse(JSON.stringify(response))
         } else if (response.data) {
           data.value = response.data as T[]
+          cache_data = JSON.parse(JSON.stringify(response.data))
         }
       }
     } catch (error) {
@@ -93,5 +98,6 @@ export const useTable = <T extends object>(options: Options<T>) => {
     data,
     refresh: initRefresh,
     columns,
+    getCacheData,
   }
 }

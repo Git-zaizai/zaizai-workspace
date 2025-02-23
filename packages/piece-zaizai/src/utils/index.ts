@@ -1,4 +1,4 @@
-import { isFunction, isObject } from 'lodash-es'
+import { isFunction, isObject, isString } from 'lodash-es'
 
 export const isComponent = (component: any) => {
   return (isObject(component) as {}) && isFunction(component.render)
@@ -81,4 +81,18 @@ export function wait(time = 1000) {
   return new Promise(resolve => {
     setTimeout(resolve, time)
   })
+}
+
+export function downloadFile(data: any, filename: string) {
+  let str
+  if (!isString(data)) {
+    str = JSON.stringify(data)
+  }
+  const blob = new Blob([str])
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
 }

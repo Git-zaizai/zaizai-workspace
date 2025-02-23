@@ -2,16 +2,20 @@
 import monacoEditor from '@/components/monaco-editor'
 import { ZaiTableV1, useTable, useDialog } from '@/components/zai-table-v1'
 import type { DataTableColumns } from 'naive-ui'
+import { NButton } from 'naive-ui'
 import { getJsonFile, getJosnList, setJsonFile, delJsonFile } from '@/api'
 import dayjs from 'dayjs'
 import { isString } from 'lodash-es'
 import { useUserStore } from '@/store/user'
+import phFileArrowDownDuotone from '~icons/ph/file-arrow-down-duotone'
+import { downloadFile } from '@/utils'
 
 interface Row {
   name: string
   update: string
   createDate: string
   size: string
+  code: string
 }
 
 const userStore = useUserStore()
@@ -66,6 +70,20 @@ const { loading, data, columns, refresh } = useTable({
       {
         title: '文件大小',
         key: 'size',
+        render(rowData, rowIndex) {
+          return (rowData.size / 1024).toFixed(2) + 'kb'
+        },
+      },
+      {
+        title: '下载',
+        key: 'dod',
+        render(row) {
+          return h(NButton, {
+            size: 'small',
+            renderIcon: () => h(phFileArrowDownDuotone),
+            onClick: () => downloadJosnList(row),
+          })
+        },
       },
     ]
 
@@ -78,6 +96,18 @@ const { loading, data, columns, refresh } = useTable({
     return columns
   },
 })
+
+async function downloadJosnList(row: Row) {
+  const { data, error } = await getJsonFile({
+    name: row.name,
+    code: row.code,
+  })
+  if (error.value || data.value?.code === 500) {
+    window.$message.error(data.value?.msg ?? '获取数据失败')
+  } else {
+    downloadFile(data.value, row.name)
+  }
+}
 
 const saveJson = async (value: string) => {
   const str = value.replaceAll('\n', '').replaceAll(' ', '')

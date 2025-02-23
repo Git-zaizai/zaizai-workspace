@@ -8,6 +8,8 @@
       @add="bindAddShow"
       @action-update="bandUpdateShow"
       @refresh="refresh"
+      @select-changa="bandSelect"
+      @action-delete="bandUpdateItem('isdel', $event, 0)"
     />
 
     <n-drawer
@@ -204,6 +206,7 @@
           <drawerFormButton
             @submit="submit"
             @close="showToggle(false)"
+            @reset="bindAddShow"
           />
         </n-form>
       </n-drawer-content>
@@ -215,10 +218,10 @@
 import { ZaiTableV1, useTable, useDialog, drawerFormButton } from '@/components/zai-table-v1'
 import type { DataTableColumns } from 'naive-ui'
 import { copyStr } from '@/utils'
-import { NTag, NSpace } from 'naive-ui'
+import { NTag, NSpace, NButton } from 'naive-ui'
 import dayjs from 'dayjs'
 import { random } from 'lodash-es'
-import { getLinkTabs, getLinkTable, setLinkItem } from '@/api'
+import { getLinkTabs, getLinkTable, setLinkItem, addLink, deleteLink } from '@/api'
 import Iconify from '@/components/Iconify.vue'
 
 interface Row {
@@ -262,7 +265,7 @@ const rule = {
   },
 }
 
-const { show, showToggle, getAction, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
+const { show, showToggle, getAction, setAction, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
   formData: {
     title: '',
     start: 0,
@@ -296,10 +299,11 @@ const {
   data: tableData,
   columns,
   refresh,
+  getCacheData,
 } = useTable<Row>({
   refresh: async () => {
     const { data, error } = await getLinkTable()
-    if (!error) {
+    if (!error.value) {
       return data.value.reverse()
     }
   },
@@ -502,7 +506,7 @@ const {
       {
         title: '评分',
         key: 'rate',
-        render: (row: any) => {
+        /* render: (row: any) => {
           if (!row.rate.length) {
             return (
               <NTag
@@ -521,6 +525,33 @@ const {
               {item}
             </NTag>
           ))
+        }, */
+      },
+      {
+        title: '彻底删除',
+        key: 'completelyDelete',
+        render(row, index) {
+          return (
+            <n-popconfirm
+              onPositiveClick={() => {
+                console.log('asdasdas')
+                handlePositiveClick(row, index)
+              }}
+            >
+              {{
+                trigger: () => (
+                  <n-button
+                    size={'small'}
+                    type={'error'}
+                    ghost={true}
+                  >
+                    彻底删除
+                  </n-button>
+                ),
+                default: () => '确定要删除吗？',
+              }}
+            </n-popconfirm>
+          )
         },
       },
     ]
@@ -557,16 +588,43 @@ const formRef = useTemplateRef('formRef')
 async function submit() {
   formRef.value.validate(async errors => {
     if (!errors) {
-      const { data } = await setLinkItem({ id: formData.value.id, data: formData.value })
-      if (data.value.code === 200) {
-        const index = tableData.value.findIndex(fv => fv.id === formData.value.id)
-        tableData.value[index] = formData.value
-        window.$message.success(data.value.msg)
+      if (getAction() === 'add') {
+        const { data } = await addLink(formData.value)
+        if (data.value.code === 200) {
+          tableData.value.unshift(data.value.data)
+          formData.value = data.value.data
+          setAction('update')
+        } else {
+          window.$message.error(`${data.value.code}: ${data.value.msg}`)
+        }
       } else {
-        window.$message.error(`${data.value.code}: ${data.value.msg}`)
+        const { data } = await setLinkItem({ id: formData.value.id, data: formData.value })
+        if (data.value.code === 200) {
+          const index = tableData.value.findIndex(fv => fv.id === formData.value.id)
+          tableData.value[index] = formData.value
+          window.$message.success(data.value.msg)
+        } else {
+          window.$message.error(`${data.value.code}: ${data.value.msg}`)
+        }
       }
     }
   })
+}
+
+function bandSelect(value) {
+  if (value === '') {
+    tableData.value = getCacheData()
+    return
+  }
+  tableData.value = tableData.value.filter(item => item.title.includes(value))
+}
+
+async function handlePositiveClick(row: Row, index) {
+  const { data } = await deleteLink({ id: row.id })
+  if (data.value.code === 200) {
+    tableData.value.splice(index, 1)
+    window.$message.success('已删除！')
+  }
 }
 </script>
 

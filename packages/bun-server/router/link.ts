@@ -57,7 +57,7 @@ router.get('/link/table', async () => {
       id: 0,
     }
  */
-router.get('/link/add', async req => {
+router.post('/link/add', async req => {
   const form = req.form
   const novel: any[] = await Bun.file(novelFilePath).json()
 
@@ -65,39 +65,28 @@ router.get('/link/add', async req => {
     return { msg: '已有' }
   }
 
-  if (!form['_id']) {
+  /* if (!form['_id']) {
     form['_id'] = nanoid()
-  }
+  } */
 
-  if (!form.id) {
-    form.id = Date.now()
-  }
-
-  if (!form.addDate) {
-    form.addDate = dayjs()
-  }
-
-  if (!form.update) {
-    form.addDate = dayjs()
-  }
-
-  if (!form.finishtime) {
-    form.addDate = dayjs()
-  }
-  if (!form.isdel) {
-    form.isdel = 1
-  }
+  form.id = nanoid()
+  const date = dayjs()
+  form.addDate = date
+  form.finishtime = dayjs()
+  form.update = dayjs()
+  form.isdel = 1
 
   try {
-    await Bun.write(novelFilePath, JSON.stringify([form].concat(novel)))
-    return form
+    novel.push(form)
+    await Bun.write(novelFilePath, JSON.stringify(novel))
+    return { data: form }
   } catch (err) {
     return { code: 500, msg: '写入错误', err: err.toString() }
   }
 })
 
 router.get('/link/detele', async req => {
-  const id = req.form.id
+  const id = req.query.id
   const novel: any[] = await Bun.file(novelFilePath).json()
   try {
     await Bun.write(
@@ -107,6 +96,7 @@ router.get('/link/detele', async req => {
     const index = novel.findIndex(fv => fv.id === id)
     novel.splice(index, 1)
     await Bun.write(novelFilePath, JSON.stringify(novel))
+    return 1
   } catch (err) {
     return { code: 500, msg: '写入错误', err: err.toString() }
   }

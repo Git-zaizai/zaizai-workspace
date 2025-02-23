@@ -6,7 +6,7 @@ public/js/*
 public/upload/*
 data/json/*.json
 logs/*
-
+cache/json/*
 # Logs
 
 _.log

@@ -56,6 +56,8 @@ export const useDialog = <T>(options: Optinos<T>) => {
   }
 
   const getAction = () => action
+  const setAction = (value: 'add' | 'update') => action = value
+  
 
   return {
     show,
@@ -65,6 +67,7 @@ export const useDialog = <T>(options: Optinos<T>) => {
     bandUpdateShow,
     getInitFormData,
     getAction,
+    setAction,
     /**
      * 为什么在这里 as Ref<T> ？
      * 因为不在这里 as , IDEA 会提示 下面的报红

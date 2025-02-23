@@ -29,6 +29,11 @@ export const verifyTest = () => http('/verify').get().json()
 export const getLinkTabs = () => http('/link/tags').get().json()
 export const getLinkTable = () => http('/link/table').get().json()
 export const setLinkItem = (data: any) => http('/link/update-item').post(data).json()
+export const addLink = (data: any) => http('/link/add').post(data).json()
+export const deleteLink = (data: { id: string }) =>
+  http('/link/detele?' + queryParams(data))
+    .get()
+    .json()
 
 export const wsGetList = () => http('/ws/list').get().json()
 export const wsSendMessage = (data: { socketId: string; msg: string }) => http('/ws/test-msg').post(data).json()

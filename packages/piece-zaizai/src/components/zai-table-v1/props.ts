@@ -31,10 +31,6 @@ export const zaiTableProps = {
     type: [Boolean, Object] as PropType<boolean | DataTableColumn>,
     default: true,
   },
-  deletePopconfirmShow: {
-    type: Boolean,
-    default: true,
-  },
   columnHides: {
     type: Array as PropType<columnHidesType[]>,
     default: () => [],

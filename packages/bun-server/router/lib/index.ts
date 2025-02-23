@@ -135,12 +135,12 @@ class Router {
     let { pathname, method } = req
     
     if (this.proxy && pathname.includes(this.proxy)) {
-      pathname = pathname.replace(this.proxy, '/')
+      pathname = pathname.replace(this.proxy, '')
     }
 
     const dispatch = async (req: Req, server: Server, next?: Next) => {
       if (this.proxy && req.pathname.includes(this.proxy)) {
-        req.pathname = req.pathname.replace(this.proxy, '/')
+        req.pathname = req.pathname.replace(this.proxy, '')
       }
 
       const route = this.match(pathname, method)
