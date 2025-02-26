@@ -21,6 +21,7 @@ declare namespace Env {
     readonly VITE_GITHUB: string //
     readonly VITE_GLOB_ROUTER_FN: 'history' | 'hash'
     readonly VITE_VISUZLIZER: boolean
+    readonly VITE_INLINE_THEME: '1' | '0'
   }
 }
 

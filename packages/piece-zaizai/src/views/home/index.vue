@@ -1,7 +1,14 @@
 <template>
   <div>
     <left-image class="left-image" />
-    <right-image class="right-image" />
+    <right-image
+      class="right-image"
+      @click="
+        $router.push({
+          name: 'h5-link',
+        })
+      "
+    />
     <div class="flex-col-center h-87vh">
       <h1>( *￣▽￣)</h1>
     </div>

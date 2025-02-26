@@ -41,7 +41,7 @@ export function cancelFullscreen() {
 
 export function copyStr(value: string): void {
   if (!value) {
-    window.$message.info('没有内容')
+    window.$message.warning('没有内容')
     return
   }
   const execCommand = (): void => {
