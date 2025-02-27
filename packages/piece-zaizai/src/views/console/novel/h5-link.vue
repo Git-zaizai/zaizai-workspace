@@ -260,8 +260,25 @@ function bandContent(item: Row, event: MouseEvent) {
       display-directive="show"
     >
       <div class="w-90vw bg-white flex-col-center p-y-10 rounded-7px">
-        <div class="text-21 m-y-7">嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻</div>
-        <div class="text-21 m-y-7">嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻嘻</div>
+        <div
+          class="text-21 m-y-7"
+          @click="copyStr(formData.title)"
+        >
+          {{ formData.title }}
+        </div>
+        <div
+          class="text-21 m-y-7"
+          @click="copyStr(formData.link)"
+        >
+          {{ formData.link }}
+        </div>
+        <div
+          class="text-21 m-y-7"
+          @click="copyStr(formData.linkback)"
+        >
+          {{ formData.linkback }}
+        </div>
+        <div class="text-21 m-y-7">备注： {{ formData.beizhu }}</div>
       </div>
     </n-modal>
 
