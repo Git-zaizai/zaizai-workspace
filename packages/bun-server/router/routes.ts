@@ -197,7 +197,7 @@ router.post('/upload-web', async req => {
     // console.log(file instanceof File); // true
     await Bun.write(path.join(mkdir, file.name), file)
     return 1
-  } catch (err) {
+  } catch (err) { 
     return {
       code: 500,
       msg: '写入文件',

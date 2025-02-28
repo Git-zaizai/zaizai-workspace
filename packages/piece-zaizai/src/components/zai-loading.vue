@@ -22,6 +22,9 @@
         viewBox="0 0 48 24"
         width="48px"
         height="24px"
+        :style="{
+          width: size + 'rem',
+        }"
       >
         <g
           fill="none"
@@ -96,18 +99,28 @@
 <script setup lang="ts">
 import { useCssVars } from '@/hooks/useCssVars'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     pointerEvents?: boolean
+    size?: string | number
+    zIndex?: string | number
   }>(),
   {
     pointerEvents: true,
+    zIndex: 999999,
   }
 )
 
-const cssVars = useCssVars([], null, {
-  'loading-color': 'primaryColor',
-})
+const cssVars = useCssVars(
+  [],
+  null,
+  {
+    'loading-color': 'primaryColor',
+  },
+  {
+    '--zai-z-index': props.zIndex,
+  }
+)
 const show = defineModel('show', {
   default: true,
 })
@@ -116,10 +129,10 @@ const show = defineModel('show', {
 <style scoped>
 .zai-body {
   position: absolute;
-  z-index: 999999;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: var(--zai-z-index);
 }
 .zai-body-qita {
   position: absolute;
@@ -127,7 +140,7 @@ const show = defineModel('show', {
   top: 0;
   width: 100%;
   height: 100%;
-  z-index: 999997;
   pointer-events: auto;
+  z-index: var(--zai-z-index);
 }
 </style>

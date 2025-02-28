@@ -26,10 +26,15 @@ onMounted(() => {
         bordered
         class="h-65 flex-y-center px-5 h5-header"
       >
-        <img
-          src="@/assets/logo.png"
-          class="h-40px w-40px ml-3"
-        />
+        <router-link
+          to="/"
+          class="flex-y-center"
+        >
+          <img
+            src="@/assets/logo.png"
+            class="h-40px w-40px ml-3"
+          />
+        </router-link>
 
         <div class="ml-auto flex-y-center">
           <dialogLogin />
@@ -44,8 +49,5 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.h5-header {
-  backdrop-filter: blur(18px);
-  background: transparent;
-}
+
 </style>

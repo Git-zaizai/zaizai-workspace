@@ -44,4 +44,6 @@ Bun.serve({
   websocket: webSocketHandler,
 })
 
-console.log(`Bun server is running at http://localhost:${process.env.ZAI_PORT}`)
+import { getLocalIP } from './utils'
+
+console.log(`Bun server is running at http://localhost:${process.env.ZAI_PORT} \nip: http://${getLocalIP()}:${process.env.ZAI_PORT}`)

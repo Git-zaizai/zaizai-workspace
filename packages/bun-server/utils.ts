@@ -35,3 +35,16 @@ export function mkdirRecursive(ph: string) {
     fs.mkdirSync(ph, { recursive: true })
   }
 }
+
+import os from 'node:os'
+
+export function getLocalIP() {
+  const ifaces = []
+  const interfaces = os.networkInterfaces()
+  for (const interfaceName in interfaces) {
+    if (interfaceName === 'WLAN') {
+      ifaces.push(interfaces[interfaceName][1].address)
+    }
+  }
+  return ifaces
+}

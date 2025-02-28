@@ -8,8 +8,8 @@ const emits = defineEmits<{
 const userStore = useUserStore()
 
 const form = ref({
-  un: 'zaizai',
-  pwd: 'nbj123456',
+  un: 'ONE_PIECE_ZAIZAI',
+  pwd: 'zaizai',
 })
 const formRef = useTemplateRef('formRef')
 const rules: FormRules = {

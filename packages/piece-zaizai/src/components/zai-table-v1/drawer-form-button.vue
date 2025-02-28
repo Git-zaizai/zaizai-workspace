@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const { submitAttrType = 'submit' } = defineProps<{
+  submitAttrType?: 'reset' | 'submit' | 'button'
+}>()
 const emits = defineEmits<{
   submit: []
   close: []
@@ -10,6 +13,7 @@ const emits = defineEmits<{
   <div class="w-full">
     <n-button
       block
+      :attr-type="submitAttrType"
       type="primary"
       @click="emits('submit')"
     >

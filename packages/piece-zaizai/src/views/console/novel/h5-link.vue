@@ -49,14 +49,25 @@ const tags = ref([])
 const formRef = useTemplateRef('formRef')
 let formdataIndex = -1
 
-async function init() {
+const [bodyLoding, bodyLodingToggle] = useToggle()
+async function init(v: boolean = true) {
+  bodyLodingToggle(v)
   const { data } = await getLinkTable()
-  tableData.value = data.value.reverse()
+  tableData.value = data.value
+    .map((v, i) => {
+      return v
+    })
+    .reverse()
   const { data: tagsData } = await getLinkTabs()
   tags.value = tagsData.value
+  setTimeout(() => {
+    bodyLodingToggle(false)
+  }, 700)
 }
 
-onMounted(init)
+onMounted(() => {
+  init(false)
+})
 
 const rule = {
   trigger: 'blur',
@@ -198,51 +209,115 @@ function bandContent(item: Row, event: MouseEvent) {
     copyStr(item.title)
   }, 200)
 }
+
+const [selectShow, selectShowToggle] = useToggle()
+const titleSelectInput = useTemplateRef('titleSelectInput')
+function showSelectInput() {
+  selectShowToggle()
+  nextTick(() => {
+    titleSelectInput.value.focus()
+  })
+}
+const [selectDialogShow, selectDialogShowToggle] = useToggle()
+const queryFormRef = useTemplateRef('queryFormRef')
+const queryForm = ref({
+  title: '',
+  isdel: -1,
+  tags: [],
+  wanjie: -1,
+  duwan: -1,
+  link: '',
+  date: '',
+})
+
+function queryfilterData() {
+  let filterData
+  if (selectShow.value && !queryForm.value.title) {
+    window.$message.warning('请输入小说名')
+    return
+  } else {
+    filterData = tableData.value.filter(v => v.title.includes(queryForm.value.title))
+  }
+
+  if (queryForm.value.tags.length) {
+    const tags = queryForm.value.tags
+    filterData = filterData.filter(v => v.tags.some(t => tags.includes(t)))
+  }
+
+  if (queryForm.value.wanjie !== -1) {
+    filterData = filterData.filter(v => v.isdel === queryForm.value.isdel)
+  }
+
+  if (queryForm.value.wanjie !== -1) {
+    filterData = filterData.filter(v => v.wanjie === queryForm.value.wanjie)
+  }
+
+  if (queryForm.value.duwan !== -1) {
+    filterData = filterData.filter(v => v.duwan === queryForm.value.duwan)
+  }
+
+  if (queryForm.value.link) {
+    filterData = tableData.value.filter(v => v.link.includes(queryForm.value.link))
+  }
+
+  tableData.value = filterData
+}
+
+function queryClose(){
+  selectDialogShowToggle(false)
+  resetQueryForm()
+}
+
+function resetQueryForm() {
+  queryForm.value = {
+    title: '',
+    isdel: -1,
+    tags: [],
+    wanjie: -1,
+    duwan: -1,
+    link: '',
+    date: '',
+  }
+}
 </script>
 
 <template>
   <div>
-    <div class="page-view p-10">
-      <div
-        class="flex flex-y-center bg-white rounded-3xl p-x-10 p-y-5 mb-10 last:mb-0"
-        v-for="(item, index) in tableData"
-        :key="item.id"
-      >
-        <div class="w-30 flex-center">
-          <Iconify
-            class="i-ph-android-logo-bold"
-            @click="bandAction($event, index)"
-            size="26"
-          />
-        </div>
-        <p
-          class="w-full ml-15 text-20"
-          @click="bandContent(item, $event)"
-        >
-          {{ item.title }}
-        </p>
-      </div>
-      <div class="h-65"></div>
-    </div>
+    <header class="fixed top-0 right-130 h-65 flex-y-center">
+      <Iconify
+        class="i-ph-magnifying-glass-thin"
+        @click="showSelectInput"
+      />
+    </header>
 
-    <footer
-      class="h-65 w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-white"
-      @click="init"
+    <zai-loading
+      :show="bodyLoding"
+      size="48"
+      z-index="1"
     >
-      <div class="flex-y-center justify-between h-full">
+      <div class="page-view p-10 p-b-0">
         <div
-          class="w-35 h-full"
-          @click="bindAddShow"
-        ></div>
-        <div class="flex-center h-full">
-          <Iconify class="i-ph-anchor-bold" />
+          class="flex flex-y-center bg-white rounded-3xl p-x-10 p-y-5 mb-10 last:mb-0"
+          v-for="(item, index) in tableData"
+          :key="item.id"
+        >
+          <div class="w-30 flex-center">
+            <Iconify
+              class="i-ph-android-logo-bold"
+              @click="bandAction($event, index)"
+              size="26"
+            />
+          </div>
+          <p
+            class="w-full ml-15 text-20"
+            @click="bandContent(item, $event)"
+          >
+            {{ item.title }}
+          </p>
         </div>
-        <div
-          class="w-35 h-full"
-          @click="bindAddShow"
-        ></div>
+        <div class="h-65"></div>
       </div>
-    </footer>
+    </zai-loading>
 
     <n-dropdown
       placement="bottom-start"
@@ -254,6 +329,174 @@ function bandContent(item: Row, event: MouseEvent) {
       @clickoutside="dropdown.show = false"
       @select="handleSelect"
     />
+
+    <footer class="h5-header h-65 w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-white">
+      <div class="flex-y-center justify-between h-full">
+        <div
+          class="w-35 h-full"
+          @click="bindAddShow"
+        ></div>
+        <div
+          class="w-35 h-full"
+          @click="() => selectDialogShowToggle()"
+        ></div>
+        <div class="flex-center h-full flex-1">
+          <Iconify
+            class="i-ph-anchor-bold"
+            @click="init"
+          />
+        </div>
+        <div
+          class="w-35 h-full"
+          @click="() => selectDialogShowToggle()"
+        ></div>
+        <div
+          class="w-35 h-full"
+          @click="bindAddShow"
+        ></div>
+      </div>
+    </footer>
+
+    <div
+      class="fixed bottom-70 left-5vw h-65 w-90vw flex-y-center bg-white p-x-10 shadow-lg z-2"
+      v-if="selectShow"
+    >
+      <n-input-group>
+        <n-input
+          ref="titleSelectInput"
+          :style="{ width: '100%' }"
+          autofocus
+          clearable
+          attr-type="search"
+          @keyup.enter="queryfilterData"
+          v-model:value="queryForm.title"
+        />
+        <n-button
+          strong
+          secondary
+        >
+          <Iconify class="i-ph-magnifying-glass-plus" />
+        </n-button>
+        <n-button
+          strong
+          secondary
+          @click="() => selectShowToggle()"
+        >
+          <Iconify class="i-ph-x-circle" />
+        </n-button>
+      </n-input-group>
+    </div>
+
+    <n-modal v-model:show="selectDialogShow">
+      <div class="w-95vw bg-white p-x-15 pt-30 pb-20 rounded-7px">
+        <n-form
+          :model="queryForm"
+          ref="queryFormRef"
+          label-align="left"
+          label-placement="left"
+          label-width="60"
+          @submit.prevent.enter="queryfilterData"
+        >
+          <n-form-item
+            label="小说名:"
+            path="title"
+          >
+            <n-input
+              placeholder="小说名"
+              clearable
+              v-model:value="queryForm.title"
+            />
+          </n-form-item>
+
+          <n-form-item
+            label="网址:"
+            path="title"
+          >
+            <n-input
+              placeholder="网址"
+              clearable
+              v-model:value="queryForm.link"
+            />
+          </n-form-item>
+
+          <n-form-item label="标签：">
+            <n-checkbox-group v-model:value="queryForm.tags">
+              <n-space>
+                <n-checkbox
+                  v-for="item in tags"
+                  :value="item"
+                  :label="item"
+                />
+              </n-space>
+            </n-checkbox-group>
+          </n-form-item>
+
+          <n-form-item label="读完：">
+            <n-radio-group
+              v-model:value="queryForm.duwan"
+              name="radiogroup"
+            >
+              <n-space>
+                <n-radio-button
+                  :value="1"
+                  label="读完"
+                />
+                <n-radio-button
+                  :value="0"
+                  label="未读完"
+                />
+                <n-radio :value="-1" />
+              </n-space>
+            </n-radio-group>
+          </n-form-item>
+
+          <n-form-item label="读完：">
+            <n-radio-group
+              v-model:value="queryForm.isdel"
+              name="radiogroup"
+            >
+              <n-space>
+                <n-radio-button
+                  :value="1"
+                  label="显示"
+                />
+                <n-radio-button
+                  :value="0"
+                  label="隐藏"
+                />
+                <n-radio :value="-1" />
+              </n-space>
+            </n-radio-group>
+          </n-form-item>
+
+          <n-form-item label="完结/连载：">
+            <n-radio-group
+              v-model:value="queryForm.wanjie"
+              name="radiogroup"
+            >
+              <n-space>
+                <n-radio-button
+                  :value="1"
+                  label="完结"
+                />
+                <n-radio-button
+                  :value="0"
+                  label="连载"
+                />
+                <n-radio :value="-1" />
+              </n-space>
+            </n-radio-group>
+          </n-form-item>
+
+          <drawerFormButton
+            class="drawer-form-button"
+            @submit="queryfilterData"
+            @close="queryClose"
+            @reset="resetQueryForm"
+          />
+        </n-form>
+      </div>
+    </n-modal>
 
     <n-modal
       v-model:show="copyShow"
@@ -340,6 +583,7 @@ function bandContent(item: Row, event: MouseEvent) {
               </n-space>
             </n-radio-group>
           </n-form-item>
+
           <n-form-item label="标签：">
             <n-checkbox-group v-model:value="formData.tabs">
               <n-space>
