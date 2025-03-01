@@ -27,6 +27,20 @@ interface Row {
   id: string
 }
 
+const rule = {
+  trigger: 'blur',
+  required: true,
+  validator(_, val: string) {
+    if (val === '') {
+      return new Error('不能为空')
+    }
+    if (getAction() === 'add' && tableData.value.some(v => v.title === val)) {
+      return new Error('小说名不能相同')
+    }
+    return true
+  },
+}
+
 const dropdownOptions: DropdownOption[] = [
   {
     label: '修改',
@@ -65,23 +79,40 @@ async function init(v: boolean = true) {
   }, 700)
 }
 
+const [copyShow, copyShowToggle] = useToggle()
+let clickTimerState: {
+  timer: NodeJS.Timeout | null
+  el: EventTarget | null
+  dropdown: boolean
+} = {
+  timer: null,
+  el: null,
+  dropdown: false,
+}
+function resetClickTimer() {
+  clearTimeout(clickTimerState.timer)
+  clickTimerState.timer = null
+  clickTimerState.el = null
+  clickTimerState.dropdown = false
+}
+function bandContent(item: Row, event: MouseEvent) {
+  if (clickTimerState.dropdown) return
+  if (clickTimerState.timer && clickTimerState.el === event.target) {
+    formData.value = item
+    copyShowToggle(true)
+    resetClickTimer()
+    return
+  }
+  clickTimerState.el = event.target
+  clickTimerState.timer = setTimeout(() => {
+    resetClickTimer()
+    copyStr(item.title)
+  }, 200)
+}
+
 onMounted(() => {
   init(false)
 })
-
-const rule = {
-  trigger: 'blur',
-  required: true,
-  validator(_, val: string) {
-    if (val === '') {
-      return new Error('不能为空')
-    }
-    if (getAction() === 'add' && tableData.value.some(v => v.title === val)) {
-      return new Error('小说名不能相同')
-    }
-    return true
-  },
-}
 
 const { show, showToggle, getAction, setAction, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
   formData: {
@@ -179,56 +210,35 @@ async function bandUpdateItem(key: 'duwan' | 'wanjie' | 'isdel', row: Row, index
   }
 }
 
-const [copyShow, copyShowToggle] = useToggle()
-let clickTimerState: {
-  timer: NodeJS.Timeout | null
-  el: EventTarget | null
-  dropdown: boolean
-} = {
-  timer: null,
-  el: null,
-  dropdown: false,
-}
-function resetClickTimer() {
-  clearTimeout(clickTimerState.timer)
-  clickTimerState.timer = null
-  clickTimerState.el = null
-  clickTimerState.dropdown = false
-}
-function bandContent(item: Row, event: MouseEvent) {
-  if (clickTimerState.dropdown) return
-  if (clickTimerState.timer && clickTimerState.el === event.target) {
-    formData.value = item
-    copyShowToggle(true)
-    resetClickTimer()
-    return
-  }
-  clickTimerState.el = event.target
-  clickTimerState.timer = setTimeout(() => {
-    resetClickTimer()
-    copyStr(item.title)
-  }, 200)
-}
-
 const [selectShow, selectShowToggle] = useToggle()
 const titleSelectInput = useTemplateRef('titleSelectInput')
+const queryFormRef = useTemplateRef('queryFormRef')
+const {
+  show: selectDialogShow,
+  showToggle: selectDialogShowToggle,
+  formData: queryForm,
+  bindAddShow: bindAddShowQuery,
+  resetFormData,
+} = useDialog({
+  formData: {
+    title: '',
+    isdel: -1,
+    tags: [],
+    wanjie: -1,
+    duwan: -1,
+    link: '',
+    date: '',
+  },
+  addCallback: form => form,
+  updateCallback: item => item,
+})
+
 function showSelectInput() {
   selectShowToggle()
   nextTick(() => {
     titleSelectInput.value.focus()
   })
 }
-const [selectDialogShow, selectDialogShowToggle] = useToggle()
-const queryFormRef = useTemplateRef('queryFormRef')
-const queryForm = ref({
-  title: '',
-  isdel: -1,
-  tags: [],
-  wanjie: -1,
-  duwan: -1,
-  link: '',
-  date: '',
-})
 
 function queryfilterData() {
   let filterData
@@ -263,21 +273,9 @@ function queryfilterData() {
   tableData.value = filterData
 }
 
-function queryClose(){
-  selectDialogShowToggle(false)
-  resetQueryForm()
-}
-
-function resetQueryForm() {
-  queryForm.value = {
-    title: '',
-    isdel: -1,
-    tags: [],
-    wanjie: -1,
-    duwan: -1,
-    link: '',
-    date: '',
-  }
+const pageViewRef = useTemplateRef('pageViewRef')
+function pageViewScrollTop() {
+  pageViewRef.value.scrollTop = 0
 }
 </script>
 
@@ -295,7 +293,10 @@ function resetQueryForm() {
       size="48"
       z-index="1"
     >
-      <div class="page-view p-10 p-b-0">
+      <div
+        class="page-view p-10 p-b-0"
+        ref="pageViewRef"
+      >
         <div
           class="flex flex-y-center bg-white rounded-3xl p-x-10 p-y-5 mb-10 last:mb-0"
           v-for="(item, index) in tableData"
@@ -340,12 +341,20 @@ function resetQueryForm() {
           class="w-35 h-full"
           @click="() => selectDialogShowToggle()"
         ></div>
+        <div
+          class="w-35 h-full"
+          @click="pageViewScrollTop"
+        ></div>
         <div class="flex-center h-full flex-1">
           <Iconify
             class="i-ph-anchor-bold"
             @click="init"
           />
         </div>
+        <div
+          class="w-35 h-full"
+          @click="pageViewScrollTop"
+        ></div>
         <div
           class="w-35 h-full"
           @click="() => selectDialogShowToggle()"
@@ -387,14 +396,17 @@ function resetQueryForm() {
       </n-input-group>
     </div>
 
-    <n-modal v-model:show="selectDialogShow">
+    <n-modal
+      v-model:show="selectDialogShow"
+      :mask="false"
+    >
       <div class="w-95vw bg-white p-x-15 pt-30 pb-20 rounded-7px">
         <n-form
           :model="queryForm"
           ref="queryFormRef"
           label-align="left"
           label-placement="left"
-          label-width="60"
+          label-width="87"
           @submit.prevent.enter="queryfilterData"
         >
           <n-form-item
@@ -450,7 +462,7 @@ function resetQueryForm() {
             </n-radio-group>
           </n-form-item>
 
-          <n-form-item label="读完：">
+          <n-form-item label="显示/隐藏：">
             <n-radio-group
               v-model:value="queryForm.isdel"
               name="radiogroup"
@@ -491,8 +503,8 @@ function resetQueryForm() {
           <drawerFormButton
             class="drawer-form-button"
             @submit="queryfilterData"
-            @close="queryClose"
-            @reset="resetQueryForm"
+            @close="bindAddShowQuery"
+            @reset="resetFormData"
           />
         </n-form>
       </div>
@@ -738,5 +750,13 @@ function resetQueryForm() {
 
 .drawer-form-button :deep(.n-button) {
   margin-top: 10px !important;
+}
+
+:global(.n-modal-mask) {
+  height: calc(100vh - 16.25rem);
+}
+
+:global(.n-modal-body-wrapper) {
+  height: calc(100vh - 16.25rem);
 }
 </style>

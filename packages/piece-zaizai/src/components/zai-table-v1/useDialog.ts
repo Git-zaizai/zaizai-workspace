@@ -28,14 +28,14 @@ export const useDialog = <T>(options: Optinos<T>) => {
   const cacheCationTitle = options.actionTitle ?? defaultActionTitle
   const actionTitle = ref(cacheCationTitle[action])
 
-  const getInitFormData = () => cloneDeep(isRef(options.formData) ? options.formData.value : options.formData) as T
-  const formData = ref(getInitFormData())
+  const getCacheInitFormData = () => cloneDeep(isRef(options.formData) ? options.formData.value : options.formData) as T
+  const formData = ref(getCacheInitFormData())
 
   const bindAddShow = async () => {
     action = 'add'
     actionTitle.value = cacheCationTitle[action]
     if (options.addCallback) {
-      const resp = await options.addCallback(getInitFormData())
+      const resp = await options.addCallback(getCacheInitFormData())
       if (resp) {
         formData.value = resp
       }
@@ -47,7 +47,7 @@ export const useDialog = <T>(options: Optinos<T>) => {
     action = 'update'
     actionTitle.value = cacheCationTitle[action]
     if (options.updateCallback) {
-      const resp = await options.updateCallback(value, getInitFormData())
+      const resp = await options.updateCallback(value, getCacheInitFormData())
       if (resp) {
         formData.value = cloneDeep(resp)
       }
@@ -56,8 +56,10 @@ export const useDialog = <T>(options: Optinos<T>) => {
   }
 
   const getAction = () => action
-  const setAction = (value: 'add' | 'update') => action = value
-  
+  const setAction = (value: 'add' | 'update') => (action = value)
+  const resetFormData = () => {
+    formData.value = getCacheInitFormData()
+  }
 
   return {
     show,
@@ -65,7 +67,8 @@ export const useDialog = <T>(options: Optinos<T>) => {
     actionTitle,
     bindAddShow,
     bandUpdateShow,
-    getInitFormData,
+    getCacheInitFormData,
+    resetFormData,
     getAction,
     setAction,
     /**

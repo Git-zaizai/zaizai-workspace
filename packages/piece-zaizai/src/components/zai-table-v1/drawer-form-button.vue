@@ -3,9 +3,9 @@ const { submitAttrType = 'submit' } = defineProps<{
   submitAttrType?: 'reset' | 'submit' | 'button'
 }>()
 const emits = defineEmits<{
-  submit: []
-  close: []
-  reset: []
+  submit: [void]
+  close: [void]
+  reset: [void]
 }>()
 </script>
 
