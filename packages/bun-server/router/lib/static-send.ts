@@ -39,7 +39,7 @@ export const staticSend = (
       return body
     }
 
-    if (options.indexHtml && !body && req.pathname === '/') {
+    if (options.indexHtml && body.status === 404 && req.pathname === '/') {
       const html = path.join(filePath, 'index.html')
       if (fs.existsSync(html)) {
         return new Response(Bun.file(html))
