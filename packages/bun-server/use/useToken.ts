@@ -28,6 +28,7 @@ const matchRoute = (pathname: string) => {
 export const usePriveartRoute = (routers?: string[]) => {
   return async (req: Req, server: Server, next: Next) => {
     console.log('usePriveartRoute ===>')
+    
     if (PRIVATE_ROUTES.length === 0) {
       console.log('usePriveartRoute <===')
       return next()
@@ -35,21 +36,18 @@ export const usePriveartRoute = (routers?: string[]) => {
     const { pathname } = req
 
     if (!matchRoute(pathname)) {
-      console.log('usePriveartRoute <===')
       return next()
     }
 
     const Authorization = req.headers.get('Authorization')
     if (!Authorization) {
       req.status = 401
-      console.log('usePriveartRoute <===')
       return '请先获取令牌'
     }
 
     const isjwt = jwtVerify(Authorization)
     if (isjwt.code === 200) {
       req.mate.token = { code: isjwt.code, msg: isjwt.msg, ...isjwt.data }
-      console.log('usePriveartRoute <===')
       return next()
     } else {
       req.status = isjwt.code

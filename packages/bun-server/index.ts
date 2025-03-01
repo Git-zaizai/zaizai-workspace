@@ -11,7 +11,8 @@ const router = new Router({
 })
 
 // 查看log的执行顺序
-router.use(cors()).use(useResponse).use(staticSend()).use(usePriveartRoute()).use(routrs.routes())
+// router.use(cors()).use(useResponse).use(staticSend()).use(usePriveartRoute()).use(routrs.routes())
+router.use(cors()).use(usePriveartRoute()).use(staticSend()).use(useResponse).use(routrs.routes())
 
 Bun.serve({
   port: Number(process.env.ZAI_PORT),

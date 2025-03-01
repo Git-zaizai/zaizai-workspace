@@ -112,12 +112,22 @@ export default defineConfig(configEnv => {
           drop_debugger: true,
         },
       },
-      cssCodeSplit: true, //禁用 CSS 代码拆分
+      cssCodeSplit: false, //禁用 CSS 代码拆分
       rollupOptions: {
         output: {
           entryFileNames: 'assets/js/[name].[hash].js',
           chunkFileNames: 'assets/js/[name].[hash].js',
-          assetFileNames: 'assets/[ext]/[name].[hash].[ext]',
+          assetFileNames: assetInfo => {
+            const extType = assetInfo.name.split('.').pop()
+            if (extType === 'css') {
+              return 'assets/css/[name].[hash].[ext]'
+            } else if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(extType)) {
+              return 'assets/images/[name].[hash].[ext]'
+            } else if (['woff', 'woff2', 'eot', 'ttf', 'otf'].includes(extType)) {
+              return 'assets/fonts/[name].[hash].[ext]'
+            }
+            return 'assets/static/[name].[hash].[ext]'
+          },
         },
       },
     },
