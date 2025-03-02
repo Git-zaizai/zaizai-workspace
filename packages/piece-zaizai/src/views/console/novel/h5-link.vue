@@ -251,7 +251,9 @@ function queryfilterData() {
 
   if (queryForm.value.tags.length) {
     const tags = queryForm.value.tags
-    filterData = filterData.filter(v => v.tags.some(t => tags.includes(t)))
+    filterData = filterData.filter(v => {
+      return v.tabs.some(t => tags.includes(t))
+    })
   }
 
   if (queryForm.value.wanjie !== -1) {

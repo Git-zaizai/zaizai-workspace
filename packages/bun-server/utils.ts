@@ -43,7 +43,7 @@ export function getLocalIP() {
   const interfaces = os.networkInterfaces()
   for (const interfaceName in interfaces) {
     if (interfaceName === 'WLAN') {
-      ifaces.push(interfaces[interfaceName][1].address)
+      ifaces.push(interfaces[interfaceName][0].address)
     }
   }
   return ifaces
