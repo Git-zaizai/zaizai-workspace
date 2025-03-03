@@ -43,3 +43,49 @@ sudo systemctl stop nginx
 sudo systemctl reload nginx
 Nginx服务的当前状态
 sudo systemctl status nginx
+
+
+# 关于在ubuntu安装bun和volta使用官网的脚本，因为网络问题连接不到github的处理办法
+
++ 安装Bun
+
+先下载Bun的压缩包，
+（网址）[https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip] :https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip
+
+然后新建文件夹
+
+```bash
+mkdir /root/.bun/bin
+```
+
+然后把文件解压在这个文件夹里面
+
+
+然后添加环境变量，在用户目录下的 `.bashrc` 文件中添加
+
+```bash
+export BUN_INSTALL="/root/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+```
+在输入 `source ~/.bashrc` 重新加载配置文件，就可以输入 `bun -v`，如果没有找到命令，请重新打开一个控制台
+
++ 安装volta
+
+同样下载安装包
+（网址）[https://github.com/volta-cli/volta/releases/download/v2.0.2/volta-2.0.2-linux-arm.tar.gz] :https://github.com/volta-cli/volta/releases/download/v2.0.2/volta-2.0.2-linux-arm.tar.gz
+
+然后新建文件夹
+
+```bash
+mkdir /root/.volta/bin
+```
+
+然后把文件解压在这个文件夹里面
+
+然后添加环境变量，在用户目录下的 `.bashrc` 文件中添加
+
+```bash
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH" 
+```
+在输入 `source ~/.bashrc` 重新加载配置文件，就可以输入 `volta -v`，如果没有找到命令，请重新打开一个控制台

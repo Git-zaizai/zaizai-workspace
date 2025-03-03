@@ -127,7 +127,10 @@ const main = async () => {
     await sftp.connect(sftpConfig)
     console.log('连接ftp完成...')
     console.log('正在删除 /dist/* 文件...')
-    await sftp.rmdir(`/www/piece-zaizai/dist`, true)
+    const is = await sftp.exists(`/www/piece-zaizai/dist`)
+    if (is) {
+      await sftp.rmdir(`/www/piece-zaizai/dist`, true)
+    }
     console.log('删除完成...')
     totalFileCount = foldFileCount(loacldist)
     spinner = ora('正在上传中...').start() // loading...
@@ -139,7 +142,7 @@ const main = async () => {
   } finally {
     sftp.end()
     ssh.dispose()
-    spinner.info('上传完成...')
+    spinner && spinner.info('上传完成...')
   }
 }
 
