@@ -158,9 +158,18 @@ const test = async () => {
     return
   }
   console.log(`ssh 连接服务器成功...`)
-  const { stdout } = await ssh.execCommand(`cd /www/zaizai-workspace && git pull`)
 
-  console.log("🚀 ~ test ~ stdout:", stdout)
+  // 检查目录是否存在，若不存在则创建
+  const checkDirCommand = `if [ ! -d "/www/zaizai-workspace" ]; then mkdir -p /www/zaizai-workspace; fi`
+  await ssh.execCommand(checkDirCommand)
+  // 检查是否为 Git 仓库，若不是则克隆仓库（这里假设仓库地址为示例地址，需替换为实际地址）
+  const checkGitRepoCommand = `if [ ! -d "/www/zaizai-workspace/.git" ]; then cd /www/zaizai-workspace && git clone <your-repo-url> .; fi`
+  await ssh.execCommand(checkGitRepoCommand)
+
+  // 执行 git pull 命令
+  const { stdout, stderr } = await ssh.execCommand(`cd  /www/zaizai-workspace && git pull`)
+
+  console.log('🚀 ~ test ~ stdout:', stdout)
 
   ssh.dispose()
 }
