@@ -42,8 +42,14 @@ export function getLocalIP() {
   const ifaces = []
   const interfaces = os.networkInterfaces()
   for (const interfaceName in interfaces) {
+    let item = interfaces[interfaceName]
     if (interfaceName === 'WLAN') {
-      ifaces.push(interfaces[interfaceName][0].address)
+      if (item.length === 2) {
+        item = item.find(i => i.family === 'IPv4')
+        item && ifaces.push(item.address)
+      }else{
+        ifaces.push(item[0].address)
+      }
     }
   }
   return ifaces

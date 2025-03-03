@@ -137,3 +137,8 @@ p {
   backdrop-filter: blur(18px);
   background: transparent;
 }
+
+.h5-page-height {
+  height: calc(100vh - 16.25rem);
+  width: 100%;
+}

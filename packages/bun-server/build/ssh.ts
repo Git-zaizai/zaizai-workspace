@@ -144,4 +144,24 @@ const main = async () => {
   }
 }
 
-main()
+const test = async () => {
+  console.log('连接服务器...')
+  try {
+    await ssh.connect({
+      host: '192.168.238.128',
+      username: 'root',
+      password: '123456',
+    })
+  } catch (e) {
+    console.log('连接服务器失败!  错误信息：')
+    console.log(e)
+    return
+  }
+  console.log(`ssh 连接服务器成功...`)
+  const { stdout } = await ssh.execCommand(`cd /xx`)
+  const { stdout: stdout2 } = await ssh.execCommand(`git pull`)
+  console.log('🚀 ~ test ~ stdout:', stdout2)
+
+  ssh.dispose()
+}
+test()

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <left-image class="left-image" />
+    <left-image
+      class="left-image"
+      @click="$router.push({ name: 'copy' })"
+    />
     <right-image
       class="right-image"
       @click="

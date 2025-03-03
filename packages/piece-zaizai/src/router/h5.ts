@@ -15,7 +15,16 @@ const h5Route: RouteRecordRaw = {
         title: 'link',
       },
       component: () => import('@/views/console/novel/h5-link.vue'),
-    }
+    },
+    {
+      // 使用这样的 默认路由方式时 不写path，需要给一个name
+      path: 'copy',
+      name: 'copy',
+      meta: {
+        title: 'link',
+      },
+      component: () => import('@/views/h5/copy-str.vue'),
+    },
   ],
 }
 
