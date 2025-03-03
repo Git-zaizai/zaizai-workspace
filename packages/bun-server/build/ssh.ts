@@ -171,18 +171,14 @@ const test = async () => {
   // 执行 git pull 命令
   const { stdout, stderr } = await ssh.execCommand(`cd  /www/zaizai-workspace && git pull`)
 
-  if (stdout) {
+  Bun.write('./asd.log', stdout)
+  /* if (stdout) {
     // @ts-ignore
     const localCommitHash = execSync(`git -C ${import.meta.dir} rev-parse HEAD`)
       .toString()
       .trim()
-  }
+  } */
   console.log('🚀 ~ test ~ stdout:', stdout)
 
   ssh.dispose()
 }
-const localCommitHash = execSync(`git -C ${import.meta.dir} rev-parse HEAD`)
-  .toString()
-
-  .trim()
-
