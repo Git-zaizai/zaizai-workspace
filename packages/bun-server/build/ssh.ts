@@ -1,7 +1,8 @@
 import { NodeSSH } from 'node-ssh'
 import Client from 'ssh2-sftp-client'
-// @ts-check
+// @ts-expect-error
 import ora from 'ora'
+import { execSync } from 'child_process'
 
 import path from 'node:path'
 import fs from 'node:fs'
@@ -25,6 +26,7 @@ const sftp = new Client()
 let spinner = null // 进度显示
 let totalFileCount = 0 // 本地dist文件夹中总文件数量
 let num = 0 // 已成功上传到远端服务器上的文件数量
+// @ts-ignore
 const loacldist = path.join(import.meta.dirname, '../dist')
 
 // 处理命令输出
@@ -169,8 +171,18 @@ const test = async () => {
   // 执行 git pull 命令
   const { stdout, stderr } = await ssh.execCommand(`cd  /www/zaizai-workspace && git pull`)
 
+  if (stdout) {
+    // @ts-ignore
+    const localCommitHash = execSync(`git -C ${import.meta.dir} rev-parse HEAD`)
+      .toString()
+      .trim()
+  }
   console.log('🚀 ~ test ~ stdout:', stdout)
 
   ssh.dispose()
 }
-test()
+const localCommitHash = execSync(`git -C ${import.meta.dir} rev-parse HEAD`)
+  .toString()
+
+  .trim()
+
