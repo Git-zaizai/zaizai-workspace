@@ -171,7 +171,10 @@ const test = async () => {
   // 执行 git pull 命令
   const { stdout, stderr } = await ssh.execCommand(`cd  /www/zaizai-workspace && git pull`)
 
+  console.log("🚀 ~ test ~ stdout:", stdout)
+  console.log("🚀 ~ test ~ stderr:", stderr)
   Bun.write('./asd.log', stdout)
+  Bun.write('./asd2.log', stderr)
   /* if (stdout) {
     // @ts-ignore
     const localCommitHash = execSync(`git -C ${import.meta.dir} rev-parse HEAD`)
@@ -182,3 +185,5 @@ const test = async () => {
 
   ssh.dispose()
 }
+
+test()
