@@ -158,9 +158,9 @@ const test = async () => {
     return
   }
   console.log(`ssh 连接服务器成功...`)
-  const { stdout } = await ssh.execCommand(`cd /xx`)
-  const { stdout: stdout2 } = await ssh.execCommand(`git pull`)
-  console.log('🚀 ~ test ~ stdout:', stdout2)
+  const { stdout } = await ssh.execCommand(`cd /www/zaizai-workspace && git pull`)
+
+  console.log("🚀 ~ test ~ stdout:", stdout)
 
   ssh.dispose()
 }
