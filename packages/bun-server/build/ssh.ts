@@ -170,8 +170,12 @@ const test = async () => {
 
   // 执行 git pull 命令
   const { stdout, stderr } = await ssh.execCommand(`cd  /www/zaizai-workspace && git pull`)
-
   if (stdout) {
+    if (stdout.includes('已经是最新的')) {
+      console.log('代码已经是最新的了')
+      ssh.dispose()
+      return
+    }
     // @ts-ignore
     const localCommitHash = execSync(`git -C ${import.meta.dir} rev-parse HEAD`)
       .toString()
@@ -180,10 +184,9 @@ const test = async () => {
       .split('\n')
       .shift()
       .replace(/[\u4e00-\u9fa5]/g, '')
+      .replace(' ', '')
       .split('..')
     const eveny = ubuntuCommitHash.every(v => localCommitHash.includes(v))
-    console.log("🚀 ~ test ~ localCommitHash:", localCommitHash)
-    console.log("🚀 ~ test ~ ubuntuCommitHash:", ubuntuCommitHash)
     if (eveny) {
       console.log('代码已经是最新的了')
       return
