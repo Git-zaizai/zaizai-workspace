@@ -171,17 +171,28 @@ const test = async () => {
   // 执行 git pull 命令
   const { stdout, stderr } = await ssh.execCommand(`cd  /www/zaizai-workspace && git pull`)
 
-  console.log("🚀 ~ test ~ stdout:", stdout)
-  console.log("🚀 ~ test ~ stderr:", stderr)
-  Bun.write('./asd.log', stdout)
-  Bun.write('./asd2.log', stderr)
-  /* if (stdout) {
+  if (stdout) {
     // @ts-ignore
     const localCommitHash = execSync(`git -C ${import.meta.dir} rev-parse HEAD`)
       .toString()
       .trim()
-  } */
-  console.log('🚀 ~ test ~ stdout:', stdout)
+    const ubuntuCommitHash = stdout
+      .split('\n')
+      .shift()
+      .replace(/[\u4e00-\u9fa5]/g, '')
+      .split('..')
+    const eveny = ubuntuCommitHash.every(v => localCommitHash.includes(v))
+    console.log("🚀 ~ test ~ localCommitHash:", localCommitHash)
+    console.log("🚀 ~ test ~ ubuntuCommitHash:", ubuntuCommitHash)
+    if (eveny) {
+      console.log('代码已经是最新的了')
+      return
+    } else {
+      console.log('代码不是最新的')
+    }
+  } else {
+    console.log('执行 git pull 命令失败')
+  }
 
   ssh.dispose()
 }
