@@ -112,7 +112,8 @@ export default defineConfig(configEnv => {
           drop_debugger: true,
         },
       },
-      cssCodeSplit: false, //禁用 CSS 代码拆分
+      // 暂时不能使用，会导致vitepress-md-renderer-web 的样式会冲突
+      // cssCodeSplit: false, //禁用 CSS 代码拆分
       rollupOptions: {
         output: {
           entryFileNames: 'assets/js/[name].[hash].js',

@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { DATA_PATH, UPLOAD_PATH, CACHE_PATH } from '../config'
 import { getUserinfo, jwtVerify, jwtSign } from '../data/user'
-import { mkdirRecursive } from '../utils'
+import { mkdirRecursive, existsFile } from '../utils'
 import dayjs from 'dayjs'
 
 const router = new Router()
@@ -208,8 +208,9 @@ router.post('/upload-web', async req => {
 router.post('/copy-str', async req => {
   const str = req.form.str
   try {
-    const file = Bun.file(path.join(CACHE_PATH, 'copy-str.txt'))
-    file.write(str)
+    const file = Bun.file(path.join(CACHE_PATH, 'copy-str.log'))
+    const writer = file.writer()
+    writer.write(str + '\n')
     return 1
   } catch (e) {
     console.log(`写入失败`, e)
@@ -218,6 +219,27 @@ router.post('/copy-str', async req => {
       msg: '写入失败',
     }
   }
+})
+
+router.get('/copy-list', async req => {
+  try {
+    const ph = path.join(CACHE_PATH, 'copy-str.log')
+    existsFile(ph)
+    const file = Bun.file(ph)
+    return file
+  } catch (e) {
+    console.log(`读取失败`, e)
+    return {
+      code: 500,
+      msg: '读取失败',
+    }
+  }
+})
+
+router.get('/clear-str', () => {
+  const ph = path.join(CACHE_PATH, 'copy-str.log')
+  Bun.write(ph, '')
+  return 1
 })
 
 import linkRoute from './link'

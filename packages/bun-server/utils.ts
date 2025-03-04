@@ -19,6 +19,7 @@ export function normalizePath(inputPath) {
 
 export async function existsFile(ph: string) {
   ph = normalizePath(ph)
+  
   if (!fs.existsSync(ph)) {
     const phs = ph.split('/')
     phs.pop()
@@ -45,7 +46,9 @@ export function getLocalIP() {
     let item = interfaces[interfaceName]
     if (interfaceName === 'WLAN') {
       if (item.length === 2) {
+        // @ts-ignore
         item = item.find(i => i.family === 'IPv4')
+        // @ts-ignore
         item && ifaces.push(item.address)
       }else{
         ifaces.push(item[0].address)

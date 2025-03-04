@@ -22,13 +22,15 @@
 <script setup lang="ts">
 import type { FloatButtonProps } from 'naive-ui'
 
-const props = defineProps<{
+const { openMdWay = 'open', ...props } = defineProps<{
   bottom?: number
   top?: number
   right?: number
   left?: number
   position?: FloatButtonProps['position']
+  // 是否开启open
   openMdWay?: 'open' | 'render'
+  // 是否开启查看源码
   checkSource?: boolean
   markdownUrl: string
 }>()
@@ -50,12 +52,17 @@ const checkSourceCode = () => {
   }
   const base = import.meta.env.VITE_GITHUB
   const fileURL = new URL(import.meta.url)
-  window.open(base + '/blob/main' + fileURL.pathname)
+  window.open(base + '/tree/main/packages/piece-zaizai' + fileURL.pathname)
 }
 
 const checkCode = () => {
-  if (!props.openMdWay || props.openMdWay === 'open') {
-    window.open(window.location.origin + `/markdown?markdownUrl=${props.markdownUrl}`)
+  if (openMdWay === 'open') {
+    const ROUTER_FN = import.meta.env.VITE_GLOB_ROUTER_FN
+    if (ROUTER_FN === 'hash') {
+      window.open(window.location.origin + `/#/markdown?markdownUrl=${props.markdownUrl}`)
+    } else {
+      window.open(window.location.origin + `/markdown?markdownUrl=${props.markdownUrl}`)
+    }
   } else {
     window.$message.info('还没想好')
   }

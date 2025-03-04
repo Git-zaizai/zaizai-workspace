@@ -49,6 +49,8 @@ const http = createFetch({
         case 404:
           window.$message.error('404 Not Found！')
           break
+        case 204:
+          
           break
         default:
           errorMessage(text, errStatus)

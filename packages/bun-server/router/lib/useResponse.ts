@@ -1,7 +1,7 @@
-import { val } from 'node_modules/cheerio/dist/commonjs/api/attributes'
 import type { Req, Server, Next } from './type'
 // @ts-ignore
 import { isNull, isUndefined, isObject } from 'lodash-es'
+import { BunFile } from 'bun'
 
 function isPrimitive(value: any): boolean {
   return (
@@ -41,15 +41,15 @@ export async function useResponse(req: Req, server: Server, next: Next) {
   const status = req.status === 204 ? 200 : req.status
   if (body instanceof Blob) {
     return new Response(body, {
-      status,
       headers,
+      status,
     })
   }
 
   headers.set('Content-Type', 'application/json; charset=utf-8')
 
   let response
-  
+
   if (isPrimitive(body)) {
     response = { code: 200, msg: 'OK', data: body }
   } else {

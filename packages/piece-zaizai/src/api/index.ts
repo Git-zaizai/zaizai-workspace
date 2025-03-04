@@ -66,5 +66,6 @@ export const getTableData = async () => {
   }
 }
 
-export const setCopyStr = (str: string) => http('/copy').post({ str }).json()
-export const getCopyList = () => http('/copy/list').get().json()
+export const setCopyStr = (str: string) => http('/copy-str').post({ str }).json()
+export const getCopyList = () => http('/copy-list').get().text()
+export const clearStrFile = () => http('/clear-str').get().json()

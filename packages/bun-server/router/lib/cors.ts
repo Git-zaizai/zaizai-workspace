@@ -5,7 +5,7 @@ export const cors = (headers: object = {}) => {
     console.log(`cors ===> req.method: ${req.method}`)
 
     req.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,PATCH')
-    req.setHeader('Access-Control-Allow-Origin', req.headers.get('origin'))
+    req.setHeader('Access-Control-Allow-Origin', req.headers.get('origin') || '*')
 
     if (req.method === 'options') {
       req.setHeader('Access-Control-Allow-Credentials', 'true')

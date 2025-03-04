@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { setCopyStr, getCopyList } from '@/api'
+import { setCopyStr, getCopyList, clearStrFile } from '@/api'
+import { copyStr } from '@/utils'
 const copystr = ref('')
-const inputStatus = ref('')
+const inputStatus = ref<'success' | 'error' | 'warning'>('success')
 const copyList = ref([])
 
 async function sendStr() {
@@ -9,16 +10,45 @@ async function sendStr() {
     inputStatus.value = 'warning'
     return
   } else {
-    inputStatus.value = ''
+    inputStatus.value = 'success'
   }
 
   try {
     await setCopyStr(copystr.value)
-    copyList.value.push(copystr.value)
+    copyList.value.unshift(copystr.value)
   } catch {
     window.$message.error('发送失败，请重试')
   }
 }
+
+function clearStr() {
+  window.$dialog.create({
+    title: '提示',
+    content: '确定清空吗？',
+    positiveText: '确定',
+    negativeText: '不确定',
+    onPositiveClick: async () => {
+      const { error } = await clearStrFile()
+      if (!error.value) {
+        copyList.value = []
+      }
+    },
+  })
+}
+
+onMounted(async () => {
+  try {
+    const res = await getCopyList()
+    const str = res.data.value.split('\r\n')
+    if (Array.isArray(str)) {
+      copyList.value = str
+    } else {
+      copyList.value = res.data.value.split('\n')
+    }
+  } catch {
+    window.$message.error('获取失败，请重试')
+  }
+})
 </script>
 
 <template>
@@ -26,6 +56,7 @@ async function sendStr() {
     <n-input
       v-model:value="copystr"
       type="textarea"
+      :status="inputStatus"
       clearable
       @keyup.center="sendStr"
       :autosize="{ minRows: 5 }"
@@ -42,13 +73,25 @@ async function sendStr() {
       @click="sendStr"
       >发送</n-button
     >
-    
+    <n-button
+      class="mt-5"
+      block
+      @click="clearStr"
+      >清空</n-button
+    >
+
     <Iconify class="i-ph-arrow-bend-down-left-thin" />
 
-    <!-- <div class="mt-20">
-      <p class="text-20 m-y-10">https://tool.h234.cn/rcode/h234/h234/h234/h234/h234index.html</p>
-     
-    </div> -->
+    <div class="mt-20">
+      <p
+        class="text-16px m-y-10"
+        v-for="(v, i) in copyList"
+        :key="i"
+        @click="copyStr(v)"
+      >
+        {{ v }}
+      </p>
+    </div>
   </div>
 </template>
 

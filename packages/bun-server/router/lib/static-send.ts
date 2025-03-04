@@ -24,7 +24,7 @@ export const staticSend = (
       fileList.push(dir.replace(/\\/g, '/'))
     }
   }
-
+  
   console.log('fileList', fileList)
 
   return async (req: Req, server: Server, next: Next) => {
@@ -33,6 +33,9 @@ export const staticSend = (
     console.log('staticSend <===')
 
     let body = responseData || req.body
+    if (body.status === 200) {
+      return body
+    }
 
     let urlPath
     if (req.method !== 'head' && req.method !== 'get') {

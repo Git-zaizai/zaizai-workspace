@@ -22,6 +22,7 @@ export const defaultRouters: RouteRecordRaw = {
   children: [
     {
       path: '',
+      name: '',
       component: index,
     },
   ],
