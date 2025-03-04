@@ -11,7 +11,7 @@ const router = new Router({
 })
 
 // 查看log的执行顺序
-router.use(cors()).use(usePriveartRoute()).use(staticSend()).use(useResponse).use(routrs.routes())
+router.use(cors()).use(useResponse).use(usePriveartRoute()).use(staticSend()).use(routrs.routes())
 
 Bun.serve({
   port: Number(process.env.ZAI_PORT),
@@ -33,7 +33,7 @@ Bun.serve({
 
     const dispatch = router.callback(req, server)
     const body = await dispatch(req, server)
-    
+
     /* if (request.method !== 'OPTIONS') {
       console.log('结束请求')
     }
@@ -46,4 +46,8 @@ Bun.serve({
 
 import { getLocalIP } from './utils'
 
-console.log(`Bun server is running at http://localhost:${process.env.ZAI_PORT} \nip: http://${getLocalIP()}:${process.env.ZAI_PORT}`)
+console.log(
+  `Bun server is running at http://localhost:${process.env.ZAI_PORT} \nip: http://${getLocalIP()}:${
+    process.env.ZAI_PORT
+  }`
+)

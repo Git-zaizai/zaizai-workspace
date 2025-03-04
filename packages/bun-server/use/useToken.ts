@@ -30,7 +30,6 @@ export const usePriveartRoute = (routers?: string[]) => {
     console.log('usePriveartRoute ===>')
     
     if (PRIVATE_ROUTES.length === 0) {
-      console.log('usePriveartRoute <===')
       return next()
     }
     const { pathname } = req
