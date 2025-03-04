@@ -89,3 +89,8 @@ export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH" 
 ```
 在输入 `source ~/.bashrc` 重新加载配置文件，就可以输入 `volta -v`，如果没有找到命令，请重新打开一个控制台
+
+# git 设置代理
+
+git config --global http.proxy 127.0.0.1:7897
+git config --global https.proxy 127.0.0.1:7899
