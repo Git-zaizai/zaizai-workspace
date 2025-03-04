@@ -7,7 +7,7 @@ public/upload/*
 data/json/*.json
 logs/*
 cache/json/*
-/build/ssh.ts
+build/ssh.ts
 # Logs
 
 _.log
