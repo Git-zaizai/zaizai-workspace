@@ -1,7 +1,7 @@
 import { Router } from './index'
 import path from 'node:path'
 import fs from 'node:fs/promises'
-import { DATA_PATH, UPLOAD_PATH } from '../config'
+import { DATA_PATH, UPLOAD_PATH, CACHE_PATH } from '../config'
 import { getUserinfo, jwtVerify, jwtSign } from '../data/user'
 import { mkdirRecursive } from '../utils'
 import dayjs from 'dayjs'
@@ -197,10 +197,25 @@ router.post('/upload-web', async req => {
     // console.log(file instanceof File); // true
     await Bun.write(path.join(mkdir, file.name), file)
     return 1
-  } catch (err) { 
+  } catch (err) {
     return {
       code: 500,
       msg: '写入文件',
+    }
+  }
+})
+
+router.post('/copy-str', async req => {
+  const str = req.form.str
+  try {
+    const file = Bun.file(path.join(CACHE_PATH, 'copy-str.txt'))
+    file.write(str)
+    return 1
+  } catch (e) {
+    console.log(`写入失败`, e)
+    return {
+      code: 500,
+      msg: '写入失败',
     }
   }
 })
