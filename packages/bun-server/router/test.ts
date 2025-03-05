@@ -1,4 +1,4 @@
-import { Router } from './index'
+import { Router } from '../plugins/router/index'
 import { mkdirRecursive, existsFile } from '../utils'
 import dayjs from 'dayjs'
 import { DATA_PATH, UPLOAD_PATH, CACHE_PATH } from '../config'

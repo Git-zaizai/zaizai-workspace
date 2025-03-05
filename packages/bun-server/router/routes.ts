@@ -1,4 +1,4 @@
-import { Router } from './index'
+import { Router } from '../plugins/router/index'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { DATA_PATH, UPLOAD_PATH, CACHE_PATH } from '../config'

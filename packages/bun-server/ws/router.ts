@@ -1,6 +1,6 @@
 import { use } from './message'
 import { loggerAppend } from './const'
-import { Router } from '../router'
+import { Router } from '../plugins/router'
 const router = new Router()
 
 const detectingSocketId = (ws, data, next) => {

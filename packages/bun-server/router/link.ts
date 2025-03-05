@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { Router } from './index'
+import { Router } from '../plugins/router/index'
 import path from 'node:path'
 import { DATA_PATH, CACHE_PATH_JSON } from '../config'
 // @ts-ignore

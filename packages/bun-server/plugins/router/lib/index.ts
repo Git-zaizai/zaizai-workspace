@@ -13,7 +13,7 @@ type MethodsFun = (namePath: string, middleware: MethodsCallback | MethodsCallba
 interface RouterOptions {
   methods?: methodsType[]
   prefix?: string
-  proxy?: string
+  proxyPrefix?: string
 }
 
 class Router {
@@ -39,7 +39,7 @@ class Router {
     一般都是 / 开始，设置了路径反向代理就是不是从 / 开始
     所以设置这个去除 /bun-server
    */
-  proxy: string
+  proxyPrefix: string
   opts: any
 
   head: MethodsFun
@@ -56,7 +56,7 @@ class Router {
     this.methods = opts?.methods || [...methods]
     this.host = ''
     this.prefix = ''
-    this.proxy = opts?.proxy ?? ''
+    this.proxyPrefix = opts?.proxyPrefix ?? ''
     this.middleware = []
 
     for (const method of methods) {
@@ -134,13 +134,13 @@ class Router {
   callback(req: Req, server: Server) {
     let { pathname, method } = req
     
-    if (this.proxy && pathname.includes(this.proxy)) {
-      pathname = pathname.replace(this.proxy, '')
+    if (this.proxyPrefix && pathname.includes(this.proxyPrefix)) {
+      pathname = pathname.replace(this.proxyPrefix, '')
     }
 
     const dispatch = async (req: Req, server: Server, next?: Next) => {
-      if (this.proxy && req.pathname.includes(this.proxy)) {
-        req.pathname = req.pathname.replace(this.proxy, '')
+      if (this.proxyPrefix && req.pathname.includes(this.proxyPrefix)) {
+        req.pathname = req.pathname.replace(this.proxyPrefix, '')
       }
 
       const route = this.match(pathname, method)

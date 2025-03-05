@@ -1,5 +1,5 @@
 import { pathToRegexp } from 'path-to-regexp'
-import type { Req, Server, Next } from '../router/index'
+import type { Req, Server, Next } from './router/index'
 import { jwtVerify } from '../data/user'
 
 const privateRoutes: string[] = [

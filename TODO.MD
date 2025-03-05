@@ -94,3 +94,14 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 
 git config --global http.proxy 127.0.0.1:7897
 git config --global https.proxy 127.0.0.1:7899
+
+# sudo systemctl restart systemd-networkd 通过 systemctl 重启网络服务
+
+## docker
+
+重启 Docker 服务命令
+sudo systemctl start docker 
+
+停止 Docker 守护进程服务
+sudo systemctl stop docker    # 停止服务 
+sudo systemctl stop docker.socket   # 停止套接字（可选）

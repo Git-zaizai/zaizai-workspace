@@ -1,13 +1,13 @@
 import './env'
-import { Router, createReq, useResponse, staticSend, cors } from './router'
+import { Router, createReq, useResponse, staticSend, cors } from './plugins/router'
 import routrs from './router/routes'
 // @ts-ignore
 import { nanoid } from 'nanoid'
 import webSocketHandler from './ws'
-import { usePriveartRoute } from './use/useToken'
+import { usePriveartRoute } from './plugins/useToken'
 
 const router = new Router({
-  proxy: '/bun-server',
+  proxyPrefix: process.env.ZAI_ROUTER_RPEFIX,
 })
 
 // 查看log的执行顺序

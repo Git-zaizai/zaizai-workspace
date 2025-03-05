@@ -1,6 +1,6 @@
 import { pathToRegexp, type Keys } from 'path-to-regexp'
 import { RouteServerWebSocket } from '../global'
-import compose from '../router/lib/compose'
+import compose from '../plugins/router/lib/compose'
 
 type RouteFn = (ws: RouteServerWebSocket, msg?: any, next?: () => any) => Promise<any> | any
 interface Layer {
