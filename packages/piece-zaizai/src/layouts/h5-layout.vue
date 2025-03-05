@@ -24,7 +24,7 @@ onMounted(() => {
       <n-layout-header
         :inverted="app.Layoutinverted"
         bordered
-        class="h-5.5vh flex-y-center px-5 h5-header"
+        class="h-6vh flex-y-center px-5 h5-header"
       >
         <router-link
           to="/"

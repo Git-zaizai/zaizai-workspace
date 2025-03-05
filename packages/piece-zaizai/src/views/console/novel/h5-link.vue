@@ -283,7 +283,7 @@ function pageViewScrollTop() {
 
 <template>
   <div>
-    <header class="fixed top-0 right-130 h-65 flex-y-center">
+    <header class="fixed top-0 right-130 h-6vh flex-y-center">
       <Iconify
         class="i-ph-magnifying-glass-thin"
         @click="showSelectInput"
@@ -333,7 +333,7 @@ function pageViewScrollTop() {
       @select="handleSelect"
     />
 
-    <footer class="h5-header h-65 w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-white">
+    <footer class="h5-header h-6vh w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-white">
       <div class="flex-y-center justify-between h-full">
         <div
           class="w-35 h-full"

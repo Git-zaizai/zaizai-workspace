@@ -244,7 +244,8 @@ router.get('/clear-str', () => {
 
 import linkRoute from './link'
 import { wsRouter } from '../ws/router'
+import TestRouter from './test'
 
-router.use(linkRoute.routes()).use(wsRouter.routes())
+router.use(linkRoute.routes()).use(wsRouter.routes()).use(TestRouter.routes())
 
 export default router
