@@ -1,8 +1,7 @@
 import type { WebSocketHandler } from 'bun'
 import { wsMap, logger } from './const'
-import { getMessage } from './message'
 import dayjs from 'dayjs'
-import './router'
+import { wsRouter } from './router'
 
 const webSocketHandler: WebSocketHandler<{ socketId: string }> = {
   open(ws) {
@@ -30,7 +29,7 @@ const webSocketHandler: WebSocketHandler<{ socketId: string }> = {
       message = message.toString()
     }
 
-    const messageRes = await getMessage(ws, message)
+    const messageRes = await wsRouter.callback(ws, message)
 
     if (messageRes !== undefined && messageRes !== null) {
       if (typeof messageRes === 'string') {

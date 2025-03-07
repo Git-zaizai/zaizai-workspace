@@ -1,6 +1,9 @@
-import { use } from './message'
+// import { use } from './message'
 import { loggerAppend } from './const'
 import { Router } from '../plugins/router'
+import WsRouter from './ws-router'
+
+export const wsRouter = new WsRouter()
 const router = new Router()
 
 const detectingSocketId = (ws, data, next) => {
@@ -12,14 +15,12 @@ const detectingSocketId = (ws, data, next) => {
   return next()
 }
 
-use('1', () => {
-  return '连接成功'
-})
+wsRouter.use('1', () => '连接成功')
 
 import { wsMap } from './const'
 import dayjs from 'dayjs'
 
-use('log-json', detectingSocketId, (ws, data) => {
+wsRouter.use('log-json', detectingSocketId, (data, ws) => {
   let socketId = ws.data.socketId
   if (!wsMap.has(socketId)) {
     return {
@@ -36,7 +37,7 @@ use('log-json', detectingSocketId, (ws, data) => {
   return resp
 })
 
-use('wol-windows', detectingSocketId, (ws, data) => {
+wsRouter.use('wol-windows', detectingSocketId, (data, ws) => {
   return {
     type: 'wol-app',
     code: 'wol-windows',
@@ -44,7 +45,7 @@ use('wol-windows', detectingSocketId, (ws, data) => {
   }
 })
 
-use('get-socketId', detectingSocketId, ws => {
+wsRouter.use('get-socketId', detectingSocketId, (data, ws) => {
   let socketId = ws.data.socketId
   return {
     type: 'wol-app',
@@ -53,7 +54,7 @@ use('get-socketId', detectingSocketId, ws => {
   }
 })
 
-use('test-socket-message', (ws, data) => {
+wsRouter.use('test-socket-message', (data, ws) => {
   return {
     type: 'wol-app',
     code: 'test-socket-message',
@@ -61,13 +62,13 @@ use('test-socket-message', (ws, data) => {
   }
 })
 
-use('heartbeat', (ws, data) => {
+wsRouter.use('heartbeat', (data, ws) => {
   let socketId = ws.data.socketId
   loggerAppend(`${dayjs().format('YYYY-MM-DD-HH-mm-ss')} ${socketId} 心跳 : ${data} \n`)
   return ''
 })
 
-use('reply-message', (ws, data) => {
+wsRouter.use('reply-message', (data, ws) => {
   const wsi = wsMap.get(ws.data.socketId)
 
   const find = wsi.messages.find(fv => {
@@ -78,6 +79,84 @@ use('reply-message', (ws, data) => {
     find.replymsg = data.replymsg
   }
 })
+
+wsRouter.use('client', (data, ws) => {
+  ws.subscribe('client')
+  return {
+    type: 'rtc client',
+    code: 1,
+  }
+})
+
+wsRouter.use('server', (data, ws) => {
+  ws.subscribe('server')
+  return {
+    type: 'rtc server',
+    code: 1,
+  }
+})
+
+import { server } from '../index'
+
+wsRouter.use('offer', (data, ws) => {
+  server.publish(
+    'client',
+    JSON.stringify({
+      type: 'A->b offer',
+      code: 'offer',
+      data,
+    })
+  )
+  return 1
+})
+
+wsRouter.use('answer', (data, ws) => {
+  server.publish(
+    'server',
+    JSON.stringify({
+      type: 'b->a answer',
+      code: 'answer',
+      data,
+    })
+  )
+  return 'b->a answer 1'
+})
+
+wsRouter.use('ICE-candidate', (data, ws) => {
+  server.publish(
+    'client',
+    JSON.stringify({
+      type: 'a->b ICE-candidate',
+      code: 'ICE-candidate',
+      data,
+    })
+  )
+  return 'a->b ICE-candidate 1'
+})
+
+wsRouter.use('server-ICE-candidate', (data, ws) => {
+  server.publish(
+    'server',
+    JSON.stringify({
+      type: 'b->a ICE-candidate',
+      code: 'server-ICE-candidate',
+      data,
+    })
+  )
+  return 'b->a ICE-candidate 1'
+})
+
+/*****
+ * ********************************************************************************************************************************
+ *                                                                                                                                 *
+ *                                                                                                                                 *
+ *                                                                                                                                 *
+ *                                                                                                                                 *
+ *                                                                                                                                 *
+ *                                                                                                                                 *
+ *                                                                                                                                 *
+ * ********************************************************************************************************************************
+ * **** */
 
 router.post('/ws/test-msg', req => {
   const { socketId, msg } = req.form
@@ -138,4 +217,4 @@ router.get('/ws/list', () => {
   return list
 })
 
-export const wsRouter = router
+export const wsHttpRouter = router

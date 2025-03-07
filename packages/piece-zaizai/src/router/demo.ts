@@ -86,6 +86,14 @@ const demoRoutes: RouteRecordRaw[] = [
     },
     component: () => import('@/views/demo/upload-web.vue'),
   },
+  {
+    path: 'webrtc',
+    meta: {
+      title: 'webrtc',
+      icon: 'i-ph-rocket-launch',
+    },
+    component: () => import('@/views/demo/webrtc/index.vue'),
+  },
 ]
 
 export default demoRoutes

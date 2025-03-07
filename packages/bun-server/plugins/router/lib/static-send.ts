@@ -24,7 +24,7 @@ export const staticSend = (
       fileList.push(dir.replace(/\\/g, '/'))
     }
   }
-  
+
   console.log('fileList', fileList)
 
   return async (req: Req, server: Server, next: Next) => {
@@ -33,7 +33,7 @@ export const staticSend = (
     console.log('staticSend <===')
 
     let body = responseData || req.body
-    if (body.status === 200) {
+    if (body && body.status === 200) {
       return body
     }
 
@@ -42,7 +42,9 @@ export const staticSend = (
       return body
     }
 
-    if (options.indexHtml && body.status === 404 && req.pathname === '/') {
+    // options.indexHtml &&  body.status === 404 && req.pathname === '/' 由于路由顺序改变 useResponse 在前
+    // 往下没有找不到路由，默认body=null了，所以在这里直接 if body
+    if (options.indexHtml && !body && req.pathname === '/') {
       const html = path.join(filePath, 'index.html')
       if (fs.existsSync(html)) {
         return new Response(Bun.file(html))

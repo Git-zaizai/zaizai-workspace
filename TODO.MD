@@ -105,3 +105,19 @@ sudo systemctl start docker
 停止 Docker 守护进程服务
 sudo systemctl stop docker    # 停止服务 
 sudo systemctl stop docker.socket   # 停止套接字（可选）
+
+
+# 方法1：重启网络服务（任选上述任意一种网络重启方式）
+sudo systemctl restart 
+
+## pm2 设置开启启动自动启动配置文件
+
+先运行配置文件
+pm2 start /www/pm2.config.js  
+保存当前进程列表
+pm2 save 
+生成开机启动脚本
+pm2 startup 
+
+
+pm2 reload all     # 重启所有进程 

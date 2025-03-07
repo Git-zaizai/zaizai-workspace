@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { setCopyStr, getCopyList, clearStrFile } from '@/api'
 import { copyStr } from '@/utils'
-const copystr = ref('')
+const copystr = ref<any>()
 const inputStatus = ref<'success' | 'error' | 'warning'>('success')
 const copyList = ref([])
 
@@ -39,12 +39,7 @@ function clearStr() {
 onMounted(async () => {
   try {
     const res = await getCopyList()
-    const str = res.data.value.split('\r\n')
-    if (Array.isArray(str)) {
-      copyList.value = str
-    } else {
-      copyList.value = res.data.value.split('\n')
-    }
+    copyList.value = res.data.value.split('\n').reverse()
   } catch {
     window.$message.error('获取失败，请重试')
   }

@@ -168,12 +168,12 @@ router.get('/verify', req => {
   const token = req.headers.get('Authorization')
   if (!token) {
     req.status = 401
-    return { msg: '请获取密钥' }
+    return '请获取密钥'
   }
   const userinfo = jwtVerify(token)
   if (userinfo.code !== 200) {
     req.status = userinfo.code
-    return { msg: '请获取密钥' }
+    return '请获取密钥'
   }
   return 1
 })
@@ -206,11 +206,9 @@ router.post('/upload-web', async req => {
 })
 
 router.post('/copy-str', async req => {
-  const str = req.form.str
+  const str = req.form.str + '\n'
   try {
-    const file = Bun.file(path.join(CACHE_PATH, 'copy-str.log'))
-    const writer = file.writer()
-    writer.write(str + '\n')
+    await fs.appendFile(path.join(CACHE_PATH, 'copy-str.log'), str)
     return 1
   } catch (e) {
     console.log(`写入失败`, e)
@@ -243,9 +241,9 @@ router.get('/clear-str', () => {
 })
 
 import linkRoute from './link'
-import { wsRouter } from '../ws/router'
+import { wsHttpRouter } from '../ws/router'
 import TestRouter from './test'
 
-router.use(linkRoute.routes()).use(wsRouter.routes()).use(TestRouter.routes())
+router.use(linkRoute.routes()).use(wsHttpRouter.routes()).use(TestRouter.routes())
 
 export default router

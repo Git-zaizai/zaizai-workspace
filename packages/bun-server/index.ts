@@ -13,7 +13,7 @@ const router = new Router({
 // 查看log的执行顺序
 router.use(cors()).use(useResponse).use(usePriveartRoute()).use(staticSend()).use(routrs.routes())
 
-Bun.serve({
+const server = Bun.serve({
   port: Number(process.env.ZAI_PORT),
   async fetch(request, server) {
     console.log('\n请求开始')
@@ -51,3 +51,5 @@ console.log(
     process.env.ZAI_PORT
   }`
 )
+
+export { server }

@@ -16,6 +16,7 @@
     "@shikijs/monaco": "^1.26.1",
     "@vueuse/core": "^11.3.0",
     "colord": "^2.9.3",
+    "mitt": "^3.0.1",
     "monaco-editor": "^0.52.2",
     "naive-ui": "^2.41.0",
     "pinia": "^2.2.8",
