@@ -1,97 +1,80 @@
+<!-- b.html (视频播放端) -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <title>Document</title>
+    <title>视频播放端 (B)</title>
   </head>
   <body>
-    <h1>bun server</h1>
-
-    <p id="text">asdhl</p>
     <video
-      width="500"
-      height="500"
+      id="remoteVideo"
       autoplay
-      playsinline
     ></video>
-  </body>
-  <script>
-    const video = document.querySelector('video')
-    const socket = new WebSocket('ws://localhost:7379')
-    const peerConnection = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302',
-        },
-      ],
-    })
-    let stream
 
-    async function offerSend(offer) {
-      await peerConnection.setRemoteDescription(offer) // 设置A的SDP
-      const answer = await peerConnection.createAnswer()
-      await peerConnection.setLocalDescription(answer)
-      socket.send(
-        JSON.stringify({
-          route: 'answer',
-          data: answer,
-        })
-      )
-    }
-
-    peerConnection.ontrack = track => {
-      console.log('触发 track')
-
-      if (track.track.kind === 'video') {
-        video.srcObject = track.streams[0]
-        // video.autoplay = true
-        // video.style.setProperty('aspect-ratio', '16 / 9')
-        // video.setAttribute('id', track.track.id)
+    <script>
+      const video = document.querySelector('video')
+      video.onerror = error => {
+        console.log('🚀 ~ error:', error)
       }
-      if (track.track.kind === 'audio') {
-        const audio = document.createElement('audio')
-        audio.srcObject = track.streams[0]
-        audio.autoplay = true
-        audio.setAttribute('id', track.track.id)
-        document.body.appendChild(audio)
-      }
-    }
+      /* 步骤5：播放端初始化 */
+      const ws = new WebSocket('ws://localhost:7379') // 连接到接收端专用端点
+      let pc
 
-    // 接受到ICE-candidate后会设置 addIceCandidate ，然后会触发 onicecandidate
-    peerConnection.onicecandidate = candidateInfo => {
-      if (candidateInfo.candidate) {
-        let json = {
-          route: 'server-ICE-candidate',
-          data: candidateInfo.candidate,
+      const configuration = {
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+      }
+
+      ws.onopen = () => {
+        ws.send('client')
+      }
+
+      // WebSocket 消息处理
+      ws.onmessage = async message => {
+        let data
+        try {
+          data = JSON.parse(message.data)
+        } catch (error) {
+          data = message.data
         }
-        socket.send(JSON.stringify(json))
-      }
-    }
 
-    async function setCandidate(data) {
-      await peerConnection.addIceCandidate(data)
-    }
+        if (data.code === 'sender-offer') {
+          /* 步骤5.1：处理推送端 offer */
+          pc = new RTCPeerConnection(configuration)
 
-    socket.onopen = () => {
-      socket.send('client')
-    }
+          // 处理远程流
+          pc.ontrack = event => {
+            document.querySelector('video').srcObject = event.streams[0]
+          }
 
-    socket.onmessage = message => {
-      let data
-      try {
-        data = JSON.parse(message.data)
-      } catch (error) {
-        data = message
+          // 处理 ICE 候选
+          pc.onicecandidate = ({ candidate }) => {
+            console.log("🚀 ~ candidate:", candidate)
+            if (candidate) {
+              ws.send(
+                JSON.stringify({
+                  route: 'receiver-candidate',
+                  data: candidate.toJSON(),
+                })
+              )
+            }
+          }
+
+          /* 步骤5.2：创建应答 */
+          await pc.setRemoteDescription(new RTCSessionDescription(data.data))
+          const answer = await pc.createAnswer()
+          await pc.setLocalDescription(answer)
+          ws.send(
+            JSON.stringify({
+              route: 'receiver-answer',
+              data: pc.localDescription,
+            })
+          )
+        }
+
+        if (data.code === 'sender-candidate') {
+          /* 步骤7：处理推送端候选 */
+          pc.addIceCandidate(new RTCIceCandidate(data.data))
+        }
       }
-      if (data.code === 'offer') {
-        offerSend(data.data)
-      } else if (data.code === 'ICE-candidate') {
-        setCandidate(data.data)
-      }
-    }
-  </script>
+    </script>
+  </body>
 </html>

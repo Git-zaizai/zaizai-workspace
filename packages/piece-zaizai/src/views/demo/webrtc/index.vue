@@ -1,98 +1,49 @@
 <script setup lang="ts">
 import mitt from 'mitt'
 
+let serverIp = '192.168.2.28'
+
 const emitter = mitt()
 // A监听到socket里面的answer事件，需要将刚才的自己的RTCpeer添加远端描述
-emitter.on('answer', async (data: RTCSessionDescriptionInit) => {
-  await peer.setRemoteDescription(data)
+emitter.on('receiver-answer', async (data: RTCSessionDescriptionInit) => {
+  /* 步骤6：处理接收端应答 */
+  // ✅ 检查当前状态是否为 have-local-offer
+  if (pc.signalingState === 'have-local-offer') {
+    await pc.setRemoteDescription(data)
+  } else {
+    console.warn('收到 Answer 但状态不匹配:', pc.signalingState)
+  }
 })
 
 // B发送过来的ICE候选信息
-emitter.on('server-ICE-candidate', async (data: RTCIceCandidate) => {
-  console.log("🚀 ~ emitter.on ~ data:", data)
-  await peer.addIceCandidate(data)
+emitter.on('receiver-candidate', async (data: RTCIceCandidate) => {
+  /* 步骤8：处理接收端候选 */
+  pc.addIceCandidate(new RTCIceCandidate(data))
 })
 
-let webSocket: WebSocket | null = null
-function socketSend(route: string, data: any) {
-  webSocket.send(
-    JSON.stringify({
-      route,
-      data,
-    })
-  )
-}
-
-const peer = new RTCPeerConnection({
-  iceServers: [
-    {
-      urls: 'stun:stun.l.google.com:19302',
-    },
-  ],
-})
-
-const peerMap = new Map()
-
-const ICE_candidate = []
-
-// 接下来A会获取到ICE候选信息，需要发送给B
-peer.onicecandidate = (candidateInfo: RTCPeerConnectionIceEvent) => {
-  console.log("🚀 ~ candidateInfo:", candidateInfo)
-  if (candidateInfo.candidate) {
-    // socketSend('ICE-candidate', candidateInfo.candidate)
-    ICE_candidate.push(candidateInfo.candidate)
-  }
-}
-
-// 监听 ICE gathering 状态变化
-peer.addEventListener('icegatheringstatechange', () => {
-  if (peer.iceGatheringState === 'complete') {
-    console.log('ICE gathering complete')
-    // 在这里可以执行所有候选者都被发现后的操作
-    socketSend('ICE-candidate', ICE_candidate.at(-1))
-  }
-})
-
+/* 步骤1：推送端初始化 */
+let ws: WebSocket | null = null
+let pc: RTCPeerConnection = null
+let localStream
 const localVideo = useTemplateRef('localVideoRef')
-let stream: MediaStream | null = null
-
-async function open() {
-  try {
-    // 创建数据源
-    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    // 显示数据源，localVideo 是 html 中的 video 标签
-    localVideo.value.srcObject = stream
-    stream.getTracks().forEach(track => {
-      peer.addTrack(track, stream)
-    })
-  } catch (error) {
-    console.error('Error accessing media devices.', error)
-  }
+const configuration = {
+  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
 }
-
-function close() {
-  if (stream) {
-    // 停止所有的轨道
-    stream.getTracks().forEach(track => track.stop())
-    // 清空视频源
-    localVideo.value.srcObject = null
-    stream = null
-  }
-}
+let iscandidate = false
 
 async function createWebSocket() {
-  webSocket = new WebSocket('ws://192.168.1.105:7379/server')
+  ws = new WebSocket(`ws://${serverIp}:7379/server`)
 
-  webSocket.onopen = () => {
+  ws.onopen = () => {
     console.log('打开 WebSocket')
     socketSend('server', 1)
   }
 
-  webSocket.onerror = e => {
+  ws.onerror = e => {
     console.log('打开WebSocket错误', e)
   }
 
-  webSocket.onmessage = (message: any) => {
+  ws.onmessage = (message: any) => {
     if (message === '') {
       return
     }
@@ -106,48 +57,137 @@ async function createWebSocket() {
   }
 }
 
-async function sendPeer() {
-  const offer = await peer.createOffer()
-  await peer.setLocalDescription(offer)
-  peerMap.set('offer', offer)
-  socketSend('offer', offer)
+/* 步骤2：初始化媒体设备 */
+async function createLocalStream() {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+    localVideo.value.srcObject = localStream
+  } catch (e) {
+    console.error('获取媒体设备失败:', e)
+  }
 }
-function sendoffer() {
-  socketSend('offer', peerMap.get('offer'))
+
+let sender_candidate
+/* 步骤3：创建推送端连接 */
+function createPeerConnection() {
+  pc = new RTCPeerConnection(configuration)
+
+  // 添加本地流
+  localStream.getTracks().forEach(track => {
+    pc.addTrack(track, localStream)
+  })
+
+  // 处理 ICE 候选
+  pc.onicecandidate = ({ candidate }) => {
+    if (candidate && candidate.address === serverIp && !iscandidate) {
+      ws.send(
+        JSON.stringify({
+          route: 'sender-candidate',
+          data: candidate.toJSON(),
+        })
+      )
+      sender_candidate = candidate.toJSON()
+      iscandidate = true
+    }
+  }
 }
-function sendcandidate(){
-  socketSend('ICE-candidate', peerMap.get('ICE-candidate'))
+
+function sendsender_candidate() {
+  ws.send(
+    JSON.stringify({
+      route: 'sender-candidate',
+      data: sender_candidate,
+    })
+  )
+}
+
+let offer
+/* 步骤4：发起呼叫 */
+async function startBroadcast() {
+  // createPeerConnection()
+  offer = await pc.createOffer()
+  await pc.setLocalDescription(offer)
+  ws.send(
+    JSON.stringify({
+      route: 'sender-offer',
+      data: pc.localDescription,
+    })
+  )
+}
+
+function sendOffer() {
+  ws.send(
+    JSON.stringify({
+      route: 'sender-offer',
+      data: pc.localDescription,
+    })
+  )
+}
+
+function socketSend(route: string, data: any) {
+  ws.send(
+    JSON.stringify({
+      route,
+      data,
+    })
+  )
+}
+
+function closeLocalStream() {
+  // 停止所有的轨道
+  localStream.getTracks().forEach(track => track.stop())
+  // 清空视频源
+  localVideo.value.srcObject = null
+  localStream = null
+  ws.close()
+  ws = null
+  pc.close()
+  pc = null
 }
 </script>
 
 <template>
   <div class="demo-content-view flex-col">
-    <n-button @click="open">创建数据源</n-button>
-    <n-button
-      @click="close"
-      class="mt-5"
-      >取消视频</n-button
-    >
+    <p>步骤1：推送端初始化</p>
     <n-button
       @click="createWebSocket"
       class="mt-5"
-      >创建webSocket</n-button
+      >1.1 创建websocket</n-button
     >
     <n-button
-      @click="sendPeer"
       class="mt-5"
-      >创建 peer</n-button
+      @click="createLocalStream"
+      >步骤2：初始化媒体设备</n-button
     >
+
     <n-button
-      @click="sendoffer"
+      @click="createPeerConnection"
       class="mt-5"
-      >发送 offer</n-button
+      >步骤3：创建推送端连接</n-button
     >
+
+    <div class="flex-x-center gap-5">
+      <n-button
+        @click="startBroadcast"
+        class="mt-5"
+        >发起 Offer</n-button
+      >
+      <n-button
+        @click="sendsender_candidate"
+        class="mt-5"
+        >发起 sender_candidate</n-button
+      >
+    </div>
+
     <n-button
-      @click="sendcandidate"
-      class="mt-5"
-      >发送 ICE-candidate</n-button
+      @click="closeLocalStream"
+      class="mt-7"
+      >关闭所有</n-button
     >
+
     <video
       ref="localVideoRef"
       width="500"

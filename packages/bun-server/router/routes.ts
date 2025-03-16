@@ -240,6 +240,19 @@ router.get('/clear-str', () => {
   return 1
 })
 
+router.get('/file/fileinfo', () => {
+ /*  console.log('绿卡就是道路喀什');
+  
+  const ph = path.join(__dirname, '../public/upload/2025-02-27/JSQ30-16WM3DPWCU1说明书.pdf')
+  return Bun.file(ph) */
+  return {
+    data: {
+      file_name: 'JSQ30-16WM3DPWCU1说明书.pdf',
+      ticket: '11111111'
+    }
+  }
+})
+
 import linkRoute from './link'
 import { wsHttpRouter } from '../ws/router'
 import TestRouter from './test'

@@ -98,52 +98,52 @@ wsRouter.use('server', (data, ws) => {
 
 import { server } from '../index'
 
-wsRouter.use('offer', (data, ws) => {
+wsRouter.use('sender-offer', (data, ws) => {
   server.publish(
     'client',
     JSON.stringify({
       type: 'A->b offer',
-      code: 'offer',
+      code: 'sender-offer',
       data,
     })
   )
   return 1
 })
 
-wsRouter.use('answer', (data, ws) => {
+wsRouter.use('receiver-answer', (data, ws) => {
   server.publish(
     'server',
     JSON.stringify({
-      type: 'b->a answer',
-      code: 'answer',
+      type: 'b->a receiver-answer',
+      code: 'receiver-answer',
       data,
     })
   )
-  return 'b->a answer 1'
+  return 'b->a receiver-answer 1'
 })
 
-wsRouter.use('ICE-candidate', (data, ws) => {
+wsRouter.use('sender-candidate', (data, ws) => {
   server.publish(
     'client',
     JSON.stringify({
-      type: 'a->b ICE-candidate',
-      code: 'ICE-candidate',
+      type: 'a->b sender-candidate',
+      code: 'sender-candidate',
       data,
     })
   )
   return 'a->b ICE-candidate 1'
 })
 
-wsRouter.use('server-ICE-candidate', (data, ws) => {
+wsRouter.use('receiver-candidate', (data, ws) => {
   server.publish(
     'server',
     JSON.stringify({
-      type: 'b->a ICE-candidate',
-      code: 'server-ICE-candidate',
+      type: 'b->a receiver-candidate',
+      code: 'receiver-candidate',
       data,
     })
   )
-  return 'b->a ICE-candidate 1'
+  return 'b->a receiver-candidate 1'
 })
 
 /*****
