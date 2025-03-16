@@ -208,7 +208,7 @@ router.post('/upload-web', async req => {
 router.post('/copy-str', async req => {
   const str = req.form.str + '\n'
   try {
-    await fs.appendFile(path.join(CACHE_PATH, 'copy-str.log'), str)
+    await fs.appendFile(path.join(CACHE_PATH, '/text/copy-str.log'), str)
     return 1
   } catch (e) {
     console.log(`写入失败`, e)
@@ -221,7 +221,7 @@ router.post('/copy-str', async req => {
 
 router.get('/copy-list', async req => {
   try {
-    const ph = path.join(CACHE_PATH, 'copy-str.log')
+    const ph = path.join(CACHE_PATH, '/text/copy-str.log')
     existsFile(ph)
     const file = Bun.file(ph)
     return file
