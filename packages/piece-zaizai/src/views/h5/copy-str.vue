@@ -77,15 +77,19 @@ onMounted(async () => {
 
     <Iconify class="i-ph-arrow-bend-down-left-thin" />
 
-    <div class="mt-20">
-      <p
-        class="text-16px m-y-10"
+    <div class="mt-20 overflow-y-scroll h-68vh">
+      <div
+        class="bg-coolGray rounded-3px p-5px mt-10px"
         v-for="(v, i) in copyList"
         :key="i"
-        @click="copyStr(v)"
       >
-        {{ v }}
-      </p>
+        <p
+          class="text-16px"
+          @click="copyStr(v)"
+        >
+          {{ v }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
