@@ -59,6 +59,7 @@ const dropdown = reactive({
 })
 
 const tableData = ref<Row[]>([])
+let cache_tableData = null
 const tags = ref([])
 const formRef = useTemplateRef('formRef')
 let formdataIndex = -1
@@ -67,8 +68,10 @@ const [bodyLoding, bodyLodingToggle] = useToggle()
 async function init(v: boolean = true) {
   bodyLodingToggle(v)
   const { data } = await getLinkTable()
+  cache_tableData = JSON.parse(JSON.stringify(data.value))
   tableData.value = data.value
     .map((v, i) => {
+      v.title = 'xxxxxxxxxxxxxxxxxxxxxx' + i
       return v
     })
     .reverse()
@@ -241,16 +244,16 @@ function showSelectInput() {
 }
 
 function queryfilterData() {
-  let filterData
+  let filterData = JSON.parse(JSON.stringify(cache_tableData))
   if (selectShow.value && !queryForm.value.title) {
     window.$message.warning('请输入小说名')
     return
-  } else {
-    filterData = tableData.value.filter(v => v.title.includes(queryForm.value.title))
+  } else if(queryForm.value.title) {
+    filterData = filterData.filter(v => v.title.includes(queryForm.value.title))
   }
 
-  if (queryForm.value.tags.length) {
-    const tags = queryForm.value.tags
+  const tags = queryForm.value.tags
+  if (tags.length) {
     filterData = filterData.filter(v => {
       return v.tabs.some(t => tags.includes(t))
     })
@@ -271,7 +274,6 @@ function queryfilterData() {
   if (queryForm.value.link) {
     filterData = tableData.value.filter(v => v.link.includes(queryForm.value.link))
   }
-
   tableData.value = filterData
 }
 
@@ -398,6 +400,7 @@ function pageViewScrollTop() {
       </n-input-group>
     </div>
 
+    <!-- select -->
     <n-modal
       v-model:show="selectDialogShow"
       :mask="false"
@@ -504,7 +507,6 @@ function pageViewScrollTop() {
 
           <drawerFormButton
             class="drawer-form-button"
-            @submit="queryfilterData"
             @close="bindAddShowQuery"
             @reset="resetFormData"
           />
@@ -539,6 +541,7 @@ function pageViewScrollTop() {
       </div>
     </n-modal>
 
+    <!-- add -->
     <n-drawer
       v-model:show="show"
       placement="left"
