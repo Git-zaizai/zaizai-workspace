@@ -8,7 +8,6 @@ data/json/*.json
 logs/*
 cache/json/*
 cache/text
-build/ssh.ts
 # Logs
 
 _.log

@@ -87,12 +87,45 @@ const demoRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/demo/upload-web.vue'),
   },
   {
+    path: 'audio-stream',
+    meta: {
+      title: 'audio-stream流播放',
+      icon: 'i-ph-file-arrow-up-duotone',
+    },
+    component: () => import('@/views/demo/audio-stream.vue'),
+  },
+  {
     path: 'webrtc',
     meta: {
       title: 'webrtc',
       icon: 'i-ph-rocket-launch',
     },
     component: () => import('@/views/demo/webrtc/index.vue'),
+  },
+  {
+    path: 'stream-md',
+    meta: {
+      title: 'stream-md',
+      icon: 'i-ph:markdown-logo',
+    },
+    children: [
+      {
+        path: 'stream-md-renderer',
+        meta: {
+          title: '流式markdown渲染器',
+          icon: 'i-ph:markdown-logo',
+        },
+        component: () => import('@/views/demo/chat/stream-md.vue')
+      },
+      {
+        path: 'chat-message',
+        meta: {
+          title: '聊天消息渲染器',
+          icon: 'i-ph:markdown-logo',
+        },
+        component: () => import('@/views/demo/chat/index.vue')
+      }
+    ]
   },
 ]
 

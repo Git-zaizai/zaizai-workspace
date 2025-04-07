@@ -1,9 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { UploadFileInfo } from 'naive-ui'
+const fileList = ref<UploadFileInfo[]>([])
+</script>
 
 <template>
   <n-upload
     multiple
     directory-dnd
+    v-model:file-list="fileList"
     action="http://localhost:7373/upload-web"
     :max="5"
   >

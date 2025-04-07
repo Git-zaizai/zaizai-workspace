@@ -2,6 +2,7 @@ import { pathToRegexp } from 'path-to-regexp'
 import type { Req, Server, Next } from './router/index'
 import { jwtVerify } from '../data/user'
 
+// 存放需要验证的路由
 const privateRoutes: string[] = [
   '/link/tags',
   '/link/table',

@@ -34,7 +34,20 @@ router.get('/link/tags', async () => {
 })
 
 router.get('/link/table', async () => {
-  return Bun.file(novelFilePath)
+  const NODE_ENV = Bun.env.NODE_ENV
+  
+  if (NODE_ENV=== 'development' || !NODE_ENV) {
+    const data = Bun.file(novelFilePath)
+    let res = await data.json()
+    res = res.map((item: any, i) => {
+      item.title = 'xxxxxxx' + i
+      return item
+    })
+    return new Response(JSON.stringify(res))
+
+  } else {
+    return Bun.file(novelFilePath)
+  }
 })
 /**
  * {

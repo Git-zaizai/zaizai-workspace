@@ -68,15 +68,10 @@ const [bodyLoding, bodyLodingToggle] = useToggle()
 async function init(v: boolean = true) {
   bodyLodingToggle(v)
   const { data } = await getLinkTable()
-  cache_tableData = JSON.parse(JSON.stringify(data.value))
-  tableData.value = data.value
-    .map((v, i) => {
-      v.title = 'xxxxxxxxxxxxxxxxxxxxxx' + i
-      return v
-    })
-    .reverse()
+  tableData.value = data.value.reverse().filter(v => v.isdel === 1)
   const { data: tagsData } = await getLinkTabs()
   tags.value = tagsData.value
+  cache_tableData = JSON.parse(JSON.stringify(data.value))
   setTimeout(() => {
     bodyLodingToggle(false)
   }, 700)
@@ -117,7 +112,17 @@ onMounted(() => {
   init(false)
 })
 
-const { show, showToggle, getAction, setAction, bindAddShow, bandUpdateShow, actionTitle, formData } = useDialog({
+const {
+  show,
+  showToggle,
+  getAction,
+  setAction,
+  bindAddShow,
+  bandUpdateShow,
+  actionTitle,
+  formData,
+  resetFormData: addFormReset,
+} = useDialog({
   formData: {
     title: '',
     start: 0,
@@ -183,6 +188,7 @@ async function submit() {
           tableData.value.unshift(data.value.data)
           formData.value = data.value.data
           setAction('update')
+          window.$message.success('添加成功 !')
         } else {
           window.$message.error(`${data.value.code}: ${data.value.msg}`)
         }
@@ -244,37 +250,62 @@ function showSelectInput() {
 }
 
 function queryfilterData() {
+  let result = []
   let filterData = JSON.parse(JSON.stringify(cache_tableData))
   if (selectShow.value && !queryForm.value.title) {
     window.$message.warning('请输入小说名')
     return
-  } else if(queryForm.value.title) {
-    filterData = filterData.filter(v => v.title.includes(queryForm.value.title))
+  }
+
+  if (queryForm.value.title) {
+    result = filterData.filter(v => v.title.includes(queryForm.value.title))
   }
 
   const tags = queryForm.value.tags
   if (tags.length) {
-    filterData = filterData.filter(v => {
-      return v.tabs.some(t => tags.includes(t))
-    })
+    if (result.length) {
+      result = result.filter(v => {
+        return v.tabs.some(t => tags.includes(t))
+      })
+    } else {
+      result = filterData.filter(v => {
+        return v.tabs.some(t => tags.includes(t))
+      })
+    }
   }
 
   if (queryForm.value.wanjie !== -1) {
-    filterData = filterData.filter(v => v.isdel === queryForm.value.isdel)
+    if (result.length) {
+      result = result.filter(v => v.isdel === queryForm.value.isdel)
+    } else {
+      result = filterData.filter(v => v.isdel === queryForm.value.isdel)
+    }
   }
 
   if (queryForm.value.wanjie !== -1) {
-    filterData = filterData.filter(v => v.wanjie === queryForm.value.wanjie)
+    if (result.length) {
+      result = result.filter(v => v.wanjie === queryForm.value.wanjie)
+    } else {
+      result = filterData.filter(v => v.wanjie === queryForm.value.wanjie)
+    }
   }
 
   if (queryForm.value.duwan !== -1) {
-    filterData = filterData.filter(v => v.duwan === queryForm.value.duwan)
+    if (result.length) {
+      result = result.filter(v => v.duwan === queryForm.value.duwan)
+    } else {
+      result = filterData.filter(v => v.duwan === queryForm.value.duwan)
+    }
   }
 
   if (queryForm.value.link) {
-    filterData = tableData.value.filter(v => v.link.includes(queryForm.value.link))
+    if (result.length) {
+      result = result.filter(v => v.link.includes(queryForm.value.link))
+    } else {
+      result = filterData.filter(v => v.link.includes(queryForm.value.link))
+    }
   }
-  tableData.value = filterData
+  tableData.value = result
 }
 
 const pageViewRef = useTemplateRef('pageViewRef')
@@ -300,6 +331,7 @@ function pageViewScrollTop() {
       <div
         class="page-view p-10 p-b-0"
         ref="pageViewRef"
+        v-if="tableData.length"
       >
         <div
           class="flex flex-y-center bg-white rounded-3xl p-x-10 p-y-5 mb-10 last:mb-0"
@@ -322,6 +354,12 @@ function pageViewScrollTop() {
         </div>
         <div class="h-65"></div>
       </div>
+      <n-empty
+        v-else
+        class="mt-15"
+        description="什么也找不到"
+      >
+      </n-empty>
     </zai-loading>
 
     <n-dropdown
@@ -387,6 +425,7 @@ function pageViewScrollTop() {
         <n-button
           strong
           secondary
+          @click="queryfilterData"
         >
           <Iconify class="i-ph-magnifying-glass-plus" />
         </n-button>
@@ -737,7 +776,7 @@ function pageViewScrollTop() {
             class="drawer-form-button"
             @submit="submit"
             @close="showToggle(false)"
-            @reset="bindAddShow"
+            @reset="addFormReset"
           />
         </n-form>
       </n-drawer-content>

@@ -594,6 +594,7 @@ async function submit() {
           tableData.value.unshift(data.value.data)
           formData.value = data.value.data
           setAction('update')
+          window.$message.success('添加成功！')
         } else {
           window.$message.error(`${data.value.code}: ${data.value.msg}`)
         }

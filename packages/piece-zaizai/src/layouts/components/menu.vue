@@ -4,6 +4,7 @@ import { menuProps } from 'naive-ui'
 import Iconify from '@/components/Iconify.vue'
 import { type RouteRecordRaw, RouterLink } from 'vue-router'
 import { isComponent } from '@/utils'
+import type { VNodeChild } from 'vue'
 
 defineOptions({
   name: 'zai-menu',
@@ -17,7 +18,8 @@ const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
   list.forEach(item => {
     let to = item.name ? { name: item.name } : routePath + '/' + item.path
 
-    let label = item.meta?.title ?? to
+    let labelStr = item.meta?.title as string
+    let label: string | (() => VNodeChild)
     let icon: any
 
     if (!item?.meta || !item.meta?.icon) {
@@ -30,9 +32,15 @@ const initMenu = (list: RouteRecordRaw[], routePath?: string): MenuOption[] => {
       icon = DefaultMenuIcon
     }
 
+    if (!item.component && item.children && item.children.length) {
+      label = labelStr
+    } else if (item.component) {
+      label = () => h(RouterLink, { to }, { default: () => labelStr })
+    }
+
     let menuItem: MenuOption = {
       key: typeof to === 'string' ? to : (to.name as string),
-      label: () => h(RouterLink, { to }, { default: () => label }),
+      label,
       icon,
     }
     if (item.children && item.children.length > 0) {
@@ -80,7 +88,7 @@ if (props.router) {
   route = useRoute()
   menuOptions = initMenu(router.getRoutes().find(v => v.name === props.routeName).children, props.routePath)
   watchEffect(() => {
-    movdelValue.value = (route.name as string) || route.fullPath + '/' + route.path
+    movdelValue.value = (route.name as string) || route.fullPath
   })
 }
 </script>

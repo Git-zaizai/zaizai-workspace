@@ -64,6 +64,7 @@ export async function highlight(
 ): Promise<(str: string, lang: string, attrs: string) => string> {
   const { defaultHighlightLang: defaultLang = '', codeTransformers: userTransformers = [] } = options
 
+  // 只导入需要的语言和主题
   const highlighter = await createHighlighterCore({
     themes: [
       import('shiki/themes/andromeeda.mjs'),
