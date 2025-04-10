@@ -22,7 +22,8 @@ let num = 0 // 已成功上传到远端服务器上的文件数量
 
 // 要排除的文件或文件夹
 const excludeFile = [
-    'node_modules'
+    'node_modules',
+    'upload',
 ]
 
 function obtainTheRequiredFiles() {

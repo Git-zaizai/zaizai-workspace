@@ -1,5 +1,5 @@
 import { Router } from '../plugins/router/index'
-import { mkdirRecursive, existsFile } from '../utils'
+import { mkdirRecursive, existsFile, wait } from '../utils'
 import dayjs from 'dayjs'
 import { DATA_PATH, UPLOAD_PATH, CACHE_PATH } from '../config'
 import path from 'node:path'
@@ -65,6 +65,28 @@ router.post('/file/upload', async req => {
   }
 })
 
+router.post('/stream-md', async () => {
+  const md = Bun.file(path.join(UPLOAD_PATH, 'markdown.md'))
+  let content = await md.text()
+  content = content.split(/\r\n/g)
+  const stream = new ReadableStream({
+    async start(controller) {
+      for (let i = 0; i < content.length; i++) {
+        controller.enqueue(content[i] + '\n')
+        await wait(500)
+      }
+      controller.close()
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    }
+  })
+})
 
 
 

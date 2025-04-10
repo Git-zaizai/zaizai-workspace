@@ -57,13 +57,19 @@ export const staticSend = (
       return body
     }
     urlPath = urlPath.replace('/public/', '')
+
     // 移除路径中的第一个斜杠
     if (urlPath.startsWith('/')) {
       urlPath = urlPath.substring(1)
     }
 
     if (!fileList.includes(urlPath)) {
-      return body
+      const ph = path.join(filePath, urlPath)
+      if (fs.existsSync(ph)) {
+        return new Response(Bun.file(ph))
+      }else{
+        return new Response('404 not found', { status: 404 })
+      }
     }
 
     const file = Bun.file(path.join(filePath, urlPath))
