@@ -22,15 +22,17 @@ import { linkPlugin } from './plugins-web/link'
 import { preWrapperPlugin } from './plugins-web/preWrapper'
 import { restoreEntities } from './plugins-web/restoreEntities'
 
+import { highlightHeader } from './plugins-web/highlight-header'
+
 export type { Header } from '../shared/shared-web'
 
 export type ThemeOptions =
   | ThemeRegistrationAny
   | BuiltinTheme
   | {
-      light: ThemeRegistrationAny | BuiltinTheme
-      dark: ThemeRegistrationAny | BuiltinTheme
-    }
+    light: ThemeRegistrationAny | BuiltinTheme
+    dark: ThemeRegistrationAny | BuiltinTheme
+  }
 
 export interface MarkdownOptions extends Options {
   /* ==================== General Options ==================== */
@@ -171,6 +173,8 @@ export interface MarkdownOptions extends Options {
    * @see https://vitepress.dev/guide/markdown#github-flavored-alerts
    */
   gfmAlerts?: boolean
+
+  isHighlightHeader?: boolean
 }
 
 export type MarkdownRenderer = MarkdownIt
@@ -266,7 +270,7 @@ export async function createMarkdownRenderer(options: MarkdownOptions = {}): Pro
   } as TocPluginOptions)
 
   /*   
-  // TODO: 数学公式处理  暂时不引入 math 
+  // TODO: 数学公式处理  暂时不引入 math
   if (options.math) {
     try {
       const mathPlugin = await import('markdown-it-mathjax3')
@@ -281,6 +285,8 @@ export async function createMarkdownRenderer(options: MarkdownOptions = {}): Pro
       throw new Error('You need to install `markdown-it-mathjax3` to use math support.')
     }
   } */
+
+  md.use(highlightHeader)
 
   // apply user config
   if (options.config) {

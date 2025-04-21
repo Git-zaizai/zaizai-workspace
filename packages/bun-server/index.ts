@@ -38,7 +38,7 @@ const server = Bun.serve({
       console.log('结束请求')
     }
  */
-    console.log('结束请求\n')
+    console.log('结束请求 ===' + `ph ${req.pathname}`)
     return body
   },
   websocket: webSocketHandler,

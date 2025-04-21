@@ -127,6 +127,14 @@ const demoRoutes: RouteRecordRaw[] = [
       }
     ]
   },
+  {
+    path: 'code-snippet',
+    meta: {
+      title: '代码片段',
+      icon: 'i-ph-rocket-launch',
+    },
+    component: () => import('@/views/demo/code/index.vue'),
+  },
 ]
 
 export default demoRoutes

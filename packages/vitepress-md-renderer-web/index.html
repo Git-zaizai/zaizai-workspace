@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-</head>
-
-<body>
-	<Button>vitepress-dark</Button>
-	<Button>light</Button>
-	<script>
-		document.querySelectorAll('Button').forEach(item => {
-			item.addEventListener('click', () => {
-				document.documentElement.classList.add(item.textContent)
-			})
-		})
-		// document.documentElement.classList.add('vitepress-dark')
-	</script>
-	<div id="app"></div>
-</body>
-<script type="module" src="./__test__/mian.ts"></script>
-
+  <body>
+    <button>vitepress-dark</button>
+    <button>light</button>
+    <script>
+      document.querySelectorAll('Button').forEach(item => {
+        item.addEventListener('click', () => {
+          if (document.documentElement.classList.contains('vitepress-dark')) {
+			document.documentElement.classList.remove('vitepress-dark')
+          } else {
+            document.documentElement.classList.add(item.textContent)
+          }
+        })
+      })
+      // document.documentElement.classList.add('vitepress-dark')
+    </script>
+    <div id="app"></div>
+  </body>
+  <script
+    type="module"
+    src="./__test__/mian.ts"
+  ></script>
 </html>

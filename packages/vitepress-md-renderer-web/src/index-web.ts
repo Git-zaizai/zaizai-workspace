@@ -175,6 +175,7 @@ export async function createMarkdownRenderer(options: Options): Promise<Markdown
 import { createHighlighterCore, type HighlighterCore } from 'shiki/core'
 import { bundledThemesInfo, bundledLanguages } from 'shiki/bundle-web.mjs'
 
+// 使用在monaco-editor上
 export function shikiHighlighter(
   theme: BundledTheme | BundledTheme[],
   Langs: string[] | BundledLanguage[]

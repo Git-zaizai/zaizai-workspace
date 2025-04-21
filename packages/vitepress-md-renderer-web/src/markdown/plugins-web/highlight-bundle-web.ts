@@ -18,6 +18,7 @@ import type { MarkdownOptions, ThemeOptions } from '../markdown-web'
 
 import { nanoid } from '../../shared/shared-web'
 
+
 // const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 10)
 
 /**
@@ -60,7 +61,7 @@ const attrsToLines = (attrs: string): TransformerCompactLineOption[] => {
 
 export async function highlight(
   theme: ThemeOptions,
-  options: MarkdownOptions
+  options: MarkdownOptions,
   // logger: Pick<Logger, 'warn'> = console
 ): Promise<(str: string, lang: string, attrs: string) => string> {
   const { defaultHighlightLang: defaultLang = '', codeTransformers: userTransformers = [] } = options
@@ -128,6 +129,7 @@ export async function highlight(
   const lineNoRE = /:(no-)?line-numbers(=\d*)?$/
   const mustacheRE = /\{\{.*?\}\}/g
   return (str: string, lang: string, attrs: string) => {
+
     const vPre = vueRE.test(lang) ? '' : 'v-pre'
     lang = lang.replace(lineNoStartRE, '').replace(lineNoRE, '').replace(vueRE, '').toLowerCase() || defaultLang
 

@@ -4,7 +4,7 @@ import VPDocView from '../src/VPDocView/VPDocView.vue'
 
 import { onMounted, ref } from 'vue'
 const test = async () => {
-  const test = await fetch('markdown.md')
+  const test = await fetch('b.md')
   return await test.text()
 }
 

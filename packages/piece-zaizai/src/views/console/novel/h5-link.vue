@@ -4,6 +4,7 @@ import { copyStr } from '@/utils'
 import { useDebounceFn, useToggle } from '@vueuse/core'
 import { useDialog, drawerFormButton } from '@/components/zai-table-v1'
 import { getLinkTabs, getLinkTable, setLinkItem, addLink, deleteLink } from '@/api'
+import { useCssVars } from '@/hooks/useCssVars'
 
 interface Row {
   title: string
@@ -26,6 +27,8 @@ interface Row {
   rate: string
   id: string
 }
+
+const cssVars = useCssVars(['boxShadow3'])
 
 const rule = {
   trigger: 'blur',
@@ -213,7 +216,11 @@ async function bandUpdateItem(key: 'duwan' | 'wanjie' | 'isdel', row: Row, index
   const { data } = await setLinkItem({ id: row.id, data: { [key]: newValue } })
   if (data.value.code === 200) {
     row[key] = newValue
+    if (key === 'isdel') {
+      tableData.value.splice(index, 1)
+    }
     window.$message.success(data.value.msg)
+    dropdown.show = false
   } else {
     window.$message.error(`${data.value.code}: ${data.value.msg}`)
   }
@@ -373,17 +380,29 @@ function pageViewScrollTop() {
       @select="handleSelect"
     />
 
-    <footer class="h5-header h-6vh w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-white">
+    <footer
+      class="h5-header h-6vh w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-white"
+      :style="cssVars"
+    >
       <div class="flex-y-center justify-between h-full">
         <div
+          :style="{
+            boxShadow: 'var(--zai-box-shadow3)',
+          }"
           class="w-35 h-full"
           @click="bindAddShow"
         ></div>
         <div
+          :style="{
+            boxShadow: 'var(--zai-box-shadow3)',
+          }"
           class="w-35 h-full"
           @click="() => selectDialogShowToggle()"
         ></div>
         <div
+          :style="{
+            boxShadow: 'var(--zai-box-shadow3)',
+          }"
           class="w-35 h-full"
           @click="pageViewScrollTop"
         ></div>
@@ -394,14 +413,23 @@ function pageViewScrollTop() {
           />
         </div>
         <div
+          :style="{
+            boxShadow: 'var(--zai-box-shadow3)',
+          }"
           class="w-35 h-full"
           @click="pageViewScrollTop"
         ></div>
         <div
+          :style="{
+            boxShadow: 'var(--zai-box-shadow3)',
+          }"
           class="w-35 h-full"
           @click="() => selectDialogShowToggle()"
         ></div>
         <div
+          :style="{
+            boxShadow: 'var(--zai-box-shadow3)',
+          }"
           class="w-35 h-full"
           @click="bindAddShow"
         ></div>

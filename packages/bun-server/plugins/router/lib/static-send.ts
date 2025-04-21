@@ -37,6 +37,11 @@ export const staticSend = (
       return body
     }
 
+    if (body instanceof Blob) {
+      return body
+    }
+  
+
     let urlPath
     if (req.method !== 'head' && req.method !== 'get') {
       return body

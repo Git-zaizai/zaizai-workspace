@@ -43,37 +43,12 @@
 }
 
 @media (min-width: 1440px) {
-  .VPDoc:not(.has-sidebar) .content {
-    max-width: 784px;
-  }
-
-  .VPDoc:not(.has-sidebar) .container {
-    max-width: 1104px;
-  }
 }
 @media (min-width: 1280px) {
-  .VPDoc .container {
-    display: flex;
-    justify-content: center;
-  }
-
-  .VPDoc .aside {
-    display: block;
-  }
 }
 @media (min-width: 960px) {
   .VPDoc {
     padding: 48px 32px 0;
-  }
-
-  .VPDoc:not(.has-sidebar) .container {
-    display: flex;
-    justify-content: center;
-    max-width: 992px;
-  }
-
-  .VPDoc:not(.has-sidebar) .content {
-    max-width: 752px;
   }
 }
 @media (min-width: 768px) {
