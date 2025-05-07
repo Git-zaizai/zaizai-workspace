@@ -1,12 +1,12 @@
 <template>
   <n-layout>
     <n-layout-header
-      class="h-67px flex-y-center justify-between pr-30px"
+      class="h-67px flex-y-center justify-between pr-1"
       bordered
       :inverted="app.Layoutinverted"
     >
       <div class="flex-center">
-        <h1 class="pl-5vw">( *￣▽￣)</h1>
+        <h1 class="pl-3 text-sm lg:text-1.7rem">( *￣▽￣)</h1>
       </div>
       <div class="flex-center gap-3">
         <router-link to="/demo">

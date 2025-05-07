@@ -3,7 +3,7 @@
     <n-layout-header
       :inverted="app.Layoutinverted"
       bordered
-      class="h-67px flex-y-center px-5"
+      class="h-67px flex-y-center pr-1"
     >
       <router-link
         to="/"

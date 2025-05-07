@@ -9,7 +9,7 @@
     <i-ph-acorn-duotone />
     <div class="w-full h-1px bg-amber"></div>
 
-    <h5>本地</h5>
+    <h5>本地 自定义合集</h5>
     <i-local-test3 />
     <div class="w-full h-1px bg-amber"></div>
 
@@ -20,6 +20,8 @@
 
     <h5>unocss class 配合 自定义组件</h5>
     <Iconify class="i-ph-warning-octagon-bold" />
+
+    <div class="w-full h-1px bg-amber"></div>
     
     <markdown-float-button :markdownUrl="markdownUrl" />
   </div>

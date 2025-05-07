@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:local": "vite --mode devprolocal",
     "devpro": "vite --mode devpro",
     "build-dev": "rimraf dist && vite build",
     "build-local": "rimraf dist && vite build --mode devprolocal && bun ./build/build-ftp-liunx.ts",

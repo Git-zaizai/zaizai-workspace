@@ -19,5 +19,5 @@ const theme = computed(() => (appProvider.theme === 'light' ? lightTheme : darkT
 </script>
 
 <style lang="scss">
-@import url('./styles/globa.scss');
+@use './styles/globa.scss';
 </style>

@@ -14,13 +14,14 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 
 import monacoEditorEsmPlugin from 'vite-plugin-monaco-editor-esm'
 
+import { visualizer } from 'rollup-plugin-visualizer'
+
 import { URL, fileURLToPath } from 'node:url'
 import { getConfigEnv } from './build/index'
 
-import { visualizer } from 'rollup-plugin-visualizer'
-
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
+  
   const env = getConfigEnv(configEnv.mode)
 
   const plugins = []
@@ -74,10 +75,11 @@ export default defineConfig(configEnv => {
       Icons({
         compiler: 'vue3',
         autoInstall: true,
-        iconCustomizer(collection, icon, props) {
-          props.width = '1.5em'
-          props.height = '1.5em'
-        },
+        scale: 1.5, 
+        // iconCustomizer(collection, icon, props) {
+        //   props.width = '1.5em'
+        //   props.height = '1.5em'
+        // },
         customCollections: {
           local: FileSystemIconLoader('./src/assets/icons'),
         },
@@ -93,7 +95,8 @@ export default defineConfig(configEnv => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "./src/styles/var.scss";`,
+          api: 'modern-compiler',
+          additionalData: [`@use "@/styles/var.scss";`],
         },
       },
     },
@@ -112,6 +115,7 @@ export default defineConfig(configEnv => {
           drop_debugger: true,
         },
       },
+      sourcemap: 'inline',
       // 暂时不能使用，会导致vitepress-md-renderer-web 的样式会冲突
       // cssCodeSplit: false, //禁用 CSS 代码拆分
       rollupOptions: {

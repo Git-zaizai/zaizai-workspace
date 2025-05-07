@@ -14,3 +14,8 @@ export const getConfigEnv = (mode: string) => {
 	viteEnv['BASE_URL'] = viteEnv['BASE_URL'] || '/'
 	return viteEnv
 }
+
+
+export const svgResolvers = (dir: string) => {
+	
+}

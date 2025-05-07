@@ -70,14 +70,17 @@ let formdataIndex = -1
 const [bodyLoding, bodyLodingToggle] = useToggle()
 async function init(v: boolean = true) {
   bodyLodingToggle(v)
-  const { data } = await getLinkTable()
-  tableData.value = data.value.reverse().filter(v => v.isdel === 1)
-  const { data: tagsData } = await getLinkTabs()
-  tags.value = tagsData.value
-  cache_tableData = JSON.parse(JSON.stringify(data.value))
-  setTimeout(() => {
-    bodyLodingToggle(false)
-  }, 700)
+  try {
+    const { data } = await getLinkTable()
+    tableData.value = data.value.reverse().filter(v => v.isdel === 1)
+    const { data: tagsData } = await getLinkTabs()
+    tags.value = tagsData.value
+    cache_tableData = JSON.parse(JSON.stringify(data.value))
+  } finally {
+    setTimeout(() => {
+      bodyLodingToggle(false)
+    }, 700)
+  }
 }
 
 const [copyShow, copyShowToggle] = useToggle()
@@ -361,12 +364,16 @@ function pageViewScrollTop() {
         </div>
         <div class="h-65"></div>
       </div>
-      <n-empty
+      <div
         v-else
-        class="mt-15"
-        description="什么也找不到"
+        class="page-view flex-col-center"
       >
-      </n-empty>
+        <n-empty
+          class="mt-15"
+          description="什么也找不到"
+        >
+        </n-empty>
+      </div>
     </zai-loading>
 
     <n-dropdown

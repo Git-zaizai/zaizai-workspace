@@ -41,6 +41,10 @@ import { zaiTableProps } from './props'
 import { useCssVars } from '@/hooks/useCssVars'
 import { tableDensity } from './const'
 
+defineOptions({
+  name: 'zai-tableV2',
+})
+
 const props = defineProps(zaiTableProps)
 
 const tableSize: Ref<'small' | 'medium' | 'large'> = ref(props.size ?? 'medium')

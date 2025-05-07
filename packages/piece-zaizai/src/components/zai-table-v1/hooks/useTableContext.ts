@@ -61,6 +61,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
   )
 
   const initColumns = () => {
+    scrollautoX.value = 0
     columns.value = []
     let isselection = true
     optinos.columns.forEach((item, index) => {
