@@ -133,7 +133,7 @@ class Router {
 
   callback(req: Req, server: Server) {
     let { pathname, method } = req
-    
+
     if (this.proxyPrefix && pathname.includes(this.proxyPrefix)) {
       pathname = pathname.replace(this.proxyPrefix, '')
     }
@@ -162,8 +162,9 @@ class Router {
 
       if (layerChain.length === 0) {
         req.status = 404
+      } else {
+        req.status = 200
       }
-
       const middleware = this.middleware
       const composeFns = [].concat(middleware, layerChain)
 

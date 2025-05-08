@@ -115,6 +115,7 @@ router.post('/json/set/:fileName', req => {
 
   if (typeof form === 'string') {
     Bun.write(filePath, form)
+    return 'ok'
   } else {
     try {
       let value = ''
@@ -235,7 +236,7 @@ router.get('/copy-list', async req => {
 })
 
 router.get('/clear-str', () => {
-  const ph = path.join(CACHE_PATH, 'copy-str.log')
+  const ph = path.join(CACHE_PATH, '/text/copy-str.log')
   Bun.write(ph, '')
   return 1
 })

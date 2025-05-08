@@ -1,7 +1,7 @@
 /**
  * pm2 start ./pm2.config.js --env production
  * pm2 start /www/pm2.config.js --env production
- * 
+ * pm2 start /www/pm2.config.js --env development
  * pm2 restart all
  */
 module.exports = {

@@ -1,7 +1,6 @@
-import type { Req, Server, Next } from './type'
+import type { Req, Server, Next } from './router'
 // @ts-ignore
 import { isNull, isUndefined, isObject } from 'lodash-es'
-import { BunFile } from 'bun'
 
 function isPrimitive(value: any): boolean {
   return (

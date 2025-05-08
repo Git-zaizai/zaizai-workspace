@@ -8,6 +8,8 @@ data/json/*.json
 logs/*
 cache/json/*
 cache/text
+www
+www/*
 # Logs
 
 _.log

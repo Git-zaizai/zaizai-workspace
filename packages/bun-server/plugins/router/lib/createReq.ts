@@ -56,7 +56,7 @@ export async function createReq(request: Request, server: Server): Promise<Req> 
     },
 
     get status() {
-      return res.status
+      return this.res.status
     },
 
     set status(value: number) {

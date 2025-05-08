@@ -1,5 +1,9 @@
 import './env'
-import { Router, createReq, useResponse, staticSend, cors } from './plugins/router'
+import { Router, createReq } from './plugins/router'
+import { useResponse } from './plugins/useResponse'
+import { staticSend } from './plugins/static-send'
+import { cors } from './plugins/cors'
+
 import routrs from './router/routes'
 // @ts-ignore
 import { nanoid } from 'nanoid'
@@ -45,6 +49,7 @@ const server = Bun.serve({
 })
 
 import { getLocalIP } from './utils'
+import './scheduled-tasks/index'
 
 console.log(
   `Bun server is running at http://localhost:${process.env.ZAI_PORT} \nip: http://${getLocalIP()}:${

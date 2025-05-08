@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "bun --watch index.ts",
-    "build": "set NODE_ENV=production&& bun ./build/ssh.ts",
+    "build": "set NODE_ENV=production&& bun ./build/ssh/index.ts",
     "build:dev": "set NODE_ENV=development&& bun ./build/ssh/index.ts"
   },
   "keywords": [],
@@ -22,6 +22,7 @@
     "inquirer": "^12.5.2",
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.0.7",
+    "node-schedule": "^2.1.1",
     "path-to-regexp": "^8.2.0"
   }
 }

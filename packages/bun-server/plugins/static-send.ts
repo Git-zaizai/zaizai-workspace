@@ -1,6 +1,6 @@
 import path from 'node:path'
 import fs from 'node:fs'
-import type { Req, Server, Next } from './type'
+import type { Req, Server, Next } from './router/lib/type'
 
 export const staticSend = (
   pathName: string = './public',
@@ -33,7 +33,7 @@ export const staticSend = (
     console.log('staticSend <===')
 
     let body = responseData || req.body
-    if (body && body.status === 200) {
+    if (body && req.status === 200) {
       return body
     }
 
