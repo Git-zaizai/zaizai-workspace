@@ -19,6 +19,10 @@ const sftpConfig = {
   port: '22',
 }
 
+import { getConfigEnv } from './index'
+
+const env = getConfigEnv(process.env.production)
+
 const ssh = new NodeSSH()
 const sftp = new Client()
 let spinner = null // 进度显示
@@ -47,7 +51,12 @@ function handleDistFiles(list) {
 // 统计本地dist文件夹中有多少个文件（用于计算文件上传进度）
 function foldFileCount(folderPath) {
   let count = 0
-  const files = fs.readdirSync(folderPath) // 读取文件夹
+  let files = fs.readdirSync(folderPath) // 读取文件夹
+
+  if (!env.VITE_UPLOAD_MAP) {
+    files = files.filter(file => !file.endsWith('.map'))
+  }
+
   for (const file of files) {
     // 遍历
     const filePath = path.join(folderPath, file)
@@ -65,7 +74,10 @@ function foldFileCount(folderPath) {
 
 // 把本地打包好的dist递归上传到远端服务器
 async function uploadFilesToRemote(localFolderPath, remoteFolderPath, sftp) {
-  const files = fs.readdirSync(localFolderPath) // 读取文件夹
+  let files = fs.readdirSync(localFolderPath) // 读取文件夹
+  if (!env.VITE_UPLOAD_MAP) {
+    files = files.filter(file => !file.endsWith('.map'))
+  }
   for (const file of files) {
     // 遍历
     let localFilePath = path.join(localFolderPath, file) // 拼接路径

@@ -21,7 +21,7 @@ import { getConfigEnv } from './build/index'
 
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
-  
+
   const env = getConfigEnv(configEnv.mode)
 
   const plugins = []
@@ -75,7 +75,7 @@ export default defineConfig(configEnv => {
       Icons({
         compiler: 'vue3',
         autoInstall: true,
-        scale: 1.5, 
+        scale: 1.5,
         // iconCustomizer(collection, icon, props) {
         //   props.width = '1.5em'
         //   props.height = '1.5em'
@@ -115,7 +115,7 @@ export default defineConfig(configEnv => {
           drop_debugger: true,
         },
       },
-      sourcemap: 'inline',
+      sourcemap: env.VITE_SOURCE_MAP as boolean,
       // 暂时不能使用，会导致vitepress-md-renderer-web 的样式会冲突
       // cssCodeSplit: false, //禁用 CSS 代码拆分
       rollupOptions: {
