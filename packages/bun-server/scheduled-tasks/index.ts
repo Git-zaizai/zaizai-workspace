@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 
 // 定义最大重试次数
 const MAX_RETRIES = 3
-const fileCpDate = process.env.NODE_ENV === 'development' ? '0 0/5 * * * ?' : '0 0 0 * * ?'
+const fileCpDate = process.env.NODE_ENV === 'development' ? '0 0/10 * * * ?' : '0 0 0 * * ?'
 
 const retryTask = () => {}
 

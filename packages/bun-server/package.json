@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.0.7",
     "node-schedule": "^2.1.1",
+    "openai": "^4.97.0",
     "path-to-regexp": "^8.2.0"
   }
 }

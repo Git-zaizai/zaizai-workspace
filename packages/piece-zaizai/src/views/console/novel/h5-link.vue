@@ -28,7 +28,7 @@ interface Row {
   id: string
 }
 
-const cssVars = useCssVars(['boxShadow3'])
+const cssVars = useCssVars(['boxShadow3', 'primaryColor', 'textColor1', 'bodyColor', 'modalColor'])
 
 const rule = {
   trigger: 'blur',
@@ -340,11 +340,12 @@ function pageViewScrollTop() {
     >
       <div
         class="page-view p-10 p-b-0"
+        :style="cssVars"
         ref="pageViewRef"
         v-if="tableData.length"
       >
         <div
-          class="flex flex-y-center bg-white rounded-3xl p-x-10 p-y-5 mb-10 last:mb-0"
+          class="flex flex-y-center bg-[--zai-modal-color] rounded-3xl p-x-10 p-y-5 mb-10 last:mb-0"
           v-for="(item, index) in tableData"
           :key="item.id"
         >
@@ -361,6 +362,9 @@ function pageViewScrollTop() {
           >
             {{ item.title }}
           </p>
+          <div class="bg-[--zai-primary-color] text-1 w-45 text-[--zai-modal-color] text-align-center rounded-2xl">
+            {{ item.duwan === 1 ? '读完' : '没玩' }}
+          </div>
         </div>
         <div class="h-65"></div>
       </div>
@@ -388,7 +392,7 @@ function pageViewScrollTop() {
     />
 
     <footer
-      class="h5-header h-6vh w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-white"
+      class="h5-header h-6vh w-full fixed bottom-0 left-0 backdrop-opacity-10 bg-[--zai-modal-color]"
       :style="cssVars"
     >
       <div class="flex-y-center justify-between h-full">
@@ -479,7 +483,7 @@ function pageViewScrollTop() {
       v-model:show="selectDialogShow"
       :mask="false"
     >
-      <div class="w-95vw bg-white p-x-15 pt-30 pb-20 rounded-7px">
+      <div class="w-95vw bg-[--n-color] p-x-15 pt-30 pb-20 rounded-7px">
         <n-form
           :model="queryForm"
           ref="queryFormRef"
@@ -822,7 +826,6 @@ function pageViewScrollTop() {
 <style lang="scss" scoped>
 .page-view {
   height: calc(100vh - 16.25rem);
-  background-color: #f5f5f5;
   overflow-y: scroll;
   overflow-x: hidden;
 }

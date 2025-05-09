@@ -120,7 +120,7 @@ router.post('/json/set/:fileName', req => {
     try {
       let value = ''
       if (form.code) {
-        value = form.data
+        value = JSON.stringify(form.data)
       } else {
         value = JSON.stringify(form)
       }

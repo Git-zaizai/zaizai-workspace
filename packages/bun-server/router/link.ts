@@ -10,24 +10,24 @@ const router = new Router()
 const JSON_PATH = path.join(DATA_PATH, '/json')
 const novelFilePath = path.join(JSON_PATH, 'novel.json')
 
-/* 
+
 
 // 由于现在使用json文件， 这个代码用于生成id
-Bun.file(novelFilePath)
-  .json()
-  .then((res: any[]) => {
-    res.forEach(item => {
-      const nid = nanoid()
-      if (!res.some(sv => sv.id === nid)) {
-        item.id = nanoid()
-      }
-    })
-    return res
-  })
-  .then(res => {
-    return Bun.write(novelFilePath, JSON.stringify(res))
-  })
- */
+// Bun.file(novelFilePath)
+//   .json()
+//   .then((res: any[]) => {
+//     res.forEach(item => {
+//       const nid = nanoid()
+//       if (!res.some(sv => sv.id === nid)) {
+//         item.id = nanoid()
+//       }
+//     })
+//     return res
+//   })
+//   .then(res => {
+//     return Bun.write(novelFilePath, JSON.stringify(res))
+//   })
+
 
 router.get('/link/tags', async () => {
   return Bun.file(`${JSON_PATH}/tags.json`)
