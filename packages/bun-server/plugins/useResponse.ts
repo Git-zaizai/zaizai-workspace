@@ -1,6 +1,6 @@
 import type { Req, Server, Next } from './router'
 // @ts-ignore
-import { isNull, isUndefined, isObject } from 'lodash-es'
+import { isNull, isUndefined, isObject, isString } from 'lodash-es'
 
 function isPrimitive(value: any): boolean {
   return (
@@ -37,6 +37,7 @@ export async function useResponse(req: Req, server: Server, next: Next) {
     return new Response(null, { headers, status: req.status || 204 })
   }
 
+
   const status = req.status === 204 ? 200 : req.status
   if (body instanceof Blob) {
     return new Response(body, {
@@ -49,13 +50,17 @@ export async function useResponse(req: Req, server: Server, next: Next) {
 
   let response
 
-  if (isPrimitive(body)) {
-    response = { code: 200, msg: 'OK', data: body }
+  if (status === 204 || status === 200) {
+    if (isPrimitive(body)) {
+      response = { code: 200, msg: 'OK', data: body }
+    } else {
+      response = Object.assign({ code: 200, msg: 'OK', data: null }, body)
+    }
   } else {
-    response = Object.assign({ code: 200, msg: 'OK', data: null }, body)
+    response = body
   }
 
-  return new Response(JSON.stringify(response), {
+  return new Response(isString(response) ? response : JSON.stringify(response), {
     status,
     headers,
   })

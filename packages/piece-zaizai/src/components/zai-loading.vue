@@ -122,6 +122,7 @@ const cssVars = useCssVars(
   }
 )
 const show = defineModel('show', {
+  type: Boolean,
   default: true,
 })
 </script>

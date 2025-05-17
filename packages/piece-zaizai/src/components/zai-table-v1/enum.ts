@@ -27,5 +27,5 @@ export enum ColumnUID {
 }
 
 export type columnHidesType = keyof typeof ColumnUID
-
+// 默认隐藏的列
 export const columnHides: columnHidesType[] = ['selection', 'index_column', 'default_action_column']

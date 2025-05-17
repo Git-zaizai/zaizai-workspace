@@ -4,6 +4,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import VscodeIconsFileTypeLightJson from '~icons/vscode-icons/file-type-light-json'
 import PhTwitterLogoFill from '~icons/ph/twitter-logo-fill'
 import PhBackpackDuotone from '~icons/ph/backpack-duotone'
+import phAlarmBold from '~icons/ph/alarm-bold'
 
 const consoleRoute: RouteRecordRaw = {
   path: '/console',
@@ -46,6 +47,15 @@ const consoleRoute: RouteRecordRaw = {
       },
       component: () => import('@/views/console/novel/index.vue'),
     },
+    {
+      path: 'scheduled',
+      name: 'scheduled',
+      meta: {
+        title: '定时任务',
+        icon: phAlarmBold,
+      },
+      component: () => import('@/views/console/scheduled/index.vue'),
+    },  
   ],
 }
 

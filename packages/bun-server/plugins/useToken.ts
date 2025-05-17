@@ -10,11 +10,25 @@ const privateRoutes: string[] = [
   '/ws/test-msg',
   '/ws/get-test-msg',
   '/ws/list',
+  //
+  '/scheduled-flie-list',
+  '/scheduled-file-content',
+  '/scheduled-add',
+  '/open-tasks',
+  '/manual-start-tasks',
+  '/stop-tasks',
+  '/deldet-tashks',
+  '/runner',
+  '/upload-runfile',
 ]
+// 通配 /test/**/**
+if (process.env.NODE_ENV === 'development') {
+  privateRoutes.push('/test/:xx')
+}
 
-export const PRIVATE_ROUTES = privateRoutes.map(item => pathToRegexp(item))
+export let PRIVATE_ROUTES = privateRoutes.map(item => pathToRegexp(item))
 
-const PRIVATE_ROUTES_LENG = PRIVATE_ROUTES.length
+let PRIVATE_ROUTES_LENG = PRIVATE_ROUTES.length
 
 const matchRoute = (pathname: string) => {
   for (let i = 0; i < PRIVATE_ROUTES_LENG; i++) {
@@ -27,9 +41,12 @@ const matchRoute = (pathname: string) => {
 }
 
 export const usePriveartRoute = (routers?: string[]) => {
+  routers && (PRIVATE_ROUTES = routers.map(item => pathToRegexp(item)))
+  PRIVATE_ROUTES_LENG = PRIVATE_ROUTES.length
+
   return async (req: Req, server: Server, next: Next) => {
     console.log('usePriveartRoute ===>')
-    
+
     if (PRIVATE_ROUTES.length === 0) {
       return next()
     }

@@ -8,7 +8,7 @@ const fileList = ref<UploadFileInfo[]>([])
     multiple
     directory-dnd
     v-model:file-list="fileList"
-    action="http://localhost:7373/upload-web"
+    action="http://118.193.47.111/bun-server/file/upload"
     :max="5"
   >
     <n-upload-dragger>

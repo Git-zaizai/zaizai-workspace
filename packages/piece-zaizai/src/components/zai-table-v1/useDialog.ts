@@ -17,8 +17,8 @@ interface Optinos<T> {
   }
   formData: T
   // resetFormData?: () => T
-  addCallback: (value: T) => void | T | Promise<T>
-  updateCallback: (row: any, formData: T) => void | T | Promise<T>
+  addCallback: (value: T) => void | T | Promise<T> | Promise<void>
+  updateCallback: (row: T, formData: T) => void | T | Promise<T>
 }
 
 export const useDialog = <T>(options: Optinos<T>) => {

@@ -13,13 +13,13 @@ const questions = [
 async function main() {
     // @ts-ignore
     const { choice } = await inquirer.prompt(questions)
-    if (choice === '1') {
+    if (choice == '1') {
         console.log('使用git更新')
         await gitPush()
-    } else if (choice === '2') {
+    } else if (choice == '2') {
         console.log('使用sftp更新')
         await sftpPush()
-    } else if (choice === '3') {
+    } else if (choice == '3') {
         console.log('退出')
         return
     }

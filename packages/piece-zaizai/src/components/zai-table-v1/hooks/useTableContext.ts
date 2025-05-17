@@ -41,6 +41,14 @@ const defulat_selection: ZaiTableColumn = {
   fixed: 'left',
 }
 
+/**
+ * @function 判断table自动scrollx
+ */
+const isScrollautoX = (isscrollXauto: boolean, columns: ZaiTableColumn[], optinosColumnHides: string[]) => {
+  if (!isscrollXauto) return
+  return columns.some(item => item.fixed)
+}
+
 type ZaiTableInject = Pick<ReturnType<typeof createTableContext>, 'columns' | 'setfixed'>
 
 export const useTableContext = (): ReturnType<typeof createTableContext> => {
@@ -48,7 +56,8 @@ export const useTableContext = (): ReturnType<typeof createTableContext> => {
 }
 
 export const createTableContext = (optinos: ZaiTablePropsType) => {
-  let scrollautoX = ref(0)
+  let scrollautoX = ref<number | undefined>(undefined)
+  let __scrollautoX = 0
 
   let cacheColumns = []
   const columns = shallowRef<ZaiTableColumn[]>([])
@@ -61,7 +70,8 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
   )
 
   const initColumns = () => {
-    scrollautoX.value = 0
+    __scrollautoX = 0
+
     columns.value = []
     let isselection = true
     optinos.columns.forEach((item, index) => {
@@ -70,7 +80,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
         uid: index,
       })
       if (item.type === 'selection') isselection = false
-      scrollautoX.value += getWidth(item)
+      __scrollautoX += getWidth(item)
     })
 
     if (isBoolean(optinos.defaultActionColumn) && optinos.defaultActionColumn) {
@@ -79,11 +89,11 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
         default_index_column.width = w
       }
       columns.value.unshift(default_index_column)
-      scrollautoX.value += default_index_column.width as number
+      __scrollautoX += default_index_column.width as number
     } else {
       let assign = Object.assign(defaultActionColumn, optinos.defaultActionColumn)
       columns.value.push(assign)
-      scrollautoX.value += getWidth(assign)
+      __scrollautoX += getWidth(assign)
     }
 
     if (isBoolean(optinos.defaultActionColumn) && optinos.defaultActionColumn) {
@@ -97,7 +107,7 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
 
     if (isselection) {
       columns.value.unshift(defulat_selection)
-      scrollautoX.value += defulat_selection.width as number
+      __scrollautoX += defulat_selection.width as number
     }
 
     cacheColumns = cloneDeep(columns.value)
@@ -109,6 +119,9 @@ export const createTableContext = (optinos: ZaiTablePropsType) => {
         columns.value.splice(index, 1)
       }
     })
+    if (isScrollautoX(optinos.scrollXauto, columns.value, optinos.columnHides)) {
+      scrollautoX.value = __scrollautoX
+    }
   }
 
   const setfixed = (uid: number, value: 'left' | 'right' | undefined) => {

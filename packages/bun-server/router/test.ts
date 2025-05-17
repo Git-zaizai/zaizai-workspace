@@ -1,11 +1,13 @@
 import { Router } from '../plugins/router/index'
-import { mkdirRecursive, existsFile, wait } from '../utils'
+import { mkdirRecursive, wait } from '../utils'
 import dayjs from 'dayjs'
-import { DATA_PATH, UPLOAD_PATH, CACHE_PATH } from '../config'
+import { UPLOAD_PATH } from '../config'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 
-const router = new Router()
+const router = new Router({
+  prefix: '/test',
+})
 
 router.post('/upload-app', async req => {
   const form = req.form
@@ -37,7 +39,6 @@ router.post('/upload-app', async req => {
   }
 })
 
-
 router.post('/file/upload', async req => {
   const form = req.form
   const file = form.get('file')
@@ -67,7 +68,7 @@ router.post('/file/upload', async req => {
 
 router.post('/stream-md', async () => {
   const md = Bun.file(path.join(UPLOAD_PATH, 'markdown.md'))
-  let content = await md.text()
+  let content:any = await md.text()
   content = content.split(/\r\n/g)
   const stream = new ReadableStream({
     async start(controller) {
@@ -83,11 +84,9 @@ router.post('/stream-md', async () => {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive'
-    }
+      Connection: 'keep-alive',
+    },
   })
 })
-
-
 
 export default router

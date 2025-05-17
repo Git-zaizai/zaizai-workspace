@@ -6,8 +6,8 @@ import dayjs from 'dayjs'
 import { existsFile } from '../utils'
 import type { ServerWebSocket } from 'bun'
 
-export const logfile = path.join(LOG_PATH, '/ws/log.log')
-export const errorfile = path.join(LOG_PATH, '/ws/error.log')
+export const logfile = path.join(LOG_PATH, '/log.log')
+export const errorfile = path.join(LOG_PATH, '/error.log')
 
 existsFile(logfile)
 existsFile(errorfile)

@@ -1,17 +1,17 @@
 import dayjs from 'dayjs'
 import { Router } from '../plugins/router/index'
 import path from 'node:path'
-import { DATA_PATH, CACHE_PATH_JSON } from '../config'
-// @ts-ignore
+import { DATA_PATH, backupAddressPath } from '../config'
 import { nanoid } from 'nanoid'
+import { existsFile, mkdirRecursive, readFileBlob } from '../utils'
 
 const router = new Router()
 
 const JSON_PATH = path.join(DATA_PATH, '/json')
 const novelFilePath = path.join(JSON_PATH, 'novel.json')
 
-
-
+mkdirRecursive(JSON_PATH)
+existsFile(novelFilePath)
 // 由于现在使用json文件， 这个代码用于生成id
 // Bun.file(novelFilePath)
 //   .json()
@@ -29,14 +29,19 @@ const novelFilePath = path.join(JSON_PATH, 'novel.json')
 //   })
 
 
-router.get('/link/tags', async () => {
-  return Bun.file(`${JSON_PATH}/tags.json`)
+router.get('/link/tags', async (req) => {
+  let res = readFileBlob(path.join(JSON_PATH, '/tags.json'))
+  if (typeof res === 'string') {
+    req.status = 400
+    return 'tags.json' + res
+  }
+  return res
 })
 
 router.get('/link/table', async () => {
   const NODE_ENV = Bun.env.NODE_ENV
-  
-  if (NODE_ENV=== 'development' || !NODE_ENV) {
+
+  if (NODE_ENV === 'development' || !NODE_ENV) {
     const data = Bun.file(novelFilePath)
     let res = await data.json()
     res = res.map((item: any, i) => {
@@ -51,24 +56,24 @@ router.get('/link/table', async () => {
 })
 /**
  * {
-      _id: '',
-      title: '',
-      start: 0,
-      finish: 0,
-      duwan: 1,
-      tabs: [],
-      wanjie: 1,
-      isdel: 1,
-      link: '',
-      linkback: '',
-      beizhu: '',
-      links: [],
-      addDate: null,
-      update: null,
-      finishtime: null,
-      rate: '',
-      id: 0,
-    }
+ _id: '',
+ title: '',
+ start: 0,
+ finish: 0,
+ duwan: 1,
+ tabs: [],
+ wanjie: 1,
+ isdel: 1,
+ link: '',
+ linkback: '',
+ beizhu: '',
+ links: [],
+ addDate: null,
+ update: null,
+ finishtime: null,
+ rate: '',
+ id: 0,
+ }
  */
 router.post('/link/add', async req => {
   const form = req.form
@@ -79,8 +84,8 @@ router.post('/link/add', async req => {
   }
 
   /* if (!form['_id']) {
-    form['_id'] = nanoid()
-  } */
+   form['_id'] = nanoid()
+   } */
 
   form.id = nanoid()
   const date = dayjs()
@@ -103,8 +108,8 @@ router.get('/link/detele', async req => {
   const novel: any[] = await Bun.file(novelFilePath).json()
   try {
     await Bun.write(
-      path.join(CACHE_PATH_JSON, `novel-${dayjs().format('YYYY-MM-DD-HH-mm-ss')}.json`),
-      JSON.stringify(novel)
+      path.join(backupAddressPath, `novel-${dayjs().format('YYYY-MM-DD-HH-mm-ss')}.json`),
+      JSON.stringify(novel),
     )
     const index = novel.findIndex(fv => fv.id === id)
     novel.splice(index, 1)

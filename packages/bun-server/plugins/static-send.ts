@@ -33,14 +33,22 @@ export const staticSend = (
     console.log('staticSend <===')
 
     let body = responseData || req.body
-    if (body && req.status === 200) {
-      return body
-    }
 
-    if (body instanceof Blob) {
+    // if (body instanceof Response) {
+    //   return body
+    // }
+
+    // if (body instanceof Blob) {
+    //   return body
+    // }
+
+    // if (body && req.status === 200) {
+    // return body
+    // }
+    
+    if (body) {
       return body
     }
-  
 
     let urlPath
     if (req.method !== 'head' && req.method !== 'get') {
@@ -72,7 +80,7 @@ export const staticSend = (
       const ph = path.join(filePath, urlPath)
       if (fs.existsSync(ph)) {
         return new Response(Bun.file(ph))
-      }else{
+      } else {
         return new Response('404 not found', { status: 404 })
       }
     }

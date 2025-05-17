@@ -362,7 +362,7 @@ function pageViewScrollTop() {
           >
             {{ item.title }}
           </p>
-          <div class="bg-[--zai-primary-color] text-1 w-45 text-[--zai-modal-color] text-align-center rounded-2xl">
+          <div class="bg-[--zai-primary-color] text-12px w-45 text-[--zai-modal-color] text-align-center rounded-2xl">
             {{ item.duwan === 1 ? '读完' : '没玩' }}
           </div>
         </div>
@@ -603,17 +603,19 @@ function pageViewScrollTop() {
         >
           {{ formData.title }}
         </div>
-        <div
-          class="text-21 m-y-7"
-          @click="copyStr(formData.link)"
-        >
-          {{ formData.link }}
+        <div class="text-21 m-y-7">
+          <a
+            :href="formData.link"
+            target="_blank"
+            >{{ formData.link }}</a
+          >
         </div>
-        <div
-          class="text-21 m-y-7"
-          @click="copyStr(formData.linkback)"
-        >
-          {{ formData.linkback }}
+        <div class="text-21 m-y-7">
+          <a
+            :href="formData.linkback"
+            target="_blank"
+            >{{ formData.linkback }}</a
+          >
         </div>
         <div class="text-21 m-y-7">备注： {{ formData.beizhu }}</div>
       </div>

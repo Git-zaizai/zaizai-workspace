@@ -12,6 +12,9 @@ const demoRoutes: RouteRecordRaw[] = [
   },
   {
     path: '404',
+    meta: {
+      title: '404',
+    },
     component: () => import('@/views/common/404.vue'),
   },
   {
@@ -115,7 +118,7 @@ const demoRoutes: RouteRecordRaw[] = [
           title: '流式markdown渲染器',
           icon: 'i-ph:markdown-logo',
         },
-        component: () => import('@/views/demo/chat/stream-md.vue')
+        component: () => import('@/views/demo/chat/stream-md.vue'),
       },
       {
         path: 'chat-message',
@@ -123,9 +126,9 @@ const demoRoutes: RouteRecordRaw[] = [
           title: '聊天消息渲染器',
           icon: 'i-ph:markdown-logo',
         },
-        component: () => import('@/views/demo/chat/index.vue')
-      }
-    ]
+        component: () => import('@/views/demo/chat/index.vue'),
+      },
+    ],
   },
   {
     path: 'code-snippet',
@@ -134,6 +137,22 @@ const demoRoutes: RouteRecordRaw[] = [
       icon: 'i-ph-rocket-launch',
     },
     component: () => import('@/views/demo/code/index.vue'),
+  },
+  {
+    path: 'web-vscode',
+    meta: {
+      title: 'vscode',
+      icon: 'i-vscode-icons-file-type-vscode',
+    },
+    component: () => import('@/views/demo/web-vscode.vue'),
+  },
+  {
+    path: 'select-item',
+    meta: {
+      title: 'select-item 拿出来做也列表',
+      icon: '',
+    },
+    component: () => import('@/views/demo/select-item.vue'),
   },
 ]
 

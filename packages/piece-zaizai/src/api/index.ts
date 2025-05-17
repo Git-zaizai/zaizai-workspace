@@ -69,3 +69,22 @@ export const getTableData = async () => {
 export const setCopyStr = (str: string) => http('/copy-str').post({ str }).json()
 export const getCopyList = () => http('/copy-list').get().text()
 export const clearStrFile = () => http('/clear-str').get().json()
+
+export const getScheduledFileContent = (ph: string, fileType: 'runfile' | 'logfile') =>
+  http('/scheduled-file-content')
+    .post({
+      ph,
+      fileType,
+    })
+    .text()
+
+export const getRunFileList = () => http('/scheduled-flie-list').get().json()
+export const scheduleAdd = data => http('/scheduled-add').post(data).json()
+export const scheduleOpenStart = (data: { id: string }) => http('/open-tasks').post(data).json()
+export const scheduleStop = data => http('/stop-tasks').post(data).json()
+export const scheduleDelete = data => http('/deldet-tashks').post(data).json()
+export const getRunnerList = () => http('/runner').get().json()
+export const manualStartTasks = (id: string) => http('/manual-start-tasks').post({ id }).json()
+export const updateSchedule = data => http('/update-tasks').post(data).json()
+export const getViewTatasks = () => http('/tashks-size').get().json()
+export const setsaveFile = (data: { ph: string; content: string }) => http('/saveFile').post(data).json()

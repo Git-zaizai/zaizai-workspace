@@ -5,6 +5,7 @@ const { VITE_GLOB_API_URL, VITE_GLOB_API_URL_PREFIX } = import.meta.env
 
 function errorMessage(text: any, status: number) {
   if (typeof text === 'string') {
+    text = text === '' ? '404 Not Found！' : text
     window.$message.error(`${status}：${text}`)
   } else {
     window.$message.error(`${status}：${text?.msg ?? ''}`)
@@ -41,16 +42,15 @@ const http = createFetch({
           text = resp
         }
       }
-
       switch (errStatus) {
         case 401:
           errorMessage(text, errStatus)
           break
         case 404:
-          window.$message.error('404 Not Found！')
+          // window.$message.error('404 Not Found！')
+          errorMessage(text, errStatus)
           break
         case 204:
-          
           break
         default:
           errorMessage(text, errStatus)

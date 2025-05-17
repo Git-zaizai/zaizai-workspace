@@ -106,15 +106,13 @@ const main = async () => {
     const checkDirCommand = `if [ ! -d "/www/zaizai-workspace" ]; then mkdir -p /www/zaizai-workspace; fi`
     await ssh.execCommand(checkDirCommand)
     // 检查是否为 Git 仓库，若不是则克隆仓库（这里假设仓库地址为示例地址，需替换为实际地址）
-    const checkGitRepoCommand = `if [ ! -d "/www/zaizai-workspace/.git" ]; then cd /www/zaizai-workspace && git clone <your-repo-url> .; fi`
+    const checkGitRepoCommand = `if [ ! -d "/www/zaizai-workspace/.git" ]; then cd /www/zaizai-workspace && git clone https://github.com/Git-zaizai/zaizai-workspace .; fi`
     await ssh.execCommand(checkGitRepoCommand)
 
     // 执行 git pull 命令
     const { stdout, stderr } = await ssh.execCommand(`git pull`, {
       cwd: '/www/zaizai-workspace'
     })
-
-    console.log("🚀 ~ pullRun ~ stdout:", stdout)
     if (stdout === '' || !stdout) {
       return await pullRun()
     }

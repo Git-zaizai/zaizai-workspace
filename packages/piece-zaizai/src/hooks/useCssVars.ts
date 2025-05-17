@@ -13,22 +13,24 @@ function convertToKebabCase(str: string): string {
 
 /**
  *
- * @param keys
+ * @param keys naive的颜色
  * @param style [暗色，亮色]
  * @param style2 使用 naive的颜色在自定义名字，防止与 naive的冲突
  * @param css
  * @returns
  */
-export const useCssVars = (keys: CssKey[], style?: Style | null, style2?: Style2 | null, css?: CssStyle) => {
+export const useCssVars = (keys: CssKey[] | null, style?: Style | null, style2?: Style2 | null, css?: CssStyle) => {
   const { theme } = appStore()
   const naiveTheme = useThemeVars()
   const vars = computed(() => {
     let value = {}
-    keys.forEach(key => {
-      let nvalue = naiveTheme.value[key] as string
-      let kvalue = `--zai-${convertToKebabCase(key)}`
-      value[kvalue] = nvalue
-    })
+    if (keys) {
+      keys.forEach(key => {
+        let nvalue = naiveTheme.value[key] as string
+        let kvalue = `--zai-${convertToKebabCase(key)}`
+        value[kvalue] = nvalue
+      })
+    }
     if (style) {
       for (const key in style) {
         value[`--zai-${key}`] = theme === 'dark' ? style[key][0] : style[key][1]

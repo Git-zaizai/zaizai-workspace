@@ -3,9 +3,7 @@ import { Router, createReq } from './plugins/router'
 import { useResponse } from './plugins/useResponse'
 import { staticSend } from './plugins/static-send'
 import { cors } from './plugins/cors'
-
 import routrs from './router/routes'
-// @ts-ignore
 import { nanoid } from 'nanoid'
 import webSocketHandler from './ws'
 import { usePriveartRoute } from './plugins/useToken'
@@ -49,11 +47,9 @@ const server = Bun.serve({
 })
 
 import { getLocalIP } from './utils'
-import './scheduled-tasks/index'
 
 console.log(
-  `Bun server is running at http://localhost:${process.env.ZAI_PORT} \nip: http://${getLocalIP()}:${
-    process.env.ZAI_PORT
+  `Bun server is running at http://localhost:${server.port}${router.proxyPrefix} \nip: http://${getLocalIP()}:${server.port
   }`
 )
 

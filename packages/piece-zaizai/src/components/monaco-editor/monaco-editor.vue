@@ -10,10 +10,19 @@ import { useToggle } from '@vueuse/core'
 
 import 'monaco-editor/esm/vs/editor/editor.main.js'
 import 'monaco-editor/esm/vs/editor/contrib/contextmenu/browser/contextmenu'
+
 import 'monaco-editor/esm/vs/language/json/monaco.contribution'
 import 'monaco-editor/esm/vs/language/json/jsonMode.js'
 
-import { asynchronousImportOfLanguagePacks } from './monaco-editor-import'
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js'
+import 'monaco-editor/esm/vs/language/typescript/tsMode.js'
+
+import 'monaco-editor/esm/vs/language/css/monaco.contribution.js'
+import 'monaco-editor/esm/vs/language/css/cssMode.js'
+
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js'
+
+// import { asynchronousImportOfLanguagePacks } from './monaco-editor-import'
 
 const props = withDefaults(
   defineProps<{
@@ -21,12 +30,14 @@ const props = withDefaults(
     leng?: string
     value?: string
     fileName?: string
+    mask?: boolean
   }>(),
   {
     leng: 'json',
     theme: 'andromeeda',
     value: '',
     fileName: '',
+    mask: false,
   }
 )
 
@@ -38,6 +49,7 @@ const show = defineModel('show', {
   type: Boolean,
   default: false,
 })
+
 const [monacoIoading, monacoIoadingtoggle] = useToggle(true)
 const cssVars = useCssVars(
   ['borderColor'],
@@ -73,10 +85,23 @@ const createMonacoEditor = async () => {
         monaco.languages.register({ id: lang })
       }) */
       monaco.languages.register({ id: props.leng })
+      // @ts-ignore
+      if (!window.$highlighter) {
+        // 注册 Shiki 主题，并为 Monaco 提供语法高亮
+        // @ts-ignore
+        window.$highlighter = await shikiHighlighter([props.theme], [props.leng])
+      }
+
+      // 由于目前json是正常上色，其他有问题，先升级shiki版本在修复
+      if (props.leng === 'json') {
+        // 注入 Monaco
+        // @ts-ignore
+        shikiToMonaco(window.$highlighter as any, monaco)
+      }
 
       monacoEditor = monaco.editor.create(monacoEditorRef.value, {
         language: props.leng,
-        theme: props.theme, // 这里填的就是上面注册的主题
+        theme: props.leng === 'json' ? props.theme : 'vs-dark', // 这里填的就是上面注册的主题
         folding: true, // 是否启用代码折叠
         links: true, // 是否点击链接
         contextmenu: true, // 启用上下文菜单
@@ -105,8 +130,8 @@ const createMonacoEditor = async () => {
         monacoIoadingtoggle(false)
         monacoEditor.trigger('anyString', 'editor.action.formatDocument')
         monacoEditor.setValue(props.value)
-      }, 500)
-    }, 700)
+      }, 1000)
+    }, 500)
   })
 }
 
@@ -114,21 +139,28 @@ const dispose = () => {
   show.value = false
 }
 
-watch(show, value => {
-  if (value) {
-    monacoIoadingtoggle(true)
-    createMonacoEditor()
+watch(
+  show,
+  value => {
+    if (value) {
+      monacoIoadingtoggle(true)
+      createMonacoEditor()
+    }
+  },
+  {
+    immediate: true,
   }
-})
+)
 
 const onSave = () => {
   emits('save', monacoEditor.getValue())
 }
 
 onMounted(async () => {
-  const highlighter = await shikiHighlighter([props.theme], [props.leng])
+  // 有时候回导致高亮没有
+  // const highlighter = await shikiHighlighter([props.theme], [props.leng])
   // 注册 Shiki 主题，并为 Monaco 提供语法高亮
-  shikiToMonaco(highlighter as any, monaco)
+  // shikiToMonaco(highlighter as any, monaco)
 })
 
 onBeforeUnmount(() => {
@@ -144,8 +176,14 @@ onBeforeUnmount(() => {
     v-if="show"
   >
     <div
+      v-if="props.mask"
+      class="fixed z-9998 w-full h-full left-0 top-0 bg-[#000]/40 pointer-events-none"
+      tabindex="-1"
+      @focusin.prevent
+    ></div>
+    <div
       :style="cssVars"
-      class="fixed z-10 w-90vw h-85vh left-5vw top-10vh rounded-t-2 border border-solid border-[--zai-border-color] bg-[--zai-body-color]"
+      class="fixed z-9999 w-90vw h-85vh left-5vw top-10vh rounded-t-2 border border-solid border-[--zai-border-color] bg-[--zai-body-color]"
     >
       <div class="w-full h-50px flex flex-justify-between mt--1px">
         <div class="flex">
@@ -176,7 +214,7 @@ onBeforeUnmount(() => {
       <zai-loading v-model:show="monacoIoading">
         <div
           ref="monacoEditorRef"
-          class="w-full h-75vh"
+          style="width: 100%; height: calc(85vh - 53px)"
         ></div>
       </zai-loading>
     </div>

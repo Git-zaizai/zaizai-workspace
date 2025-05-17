@@ -1,5 +1,16 @@
 # TODO
 
+
+# 等待升级的功能 或 修复的bug
+关于 vitepress-md-renderer-web 需要升级 shiki 版本  shiki v3 是大更新所以不能直接升级
+关于 monaco-editor 如果要实现 js 代码高亮，目前有问题，等待 vitepress-md-renderer-web升级后在处理
+
+
+#  VScode连接远程服务器
+
+设置 `Local Server Download` 为 off
+
+
 ## 关于在本地引入 vitepress-md-renderer-web 的问题
 
 在 workspace 引入 这个要记得打包后引入，先去 vitepress-md-renderer-web 下执行 pnpm build后 在piece-zaizai才能使用
@@ -55,7 +66,7 @@ sudo systemctl status nginx
 然后新建文件夹
 
 ```bash
-mkdir /root/.bun/bin
+mkdir -p /root/.bun/bin
 ```
 
 然后把文件解压在这个文件夹里面

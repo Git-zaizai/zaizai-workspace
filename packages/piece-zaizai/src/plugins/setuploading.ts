@@ -27,7 +27,16 @@ export function setuploading(show = false) {
     </svg>`
 
   let lacalTheme = getCurrentTheme()
-  console.log(lacalTheme)
+
+  // 有些浏览器主题自动切换不大标准，已手动设置为准
+  let appStore: any = localStorage.getItem('zai-app-store')
+  if (appStore) {
+    appStore = JSON.parse(appStore)
+    if (lacalTheme !== appStore.theme) {
+      lacalTheme = appStore.theme
+    }
+  }
+
   const cssVars = `
 	--zai-loading-bg:${lacalTheme === 'dark' ? 'rgb(24, 24, 28)' : '#fff'};
 	--zai-loading-color: ${lacalTheme === 'dark' ? '#63e2b7' : '#18a058'};`

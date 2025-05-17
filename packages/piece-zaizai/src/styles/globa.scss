@@ -142,3 +142,20 @@ p {
   height: calc(100vh - 6vh);
   width: 100%;
 }
+
+.light-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.light-scrollbar::-webkit-scrollbar-corner,
+.light-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.light-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 4px;
+}
+.light-scrollbar::-webkit-scrollbar-corner,
+.light-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}

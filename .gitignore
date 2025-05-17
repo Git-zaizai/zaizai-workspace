@@ -3,7 +3,8 @@ dist
 .cache
 
 __test__code
-dist-test
+*dist*/
+
 
 .local
 # local env files

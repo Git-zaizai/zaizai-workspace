@@ -4,8 +4,6 @@ public/img/*
 public/json/*
 public/js/*
 public/upload/*
-data/json/*.json
-logs/*
 cache/json/*
 cache/text
 www

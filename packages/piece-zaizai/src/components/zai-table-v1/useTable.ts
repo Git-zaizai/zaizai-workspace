@@ -63,7 +63,9 @@ export const useTable = <T extends object>(options: Options<T>) => {
     } catch (error) {
       console.log(error)
     } finally {
-      toggleLoading(false)
+      setTimeout(() => {
+        toggleLoading(false)
+      }, 500)
     }
   }
 

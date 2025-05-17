@@ -183,6 +183,7 @@ const tablestriped = ref(props.striped ?? false)
 const tablebordered = ref(props.bordered ?? true)
 const selectValue = defineModel('select', {
   type: String,
+  default: '',
 })
 
 const tableSize: Ref<'small' | 'medium' | 'large'> = ref(props.size ?? 'medium')

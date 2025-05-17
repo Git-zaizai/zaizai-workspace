@@ -4,6 +4,7 @@ import ora from 'ora'
 import path from 'path'
 import fs from 'fs'
 import dayjs from 'dayjs'
+import { normalizePath } from '../../utils'
 
 const { SSH_HOST, SSH_PORT, SSH_USER, SSH_PASSWORD, SSH_UPLOAD_PATH } = process.env
 
@@ -13,98 +14,96 @@ const sftpConfig = {
   password: SSH_PASSWORD,
   port: SSH_PORT,
 }
+
 const ssh = new NodeSSH()
 const sftp = new Client()
-let spinner = null // 进度显示
-let totalFileCount = 0 // 本地dist文件夹中总文件数量
-let num = 0 // 已成功上传到远端服务器上的文件数量
 
 // 要排除的文件或文件夹
-const excludeFile = ['node_modules', 'upload', 'www', 'router-v2', 'data']
+const excludeFile = ['.idea', '.vscode', '.git/', 'node_modules', 'dist', 'bun-fastify', 'piece-zaizai', 'vitepress-md-renderer-web', 'upload/', 'data/json/', '/www']
+const isEcludeFile = (filePath) => {
+  let ph = normalizePath(filePath)
+  return excludeFile.some(exclude => ph.includes(exclude))
+}
 
-function obtainTheRequiredFiles() {
-  const root = path.join(__dirname, '../../')
-  const files = fs.readdirSync(root, { withFileTypes: true })
-  const result = files.filter(file => !excludeFile.includes(file.name))
+let spinner = null // 进度显示
+let totalFileCount = 0 // 要上传总文件数量
+let num = 0 // 已成功上传到远端服务器上的文件数量
+
+let uploadFileList = [] // 要上传的文件列表
+
+function recursivelyObtainFiles(ph) {
+  const files = fs.readdirSync(ph)
   for (const file of files) {
-    if (excludeFile.includes(file.name)) {
+    const filePath = path.join(ph, file)
+    if (isEcludeFile(filePath)) {
       continue
     }
-    if (file.isDirectory()) {
-      const fileRecursive = fs.readdirSync(file.parentPath + file.name, {
-        recursive: true, // 递归读取子文件夹
-        withFileTypes: true, // 返回文件类型信息
-        encoding: 'utf-8', // 指定编码方式
-      })
-      result.push(file, ...fileRecursive)
-    } else {
-      result.push(file)
+    const stats = fs.statSync(filePath)
+    if (stats.isFile()) {
+      uploadFileList.push(filePath)
+    } else if (stats.isDirectory()) {
+      recursivelyObtainFiles(filePath)
     }
   }
-  return result.length
 }
 
 async function main() {
   try {
-    const files = fs.readdirSync(path.join(__dirname, '../../'), { withFileTypes: true })
-    totalFileCount = files.length
+    // 由于项目是 monorepo 结构，所以要上传顶层 文件
+    const zaizaiPath = path.join(__dirname, '../../../../../zaizai-workspace')
+    fs.readdirSync(zaizaiPath).forEach(file => {
+      const filePath = path.join(zaizaiPath, file)
+      if (!isEcludeFile(filePath)) {
+        uploadFileList.push(filePath)
+      }
+    })
 
-    console.log('连接服务器')
+    const bunServerPath = path.join(__dirname, '../../')
+    recursivelyObtainFiles(bunServerPath)
+
+    console.log('开始连接服务器...')
     await ssh.connect({
       host: SSH_HOST,
       username: SSH_USER,
       password: SSH_PASSWORD,
     })
-
     await sftp.connect(sftpConfig)
     console.log('服务器连接成功')
 
     await ssh.execCommand(`pm2 stop all`)
     console.log('pm2 停止成功')
 
+
+    totalFileCount = uploadFileList.length
+    console.log(`\n 开始上传 ${totalFileCount} 个文件...`)
     spinner = ora('正在上传中...').start() // loading...
 
-    const isPh = await sftp.exists(SSH_UPLOAD_PATH)
-    if (!isPh) {
-      await sftp.mkdir(SSH_UPLOAD_PATH, true) // 给远端服务器创建文件夹
-    }
-
-    sftp.on('upload', () => {
+    for (const uploadFile of uploadFileList) {
+      let remoteFilePath = uploadFile.replace(zaizaiPath, SSH_UPLOAD_PATH)
+      remoteFilePath = normalizePath(remoteFilePath)
+      let remoteFolderPath = remoteFilePath.split('/')
+      remoteFolderPath.pop()
+      remoteFolderPath = remoteFolderPath.join('/')
+      const isPh = await sftp.exists(remoteFolderPath)
+      if (!isPh) {
+        await sftp.mkdir(remoteFolderPath, true) // 给远端服务器创建文件夹
+      }
+      const stats = fs.statSync(uploadFile)
+      if (stats.isFile()) {
+        await sftp.put(uploadFile, remoteFilePath) // 把文件丢到远端服务器
+      } else if (stats.isDirectory()) {
+        await sftp.mkdir(remoteFilePath, true) // 给远端服务器创建文件夹
+      }
       num = num + 1 // 完成数量加1
       let progress = ((num / totalFileCount) * 100).toFixed(2) + '%' // 算一下进度
       spinner.text = '当前上传进度为:' + progress // loading
-    })
-
-    const root = path.join(__dirname, '../../../../')
-    for (const file of files) {
-      try {
-        if (excludeFile.includes(file.name)) {
-          continue
-        }
-
-        let remoteph = file.parentPath.replace(root, '')
-        remoteph = remoteph.replace(/\\/g, '/')
-        remoteph = SSH_UPLOAD_PATH + '/' + remoteph
-
-        if (file.isFile()) {
-          let localFilePath = path.join(file.parentPath, file.name) // 拼接路径
-          // 使用 put 不会自动创建文件夹，所以需要手动创建文件夹
-          const isPh = await sftp.exists(remoteph)
-          if (!isPh) {
-            await sftp.mkdir(remoteph, true) // 给远端服务器创建文件夹
-          }
-          await sftp.put(localFilePath, remoteph + file.name) // 把文件丢到远端服务器
-        } else if (file.isDirectory()) {
-          let localFilePath = path.join(file.parentPath, file.name) // 拼接路径
-          await sftp.uploadDir(localFilePath, remoteph + file.name) // 给远端服务器创建文件夹
-        }
-      } catch (err) {
-        console.log(err)
-      }
     }
 
+    console.log('\n 上传完成...')
+
+    console.log('启动 pm2...');
     await ssh.execCommand(`pm2 start all`)
-    console.log('\n 更新完成...')
+    console.log('pm2 启动成功')
   } catch (err) {
     console.log(err)
   } finally {

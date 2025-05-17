@@ -244,7 +244,8 @@ router.get('/clear-str', () => {
 import linkRoute from './link'
 import { wsHttpRouter } from '../ws/router'
 import TestRouter from './test'
+import scheduledTasksRouter from '../scheduled-tasks/router'
 
-router.use(linkRoute.routes()).use(wsHttpRouter.routes()).use(TestRouter.routes())
+router.use(linkRoute.routes()).use(wsHttpRouter.routes()).use(TestRouter.routes()).use(scheduledTasksRouter.routes())
 
 export default router

@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "dev": "pnpm -F piece-zaizai dev",
-    "bun": "pnpm -F bun-server dev"
+    "bun": "pnpm -F bun-server dev",
+    "delete:nodemodelus": "bun script/delete-node-modules.js"
   },
   "keywords": [],
   "author": "",
