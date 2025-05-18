@@ -17,10 +17,13 @@ import monacoEditorEsmPlugin from 'vite-plugin-monaco-editor-esm'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 import { URL, fileURLToPath } from 'node:url'
-import { getConfigEnv } from './build/index'
+import { getConfigEnv, updateEnvFileVar, getVersion } from './build/index'
 
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
+
+  const version = getVersion()
+  updateEnvFileVar(configEnv.mode, [version])
 
   const env = getConfigEnv(configEnv.mode)
 

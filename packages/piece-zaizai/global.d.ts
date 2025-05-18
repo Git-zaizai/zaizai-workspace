@@ -24,6 +24,7 @@ declare namespace Env {
     readonly VITE_INLINE_THEME: '1' | '0'
     readonly VITE_SOURCE_MAP: true | false | 'inline' | 'hidden' | 'both'
     readonly VITE_UPLOAD_MAP: boolean
+    VITE_APP_VERSION: string
   }
 }
 

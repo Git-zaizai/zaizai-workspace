@@ -38,7 +38,7 @@
             GitHub
           </n-button>
         </a>
-        <n-text>0.2.7</n-text>
+        <n-text>{{ VITE_APP_VERSION }}</n-text>
         <SettingDrawer />
       </div>
     </n-layout-header>
@@ -58,7 +58,7 @@ import { DefaultLayoutView } from '@/components/layout-router-view'
 import { appStore } from '@/store'
 
 const app = appStore()
-const { VITE_GITHUB } = import.meta.env
+const { VITE_GITHUB, VITE_APP_VERSION } = import.meta.env
 </script>
 
 <style scoped></style>
