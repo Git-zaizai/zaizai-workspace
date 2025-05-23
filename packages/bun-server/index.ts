@@ -7,6 +7,7 @@ import routrs from './router/routes'
 import { nanoid } from 'nanoid'
 import webSocketHandler from './ws'
 import { usePriveartRoute } from './plugins/useToken'
+import { maxRequestBodySize } from './config'
 
 const router = new Router({
   proxyPrefix: process.env.ZAI_ROUTER_RPEFIX,
@@ -14,8 +15,8 @@ const router = new Router({
 
 // 查看log的执行顺序
 router.use(cors()).use(useResponse).use(usePriveartRoute()).use(staticSend()).use(routrs.routes())
-
 const server = Bun.serve({
+  maxRequestBodySize: maxRequestBodySize, // 50MB
   port: Number(process.env.ZAI_PORT),
   async fetch(request, server) {
     console.log('\n请求开始')

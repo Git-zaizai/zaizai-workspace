@@ -12,7 +12,20 @@ export async function createReq(request: Request, server: Server): Promise<Req> 
       if (contentType.includes('application/json')) {
         form = await request.json()
       } else if (contentType.includes('multipart/form-data')) {
-        form = await request.formData()
+        // 判断是否是文件上传
+        const xFileSize = request.headers.get('X-File-Size')
+        const XFileName = request.headers.get('X-File-Name')
+        if (xFileSize && XFileName) {
+          form = {
+            file: request.body,
+            fileInfo: {
+              name: XFileName,
+              size: parseInt(xFileSize),
+            }
+          }
+        } else {
+          form = await request.formData()
+        }
       } else {
         form = await request.text()
       }

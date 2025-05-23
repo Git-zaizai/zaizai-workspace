@@ -179,33 +179,6 @@ router.get('/verify', req => {
   return 1
 })
 
-router.post('/upload-web', async req => {
-  const form = req.form
-  const file = form.get('file')
-
-  if (!file) {
-    return {
-      code: 400,
-      msg: '请选择文件',
-    }
-  }
-
-  const current = dayjs().format('YYYY-MM-DD')
-  const mkdir = path.join(UPLOAD_PATH, current)
-  mkdirRecursive(mkdir)
-
-  try {
-    // console.log(file instanceof File); // true
-    await Bun.write(path.join(mkdir, file.name), file)
-    return 1
-  } catch (err) {
-    return {
-      code: 500,
-      msg: '写入文件',
-    }
-  }
-})
-
 router.post('/copy-str', async req => {
   const str = req.form.str + '\n'
   try {
@@ -239,6 +212,58 @@ router.get('/clear-str', () => {
   const ph = path.join(CACHE_PATH, '/text/copy-str.log')
   Bun.write(ph, '')
   return 1
+})
+
+router.post('/upload-web', async req => {
+  const form = req.form
+  let file
+  if (form instanceof FormData) {
+    file = form.get('file')
+  } else if (form.file) {
+    file = form.file
+  }
+  if (!file) {
+    req.status = 400
+    return '请选择文件'
+  }
+  const current = dayjs().format('YYYY-MM-DD')
+  const mkdir = path.join(UPLOAD_PATH, current)
+  mkdirRecursive(mkdir)
+
+  try {
+    let ph
+    if (file instanceof File) {
+      ph = path.join(mkdir, file.name)
+      await Bun.write(ph, file)
+      return { data: { name: file.name, ph } }
+    }
+
+    const name = form.fileInfo.name
+    const size = form.fileInfo.size
+    ph = path.join(mkdir, name)
+    const fileWriter = Bun.file(ph).writer();
+    let totalSize = 0;
+    const fileReader = await file.getReader()
+
+    while (true) {
+      const { done, value } = await fileReader.read();
+      if (done) {
+        break;
+      }
+      totalSize += value.byteLength;
+      fileWriter.write(value);
+      if (totalSize >= size) {
+        break;
+      }
+    }
+
+    await fileWriter.end();
+    return { data: { name, ph } }
+  } catch (e) {
+    console.log(`写入失败`, e)
+    req.status = 500
+    return '写入失败'
+  }
 })
 
 import linkRoute from './link'

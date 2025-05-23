@@ -24,5 +24,7 @@ export const scheduledFileDataJSON = path.join(DATA_PATH, './json/scheduled-file
 export const scheduledRunLogPath = NODE_ENV === 'development' ? path.join(__dirname, './www/scheduled-logs') : path.join(ZAI_LOGS_PATH, '/scheduled-logs')
 // 备份文件地址
 export const backupAddressPath = NODE_ENV === 'development' ? path.join(__dirname, './www/backupAddress') : path.join('/www/backupAddress')
+// 最大请求体大小 默认 2gb
+export const maxRequestBodySize = process.env.ZAI_maxRequestBodySize.replace('mb', '') ? 2 * 1024 * 1024 * 1024 : Number(process.env.ZAI_maxRequestBodySize.replace('mb', '')) * 1024 * 1024
 // 加密密钥
 export const cert = 'ONE_PIECE_ZAIZAI'

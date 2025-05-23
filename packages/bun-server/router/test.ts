@@ -42,7 +42,7 @@ router.post('/upload-app', async req => {
 router.post('/file/upload', async req => {
   const form = req.form
   const file = form.get('file')
-
+  
   if (!file) {
     return {
       code: 400,
@@ -53,10 +53,9 @@ router.post('/file/upload', async req => {
   const current = dayjs().format('YYYY-MM-DD')
   const mkdir = path.join(UPLOAD_PATH, current)
   mkdirRecursive(mkdir)
-
   try {
-    // console.log(file instanceof File); // true
-    await Bun.write(path.join(mkdir, file.name), file)
+    console.log(file instanceof File); // true
+   const res = await Bun.write(path.join(mkdir, file.name), file)
     return 1
   } catch (err) {
     return {
@@ -68,7 +67,7 @@ router.post('/file/upload', async req => {
 
 router.post('/stream-md', async () => {
   const md = Bun.file(path.join(UPLOAD_PATH, 'markdown.md'))
-  let content:any = await md.text()
+  let content: any = await md.text()
   content = content.split(/\r\n/g)
   const stream = new ReadableStream({
     async start(controller) {
@@ -88,5 +87,4 @@ router.post('/stream-md', async () => {
     },
   })
 })
-
 export default router

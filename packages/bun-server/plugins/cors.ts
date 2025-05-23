@@ -1,4 +1,4 @@
-import type { Req, Server, Next } from './type'
+import type { Req, Server, Next } from './router'
 
 export const cors = (headers: object = {}) => {
   return async (req: Req, server: Server, next: Next) => {
@@ -9,7 +9,7 @@ export const cors = (headers: object = {}) => {
 
     if (req.method === 'options') {
       req.setHeader('Access-Control-Allow-Credentials', 'true')
-      req.setHeader('Access-Control-Allow-Headers', 'content-type,info,Authorization')
+      req.setHeader('Access-Control-Allow-Headers', 'content-type,info,Authorization,X-File-Size,X-File-Name')
       req.setHeader('Access-Control-Max-Age', '86400')
       return new Response(null, {
         status: 204,

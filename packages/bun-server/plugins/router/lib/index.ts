@@ -55,7 +55,7 @@ class Router {
     this.stack = []
     this.methods = opts?.methods || [...methods]
     this.host = ''
-    this.prefix = ''
+    this.prefix = opts?.prefix?? ''
     this.proxyPrefix = opts?.proxyPrefix ?? ''
     this.middleware = []
 
@@ -66,7 +66,7 @@ class Router {
 
   private createLayer(path, method, middleware) {
     const layer = {
-      path: path,
+      path: this.prefix + path,
       methods: method.map(v => v.toLowerCase()),
       stack: Array.isArray(middleware) ? middleware : [middleware],
       regexp: pathToRegexp(this.prefix + path),

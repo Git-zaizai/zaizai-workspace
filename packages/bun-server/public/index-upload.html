@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>文件上传进度显示</title>
+    <script src="./js/tailwindcss.3.4.16.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#3B82F6',
+              secondary: '#6366F1',
+              accent: '#8B5CF6',
+              neutral: '#1F2937',
+              'base-100': '#FFFFFF',
+              success: '#10B981',
+              warning: '#F59E0B',
+              error: '#EF4444',
+              info: '#3B82F6',
+            },
+            fontFamily: {
+              inter: ['Inter', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
+
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .content-auto {
+          content-visibility: auto;
+        }
+        .file-drop-active {
+          @apply border-accent bg-accent/10;
+        }
+        .progress-transition {
+          transition: width 0.3s ease;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-inter bg-gray-50 min-h-screen flex flex-col">
+    <!-- 导航栏 -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <i class="fa fa-cloud-upload text-primary text-2xl"></i>
+          <h1 class="text-xl font-semibold text-neutral">本地上传文件使用</h1>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <div class="max-w-3xl mx-auto">
+        <!-- 文件上传区域 -->
+        <div
+          id="fileDropArea"
+          class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center transition-all duration-300 hover:border-primary/70 bg-white shadow-md mb-8"
+        >
+          <div class="flex flex-col items-center">
+            <i class="fa fa-cloud-upload-alt text-primary/70 text-5xl mb-4"></i>
+            <h3 class="text-lg font-medium text-neutral mb-2">拖放文件到此处上传</h3>
+            <p class="text-gray-500 text-sm mb-2">或者</p>
+             <h3 class="text-lg font-medium text-neutral mb-2">点击选择文件</h3>
+
+            <label
+              class="mt-2 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+            >
+              <span>选择文件</span>
+              <input
+                type="file"
+                id="fileInput"
+                class="hidden"
+              />
+            </label>
+          </div>
+        </div>
+
+        <!-- 已选择文件信息 -->
+        <div
+          id="selectedFile"
+          class="hidden bg-white rounded-xl shadow-md p-4 mb-6 transform transition-all duration-500 opacity-0"
+        >
+          <div class="flex items-center space-x-4">
+            <div
+              id="fileIcon"
+              class="p-3 rounded-lg bg-primary/10 text-primary"
+            >
+              <i class="fa fa-file-pdf text-xl"></i>
+            </div>
+            <div class="flex-grow">
+              <h4
+                id="fileName"
+                class="font-medium text-neutral truncate"
+              >
+                example.pdf
+              </h4>
+              <p
+                id="fileSize"
+                class="text-gray-500 text-sm"
+              >
+                2.4 MB
+              </p>
+            </div>
+            <button
+              id="cancelUpload"
+              class="text-gray-400 hover:text-error transition-colors"
+            >
+              <i class="fa fa-times-circle text-xl"></i>
+            </button>
+          </div>
+
+          <!-- 进度条 -->
+          <div class="mt-4">
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                id="uploadProgressBar"
+                class="h-full bg-primary rounded-full progress-transition"
+                style="width: 0%"
+              ></div>
+            </div>
+            <div class="flex justify-between mt-1">
+              <span
+                id="uploadPercentage"
+                class="text-xs text-gray-500"
+                >0%</span
+              >
+              <span
+                id="uploadSpeed"
+                class="text-xs text-gray-500"
+                >0 KB/s</span
+              >
+            </div>
+          </div>
+
+          <!-- 上传状态 -->
+          <div
+            id="uploadStatus"
+            class="mt-3 flex items-center text-sm"
+          >
+            <span
+              id="statusIcon"
+              class="text-warning mr-2"
+            >
+              <i class="fa fa-clock-o"></i>
+            </span>
+            <span id="statusText">准备上传...</span>
+          </div>
+        </div>
+
+        <!-- 上传历史 -->
+        <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+          <h3 class="text-lg font-medium text-neutral mb-4 flex items-center">
+            <i class="fa fa-history text-primary mr-2"></i>
+            最近上传
+          </h3>
+          <div
+            id="uploadHistory"
+            class="space-y-3"
+          >
+            <!-- 上传历史记录将通过JavaScript动态添加 -->
+            <div class="animate-pulse flex items-center justify-between py-2 border-b border-gray-100">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 rounded-lg bg-primary/10 text-primary">
+                  <i class="fa fa-file-text-o"></i>
+                </div>
+                <div>
+                  <p class="font-medium text-sm text-neutral">无上传记录</p>
+                  <p class="text-xs text-gray-500">暂无文件上传</p>
+                </div>
+              </div>
+              <div class="text-gray-400">
+                <i class="fa fa-check-circle"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral text-white">
+      <div class="border-t border-gray-700 mt-2 pt-2 text-center text-gray-400 text-sm">&copy; 本地上传文件使用</div>
+    </footer>
+
+    <script>
+      // 初始化变量
+      let selectedFile = null
+      let uploadStartTime = null
+      let uploadHistory = []
+
+      // DOM 元素
+      const fileDropArea = document.getElementById('fileDropArea')
+      const fileInput = document.getElementById('fileInput')
+      const selectedFileContainer = document.getElementById('selectedFile')
+      const fileName = document.getElementById('fileName')
+      const fileSize = document.getElementById('fileSize')
+      const fileIcon = document.getElementById('fileIcon')
+      const cancelUpload = document.getElementById('cancelUpload')
+      const uploadProgressBar = document.getElementById('uploadProgressBar')
+      const uploadPercentage = document.getElementById('uploadPercentage')
+      const uploadSpeed = document.getElementById('uploadSpeed')
+      const uploadStatus = document.getElementById('uploadStatus')
+      const statusIcon = document.getElementById('statusIcon')
+      const statusText = document.getElementById('statusText')
+      const uploadHistoryContainer = document.getElementById('uploadHistory')
+
+      // 文件拖放事件
+      ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileDropArea.addEventListener(eventName, preventDefaults, false)
+      })
+
+      function preventDefaults(e) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+
+      ;['dragenter', 'dragover'].forEach(eventName => {
+        fileDropArea.addEventListener(eventName, highlight, false)
+      })
+      ;['dragleave', 'drop'].forEach(eventName => {
+        fileDropArea.addEventListener(eventName, unhighlight, false)
+      })
+
+      function highlight() {
+        fileDropArea.classList.add('file-drop-active')
+      }
+
+      function unhighlight() {
+        fileDropArea.classList.remove('file-drop-active')
+      }
+
+      // 处理拖放文件
+      fileDropArea.addEventListener('drop', handleDrop, false)
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer
+        const files = dt.files
+
+        if (files.length > 0) {
+          handleFiles(files[0])
+        }
+      }
+
+      // 处理文件选择
+      fileInput.addEventListener('change', function () {
+        if (this.files.length > 0) {
+          handleFiles(this.files[0])
+        }
+      })
+
+      // 处理选中的文件
+      function handleFiles(file) {
+        selectedFile = file
+
+        // 更新文件信息
+        fileName.textContent = file.name
+        fileSize.textContent = formatFileSize(file.size)
+
+        // 根据文件类型设置图标
+        const fileExtension = file.name.split('.').pop().toLowerCase()
+        setFileIcon(fileExtension)
+
+        // 显示文件信息和进度条
+        selectedFileContainer.classList.remove('hidden')
+        setTimeout(() => {
+          selectedFileContainer.classList.remove('opacity-0')
+        }, 10)
+
+        // 自动开始上传
+        startUpload()
+      }
+
+      // 设置文件图标
+      function setFileIcon(extension) {
+        const fileTypeIcons = {
+          pdf: 'fa-file-pdf-o',
+          doc: 'fa-file-word-o',
+          docx: 'fa-file-word-o',
+          xls: 'fa-file-excel-o',
+          xlsx: 'fa-file-excel-o',
+          jpg: 'fa-file-image-o',
+          jpeg: 'fa-file-image-o',
+          png: 'fa-file-image-o',
+          txt: 'fa-file-text-o',
+          zip: 'fa-file-archive-o',
+          rar: 'fa-file-archive-o',
+          mp3: 'fa-file-audio-o',
+          mp4: 'fa-file-video-o',
+        }
+
+        const iconClass = fileTypeIcons[extension] || 'fa-file-o'
+        fileIcon.innerHTML = `<i class="fa ${iconClass} text-xl"></i>`
+
+        // 设置图标背景颜色
+        const fileTypeColors = {
+          pdf: 'bg-red-100 text-red-500',
+          doc: 'bg-blue-100 text-blue-500',
+          docx: 'bg-blue-100 text-blue-500',
+          xls: 'bg-green-100 text-green-500',
+          xlsx: 'bg-green-100 text-green-500',
+          jpg: 'bg-yellow-100 text-yellow-500',
+          jpeg: 'bg-yellow-100 text-yellow-500',
+          png: 'bg-yellow-100 text-yellow-500',
+          txt: 'bg-gray-100 text-gray-500',
+        }
+
+        const iconColor = fileTypeColors[extension] || 'bg-gray-100 text-gray-500'
+        fileIcon.className = `p-3 rounded-lg ${iconColor}`
+      }
+
+      // 格式化文件大小
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes'
+
+        const k = 1024
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+        const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+      }
+
+      // 格式化速度
+      function formatSpeed(bytesPerSecond) {
+        if (bytesPerSecond === 0) return '0 KB/s'
+
+        const k = 1024
+        const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s']
+        const i = Math.floor(Math.log(bytesPerSecond) / Math.log(k))
+
+        return parseFloat((bytesPerSecond / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+      }
+
+      // 格式化时间
+      function formatTime(seconds) {
+        if (seconds < 60) {
+          return `${Math.round(seconds)} 秒`
+        } else if (seconds < 3600) {
+          const minutes = Math.floor(seconds / 60)
+          const remainingSeconds = Math.round(seconds % 60)
+          return `${minutes} 分 ${remainingSeconds} 秒`
+        } else {
+          const hours = Math.floor(seconds / 3600)
+          const minutes = Math.floor((seconds % 3600) / 60)
+          return `${hours} 时 ${minutes} 分`
+        }
+      }
+
+      // 开始上传
+      function startUpload() {
+        if (!selectedFile) return
+
+        // 重置进度
+        uploadProgressBar.style.width = '0%'
+        uploadPercentage.textContent = '0%'
+        uploadSpeed.textContent = '0 KB/s'
+
+        // 更新状态
+        statusIcon.className = 'text-warning mr-2'
+        statusIcon.innerHTML = '<i class="fa fa-clock-o"></i>'
+        statusText.textContent = '上传中...'
+
+        // 创建表单数据
+        const formData = new FormData()
+        formData.append('file', selectedFile)
+
+        // 创建XHR对象
+        const xhr = new XMLHttpRequest()
+
+        // 监听上传进度
+        xhr.upload.addEventListener('progress', function (e) {
+          if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 100)
+            const elapsedTime = (Date.now() - uploadStartTime) / 1000 // 秒
+            const speed = elapsedTime > 0 ? e.loaded / elapsedTime : 0
+            const remainingSeconds = speed > 0 ? (e.total - e.loaded) / speed : 0
+
+            // 更新UI
+            uploadProgressBar.style.width = `${percentComplete}%`
+            uploadPercentage.textContent = `${percentComplete}%`
+            uploadSpeed.textContent = `${formatSpeed(speed)}`
+            statusText.textContent = `上传中... 剩余时间: ${formatTime(remainingSeconds)}`
+          }
+        })
+
+        // 监听上传完成事件
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            // 上传成功
+            uploadProgressBar.style.width = '100%'
+            uploadPercentage.textContent = '100%'
+
+            statusIcon.className = 'text-success mr-2'
+            statusIcon.innerHTML = '<i class="fa fa-check-circle"></i>'
+            statusText.textContent = '上传成功'
+
+            // 添加到历史记录
+            addToHistory(selectedFile, true)
+          } else if (xhr.status === 413) {
+            // 文件过大错误
+            statusIcon.className = 'text-error mr-2'
+            statusIcon.innerHTML = '<i class="fa fa-exclamation-circle"></i>'
+            statusText.textContent = '上传失败：文件大小超过服务器限制'
+
+            // 添加到历史记录
+            addToHistory(selectedFile, false)
+          } else {
+            // 其他错误
+            statusIcon.className = 'text-error mr-2'
+            statusIcon.innerHTML = '<i class="fa fa-times-circle"></i>'
+            statusText.textContent = `上传失败 (错误 ${xhr.status})`
+
+            // 添加到历史记录
+            addToHistory(selectedFile, false)
+          }
+
+          // 3秒后隐藏进度条
+          setTimeout(() => {
+            selectedFileContainer.classList.add('opacity-0')
+            setTimeout(() => {
+              selectedFileContainer.classList.add('hidden')
+              selectedFile = null
+            }, 500)
+          }, 3000)
+        }
+
+        // 监听错误事件
+        xhr.onerror = function () {
+          statusIcon.className = 'text-error mr-2'
+          statusIcon.innerHTML = '<i class="fa fa-times-circle"></i>'
+          statusText.textContent = '上传出错，请重试'
+
+          // 添加到历史记录
+          addToHistory(selectedFile, false)
+        }
+
+        // 监听取消事件
+        cancelUpload.onclick = function () {
+          xhr.abort()
+
+          statusIcon.className = 'text-error mr-2'
+          statusIcon.innerHTML = '<i class="fa fa-times-circle"></i>'
+          statusText.textContent = '已取消上传'
+
+          // 添加到历史记录
+          addToHistory(selectedFile, false, true)
+
+          // 隐藏进度条
+          setTimeout(() => {
+            selectedFileContainer.classList.add('opacity-0')
+            setTimeout(() => {
+              selectedFileContainer.classList.add('hidden')
+              selectedFile = null
+            }, 500)
+          }, 1000)
+        }
+
+        // 记录开始时间
+        uploadStartTime = Date.now()
+
+        // 发送请求
+        xhr.open('POST', '/upload-web', true)
+        xhr.send(formData)
+      }
+
+      // 添加到历史记录
+      function addToHistory(file, success, cancelled = false) {
+        const now = new Date()
+        const fileExtension = file.name.split('.').pop().toLowerCase()
+
+        const historyItem = {
+          name: file.name,
+          size: formatFileSize(file.size),
+          date: now.toLocaleString(),
+          success: success,
+          cancelled: cancelled,
+          extension: fileExtension,
+        }
+
+        // 添加到数组
+        uploadHistory.unshift(historyItem)
+
+        // 最多保留5条记录
+        if (uploadHistory.length > 5) {
+          uploadHistory.pop()
+        }
+
+        // 更新UI
+        updateHistoryUI()
+      }
+
+      // 更新历史记录UI
+      function updateHistoryUI() {
+        uploadHistoryContainer.innerHTML = ''
+
+        if (uploadHistory.length === 0) {
+          uploadHistoryContainer.innerHTML = `
+          <div class="animate-pulse flex items-center justify-between py-2 border-b border-gray-100">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 rounded-lg bg-primary/10 text-primary">
+                <i class="fa fa-file-text-o"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm text-neutral">无上传记录</p>
+                <p class="text-xs text-gray-500">暂无文件上传</p>
+              </div>
+            </div>
+            <div class="text-gray-400">
+              <i class="fa fa-check-circle"></i>
+            </div>
+          </div>
+        `
+          return
+        }
+
+        uploadHistory.forEach((item, index) => {
+          const iconClass = getFileIconClass(item.extension)
+          const iconColor = getFileIconColor(item.extension)
+          let statusIcon = ''
+          let statusClass = ''
+
+          if (item.cancelled) {
+            statusIcon = '<i class="fa fa-times-circle"></i>'
+            statusClass = 'text-error'
+          } else if (item.success) {
+            statusIcon = '<i class="fa fa-check-circle"></i>'
+            statusClass = 'text-success'
+          } else {
+            statusIcon = '<i class="fa fa-exclamation-circle"></i>'
+            statusClass = 'text-warning'
+          }
+
+          const historyItem = document.createElement('div')
+          historyItem.className = `flex items-center justify-between py-2 border-b border-gray-100 transition-all duration-300 hover:bg-gray-50 ${
+            index === 0 ? 'animate-fadeIn' : ''
+          }`
+          historyItem.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <div class="p-2 rounded-lg ${iconColor}">
+              <i class="fa ${iconClass}"></i>
+            </div>
+            <div>
+              <p class="font-medium text-sm text-neutral truncate">${item.name}</p>
+              <p class="text-xs text-gray-500">${item.size} • ${item.date}</p>
+            </div>
+          </div>
+          <div class="${statusClass}">
+            ${statusIcon}
+          </div>
+        `
+
+          uploadHistoryContainer.appendChild(historyItem)
+        })
+      }
+
+      // 获取文件图标类
+      function getFileIconClass(extension) {
+        const fileTypeIcons = {
+          pdf: 'fa-file-pdf-o',
+          doc: 'fa-file-word-o',
+          docx: 'fa-file-word-o',
+          xls: 'fa-file-excel-o',
+          xlsx: 'fa-file-excel-o',
+          jpg: 'fa-file-image-o',
+          jpeg: 'fa-file-image-o',
+          png: 'fa-file-image-o',
+          txt: 'fa-file-text-o',
+          zip: 'fa-file-archive-o',
+          rar: 'fa-file-archive-o',
+          mp3: 'fa-file-audio-o',
+          mp4: 'fa-file-video-o',
+        }
+
+        return fileTypeIcons[extension] || 'fa-file-o'
+      }
+
+      // 获取文件图标颜色
+      function getFileIconColor(extension) {
+        const fileTypeColors = {
+          pdf: 'bg-red-100 text-red-500',
+          doc: 'bg-blue-100 text-blue-500',
+          docx: 'bg-blue-100 text-blue-500',
+          xls: 'bg-green-100 text-green-500',
+          xlsx: 'bg-green-100 text-green-500',
+          jpg: 'bg-yellow-100 text-yellow-500',
+          jpeg: 'bg-yellow-100 text-yellow-500',
+          png: 'bg-yellow-100 text-yellow-500',
+          txt: 'bg-gray-100 text-gray-500',
+        }
+
+        return fileTypeColors[extension] || 'bg-gray-100 text-gray-500'
+      }
+
+      // 页面加载完成后初始化
+      document.addEventListener('DOMContentLoaded', function () {
+        // 初始化历史记录UI
+        updateHistoryUI()
+
+        // 添加淡入动画样式
+        const style = document.createElement('style')
+        style.textContent = `
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease forwards;
+        }
+      `
+        document.head.appendChild(style)
+      })
+    </script>
+  </body>
+</html>

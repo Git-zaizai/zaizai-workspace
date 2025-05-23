@@ -1,0 +1,80 @@
+<!-- b.html (视频播放端) -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>视频播放端 (B)</title>
+  </head>
+  <body>
+    <video
+      id="remoteVideo"
+      autoplay
+    ></video>
+
+    <script>
+      const video = document.querySelector('video')
+      video.onerror = error => {
+        console.log('🚀 ~ error:', error)
+      }
+      /* 步骤5：播放端初始化 */
+      const ws = new WebSocket('ws://localhost:7379') // 连接到接收端专用端点
+      let pc
+
+      const configuration = {
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+      }
+
+      ws.onopen = () => {
+        ws.send('client')
+      }
+
+      // WebSocket 消息处理
+      ws.onmessage = async message => {
+        let data
+        try {
+          data = JSON.parse(message.data)
+        } catch (error) {
+          data = message.data
+        }
+
+        if (data.code === 'sender-offer') {
+          /* 步骤5.1：处理推送端 offer */
+          pc = new RTCPeerConnection(configuration)
+
+          // 处理远程流
+          pc.ontrack = event => {
+            document.querySelector('video').srcObject = event.streams[0]
+          }
+
+          // 处理 ICE 候选
+          pc.onicecandidate = ({ candidate }) => {
+            console.log("🚀 ~ candidate:", candidate)
+            if (candidate) {
+              ws.send(
+                JSON.stringify({
+                  route: 'receiver-candidate',
+                  data: candidate.toJSON(),
+                })
+              )
+            }
+          }
+
+          /* 步骤5.2：创建应答 */
+          await pc.setRemoteDescription(new RTCSessionDescription(data.data))
+          const answer = await pc.createAnswer()
+          await pc.setLocalDescription(answer)
+          ws.send(
+            JSON.stringify({
+              route: 'receiver-answer',
+              data: pc.localDescription,
+            })
+          )
+        }
+
+        if (data.code === 'sender-candidate') {
+          /* 步骤7：处理推送端候选 */
+          pc.addIceCandidate(new RTCIceCandidate(data.data))
+        }
+      }
+    </script>
+  </body>
+</html>
