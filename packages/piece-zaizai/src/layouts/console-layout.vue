@@ -1,28 +1,17 @@
 <template>
   <n-layout class="h-100vh">
-    <n-layout-header
-      :inverted="app.Layoutinverted"
-      bordered
-      class="h-67px flex-y-center pr-1"
-    >
-      <router-link
-        to="/"
-        class="flex-y-center"
-      >
-        <img
-          src="@/assets/logo.png"
-          class="h-40px w-40px ml-3"
-        />
+    <n-layout-header :inverted="app.Layoutinverted" bordered class="h-67px flex-y-center pr-1">
+      <router-link to="/" class="flex-y-center">
+        <img src="@/assets/logo.png" class="h-40px w-40px ml-3" />
       </router-link>
 
       <div class="w-10vw"></div>
 
-      <Menu
-        router
-        route-path="/console"
-        route-name="console"
-        mode="horizontal"
-      />
+      <n-scrollbar x-scrollable>
+        <div class="h-64px flex-y-center">
+          <Menu router route-path="/console" route-name="console" mode="horizontal" />
+        </div>
+      </n-scrollbar>
 
       <div class="ml-auto flex-y-center">
         <dialogLogin />
