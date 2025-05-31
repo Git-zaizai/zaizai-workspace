@@ -66,7 +66,7 @@
               size="20"
               transition
               class="i-ph-arrows-in-light cursor-pointer hover:text-[--zai-primary-color]"
-              :class="{ 'text-[--zai-primary-color]': tablestriped }"
+              :class="{ 'text-[--zai-primary-color]': outIn }"
               @click="bandcancelFullscreen"
               v-if="outIn"
             />
@@ -74,7 +74,6 @@
               size="20"
               transition
               class="i-ph-arrows-out-light cursor-pointer hover:text-[--zai-primary-color]"
-              :class="{ 'text-[--zai-primary-color]': tablestriped }"
               @click="bandfullscreen"
               v-else
             />

@@ -320,6 +320,40 @@ const {
         fixed: 'left',
       },
       {
+        title: '评分',
+        key: 'rate',
+        width: 200,
+        ellipsis: {
+          tooltip: true, 
+        }
+        /* render: (row: any) => {
+          if (!row.rate.length) {
+            return (
+              <NTag
+                bordered={false}
+                type={'default'}
+              >
+                无
+              </NTag>
+            )
+          }
+          return row.rate.map(item => (
+            <NTag
+              bordered={false}
+              type={'default'}
+            >
+              {item}
+            </NTag>
+          ))
+        }, */
+      },
+      {
+        title: '读到那章',
+        key: 'start-finish',
+        render: row => `${row.start} - ${row.finish}`,
+        width: 90,
+      },
+      {
         title: '首页链接',
         key: 'link',
         render(row) {
@@ -342,7 +376,7 @@ const {
         ellipsis: {
           tooltip: true,
         },
-        width: 120,
+        width: 200,
       },
       {
         title: '读完',
@@ -382,7 +416,7 @@ const {
             </NSpace>
           )
         },
-        minWidth: 500,
+        minWidth: 380,
         filterOptions: tabOptions,
         filter(
           value: string,
@@ -414,6 +448,12 @@ const {
         sorter: 'default',
       },
       {
+        title: '添加时间',
+        key: 'addDate',
+        render: row => dayjs(row.addDate).format('YYYY-MM-DD HH:mm:ss'),
+        width: 160,
+      },
+      {
         title: '删除状态',
         key: 'isdel',
         render(row, index) {
@@ -434,12 +474,6 @@ const {
         sorter: 'default',
       },
       {
-        title: '读到那章',
-        key: 'start-finish',
-        render: row => `${row.start} - ${row.finish}`,
-        width: 90,
-      },
-      {
         title: '后续链接',
         key: 'linkback',
         render(row) {
@@ -456,7 +490,6 @@ const {
         },
         width: 90,
       },
-
       {
         title: '其他链接',
         key: 'links',
@@ -484,13 +517,6 @@ const {
         },
         width: 90,
       },
-
-      {
-        title: '添加时间',
-        key: 'addDate',
-        render: row => dayjs(row.addDate).format('YYYY-MM-DD HH:mm:ss'),
-        width: 160,
-      },
       {
         title: '修改时间',
         key: 'update',
@@ -502,30 +528,6 @@ const {
         key: 'finishtime',
         render: row => dayjs(row.finishtime).format('YYYY-MM-DD HH:mm:ss'),
         width: 160,
-      },
-      {
-        title: '评分',
-        key: 'rate',
-        /* render: (row: any) => {
-          if (!row.rate.length) {
-            return (
-              <NTag
-                bordered={false}
-                type={'default'}
-              >
-                无
-              </NTag>
-            )
-          }
-          return row.rate.map(item => (
-            <NTag
-              bordered={false}
-              type={'default'}
-            >
-              {item}
-            </NTag>
-          ))
-        }, */
       },
       {
         title: '彻底删除',
