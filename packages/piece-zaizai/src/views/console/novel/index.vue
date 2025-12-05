@@ -12,61 +12,26 @@
       @action-delete="bandUpdateItem('isdel', $event, 0)"
     />
 
-    <n-drawer
-      v-model:show="show"
-      placement="left"
-      width="30vw"
-    >
-      <n-drawer-content
-        :title="actionTitle"
-        :native-scrollbar="false"
-      >
-        <n-form
-          ref="formRef"
-          :model="formData"
-        >
-          <n-form-item
-            label="小说名:"
-            path="title"
-            :rule="rule"
-          >
-            <n-input
-              placeholder="小说名"
-              clearable
-              v-model:value="formData.title"
-            />
+    <n-drawer v-model:show="show" placement="left" width="30vw">
+      <n-drawer-content :title="actionTitle" :native-scrollbar="false">
+        <n-form ref="formRef" :model="formData">
+          <n-form-item label="小说名:" path="title" :rule="rule">
+            <n-input placeholder="小说名" clearable v-model:value="formData.title" />
           </n-form-item>
 
           <n-form-item label="读到那章:">
             <n-input-group>
-              <n-input-number
-                v-model:value="formData.start"
-                class="text-align flex-1"
-                button-placement="both"
-              />
+              <n-input-number v-model:value="formData.start" class="text-align flex-1" button-placement="both" />
               <n-input-group-label>--</n-input-group-label>
-              <n-input-number
-                v-model:value="formData.finish"
-                class="text-align flex-1"
-                button-placement="both"
-              />
+              <n-input-number v-model:value="formData.finish" class="text-align flex-1" button-placement="both" />
             </n-input-group>
           </n-form-item>
 
           <n-form-item label="读完：">
-            <n-radio-group
-              v-model:value="formData.duwan"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="formData.duwan" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="读完"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="未读完"
-                />
+                <n-radio-button :value="1" label="读完" />
+                <n-radio-button :value="0" label="未读完" />
               </n-space>
             </n-radio-group>
           </n-form-item>
@@ -74,118 +39,58 @@
           <n-form-item label="标签：">
             <n-checkbox-group v-model:value="formData.tabs">
               <n-space>
-                <n-checkbox
-                  v-for="item in tags"
-                  :value="item.value"
-                  :label="item.label"
-                />
+                <n-checkbox v-for="item in tags" :value="item.value" :label="item.label" />
               </n-space>
             </n-checkbox-group>
           </n-form-item>
 
           <n-form-item label="完结/连载：">
-            <n-radio-group
-              v-model:value="formData.wanjie"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="formData.wanjie" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="完结"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="连载"
-                />
+                <n-radio-button :value="1" label="完结" />
+                <n-radio-button :value="0" label="连载" />
               </n-space>
             </n-radio-group>
           </n-form-item>
 
           <n-form-item label="删除状态：">
-            <n-radio-group
-              v-model:value="formData.isdel"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="formData.isdel" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="显示"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="隐藏"
-                />
+                <n-radio-button :value="1" label="显示" />
+                <n-radio-button :value="0" label="隐藏" />
               </n-space>
             </n-radio-group>
           </n-form-item>
 
           <n-form-item label="首链接:">
-            <n-input
-              placeholder=""
-              clearable
-              v-model:value="formData.link"
-            />
+            <n-input placeholder="" clearable v-model:value="formData.link" />
           </n-form-item>
 
           <n-form-item label="后续链接:">
-            <n-input
-              placeholder=""
-              clearable
-              v-model:value="formData.linkback"
-            />
+            <n-input placeholder="" clearable v-model:value="formData.linkback" />
           </n-form-item>
 
           <n-form-item label="备注：">
-            <n-input
-              placeholder="备注"
-              type="textarea"
-              clearable
-              v-model:value="formData.beizhu"
-            />
+            <n-input placeholder="备注" type="textarea" clearable v-model:value="formData.beizhu" />
           </n-form-item>
 
           <n-form-item label="评分:">
-            <n-input
-              placeholder=""
-              clearable
-              v-model:value="formData.rate"
-            />
+            <n-input placeholder="" clearable v-model:value="formData.rate" />
           </n-form-item>
 
-          <div
-            class="links"
-            v-for="(linkItem, linki) in formData.links"
-            :key="linki"
-          >
-            <transition
-              name="fade-scale"
-              mode="out-in"
-              appear
-            >
+          <div class="links" v-for="(linkItem, linki) in formData.links" :key="linki">
+            <transition name="fade-scale" mode="out-in" appear>
               <div class="flex">
                 <div class="flex-1">
                   <n-form-item :label="linkItem.linkName ? linkItem.linkName : `${linki + 1}、链接名：`">
-                    <n-input
-                      placeholder="链接名"
-                      clearable
-                      v-model:value="linkItem.linkName"
-                    />
+                    <n-input placeholder="链接名" clearable v-model:value="linkItem.linkName" />
                   </n-form-item>
                   <n-form-item label="URL:">
-                    <n-input
-                      placeholder="URL"
-                      clearable
-                      v-model:value="linkItem.url"
-                    />
+                    <n-input placeholder="URL" clearable v-model:value="linkItem.url" />
                   </n-form-item>
                 </div>
                 <div class="flex flex-col justify-center items-end w-15">
-                  <n-button
-                    @click="bindRemoveLink(linki)"
-                    type="warning"
-                    strong
-                    secondary
-                  >
+                  <n-button @click="bindRemoveLink(linki)" type="warning" strong secondary>
                     <template #icon>
                       <Iconify class="i-ph-x-square" />
                     </template>
@@ -195,19 +100,11 @@
             </transition>
           </div>
 
-          <n-button
-            block
-            class="mb-5"
-            @click="bandaddLinks"
-          >
+          <n-button block class="mb-5" @click="bandaddLinks">
             <Iconify class="i-ph-plus-circle" />
           </n-button>
 
-          <drawerFormButton
-            @submit="submit"
-            @close="showToggle(false)"
-            @reset="bindAddShow"
-          />
+          <drawerFormButton @submit="submit" @close="showToggle(false)" @reset="bindAddShow" />
         </n-form>
       </n-drawer-content>
     </n-drawer>
@@ -324,8 +221,8 @@ const {
         key: 'rate',
         width: 200,
         ellipsis: {
-          tooltip: true, 
-        }
+          tooltip: true,
+        },
         /* render: (row: any) => {
           if (!row.rate.length) {
             return (
@@ -358,12 +255,7 @@ const {
         key: 'link',
         render(row) {
           return (
-            <n-button
-              strong
-              tertiary
-              size={'small'}
-              onClick={() => copyStr(row.link as string)}
-            >
+            <n-button strong tertiary size={'small'} onClick={() => copyStr(row.link as string)}>
               {row.link ? '复制' : '无'}
             </n-button>
           )
@@ -406,10 +298,7 @@ const {
           return (
             <NSpace>
               {row.tabs.map(item => (
-                <NTag
-                  bordered={false}
-                  type={randTagType()}
-                >
+                <NTag bordered={false} type={randTagType()}>
                   {item}
                 </NTag>
               ))}
@@ -435,10 +324,7 @@ const {
         key: 'wanjie',
         render(row) {
           return (
-            <NTag
-              bordered={false}
-              type="info"
-            >
+            <NTag bordered={false} type="info">
               {row.wanjie == 1 ? '完结' : '连载'}
             </NTag>
           )
@@ -478,12 +364,7 @@ const {
         key: 'linkback',
         render(row) {
           return (
-            <n-button
-              strong
-              tertiary
-              size={'small'}
-              onClick={() => copyStr(row.linkback as string)}
-            >
+            <n-button strong tertiary size={'small'} onClick={() => copyStr(row.linkback as string)}>
               {row.linkback ? '复制' : '无'}
             </n-button>
           )
@@ -496,21 +377,13 @@ const {
         render(row: any) {
           if (!row.links.length) {
             return (
-              <NTag
-                bordered={false}
-                type={'default'}
-              >
+              <NTag bordered={false} type={'default'}>
                 无
               </NTag>
             )
           }
           return row.links.map(item => (
-            <n-button
-              strong
-              tertiary
-              size={'small'}
-              onClick={() => copyStr(item.urli)}
-            >
+            <n-button strong tertiary size={'small'} onClick={() => copyStr(item.urli)}>
               {item.linkName}
             </n-button>
           ))
@@ -542,11 +415,7 @@ const {
             >
               {{
                 trigger: () => (
-                  <n-button
-                    size={'small'}
-                    type={'error'}
-                    ghost={true}
-                  >
+                  <n-button size={'small'} type={'error'} ghost={true}>
                     彻底删除
                   </n-button>
                 ),

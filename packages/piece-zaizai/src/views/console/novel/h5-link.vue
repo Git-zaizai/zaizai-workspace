@@ -28,7 +28,7 @@ interface Row {
   id: string
 }
 
-const cssVars = useCssVars(['boxShadow3', 'primaryColor', 'textColor1', 'bodyColor', 'modalColor'])
+const cssVars = useCssVars(['boxShadow3', 'primaryColor', 'textColor1', 'bodyColor', 'modalColor', 'warningColor'])
 
 const rule = {
   trigger: 'blur',
@@ -327,56 +327,33 @@ function pageViewScrollTop() {
 <template>
   <div>
     <header class="fixed top-0 right-130 h-6vh flex-y-center">
-      <Iconify
-        class="i-ph-magnifying-glass-thin"
-        @click="showSelectInput"
-      />
+      <Iconify class="i-ph-magnifying-glass-thin" @click="showSelectInput" />
     </header>
 
-    <zai-loading
-      :show="bodyLoding"
-      size="48"
-      z-index="1"
-    >
-      <div
-        class="page-view p-10 p-b-0"
-        :style="cssVars"
-        ref="pageViewRef"
-        v-if="tableData.length"
-      >
+    <zai-loading :show="bodyLoding" size="48" z-index="1">
+      <div class="page-view p-10 p-b-0" :style="cssVars" ref="pageViewRef" v-if="tableData.length">
         <div
           class="flex flex-y-center bg-[--zai-modal-color] rounded-3xl p-x-10 p-y-5 mb-10 last:mb-0"
           v-for="(item, index) in tableData"
           :key="item.id"
         >
           <div class="w-30 flex-center">
-            <Iconify
-              class="i-ph-android-logo-bold"
-              @click="bandAction($event, index)"
-              size="26"
-            />
+            <Iconify class="i-ph-android-logo-bold" @click="bandAction($event, index)" size="26" />
           </div>
-          <p
-            class="w-full ml-15 text-20"
-            @click="bandContent(item, $event)"
-          >
+          <p class="w-full ml-15 text-20" @click="bandContent(item, $event)">
             {{ item.title }}
           </p>
-          <div class="bg-[--zai-primary-color] text-12px w-45 text-[--zai-modal-color] text-align-center rounded-2xl">
-            {{ item.duwan === 1 ? '读完' : '没玩' }}
+          <div
+            class="bg-[--zai-primary-color] text-12px w-45 text-[--zai-modal-color] text-align-center rounded-2xl"
+            :class="{ 'bg-[--zai-primary-color]': item.duwan === 1, 'bg-[--zai-warning-color]': item.duwan === 0 }"
+          >
+            {{ item.duwan === 1 ? '读完' : '没完' }}
           </div>
         </div>
         <div class="h-65"></div>
       </div>
-      <div
-        v-else
-        class="page-view flex-col-center"
-      >
-        <n-empty
-          class="mt-15"
-          description="什么也找不到"
-        >
-        </n-empty>
+      <div v-else class="page-view flex-col-center">
+        <n-empty class="mt-15" description="什么也找不到"> </n-empty>
       </div>
     </zai-loading>
 
@@ -418,10 +395,7 @@ function pageViewScrollTop() {
           @click="pageViewScrollTop"
         ></div>
         <div class="flex-center h-full flex-1">
-          <Iconify
-            class="i-ph-anchor-bold"
-            @click="init"
-          />
+          <Iconify class="i-ph-anchor-bold" @click="init" />
         </div>
         <div
           :style="{
@@ -447,10 +421,7 @@ function pageViewScrollTop() {
       </div>
     </footer>
 
-    <div
-      class="fixed bottom-70 left-5vw h-65 w-90vw flex-y-center bg-white p-x-10 shadow-lg z-2"
-      v-if="selectShow"
-    >
+    <div class="fixed bottom-70 left-5vw h-65 w-90vw flex-y-center bg-white p-x-10 shadow-lg z-2" v-if="selectShow">
       <n-input-group>
         <n-input
           ref="titleSelectInput"
@@ -461,28 +432,17 @@ function pageViewScrollTop() {
           @keyup.enter="queryfilterData"
           v-model:value="queryForm.title"
         />
-        <n-button
-          strong
-          secondary
-          @click="queryfilterData"
-        >
+        <n-button strong secondary @click="queryfilterData">
           <Iconify class="i-ph-magnifying-glass-plus" />
         </n-button>
-        <n-button
-          strong
-          secondary
-          @click="() => selectShowToggle()"
-        >
+        <n-button strong secondary @click="() => selectShowToggle()">
           <Iconify class="i-ph-x-circle" />
         </n-button>
       </n-input-group>
     </div>
 
     <!-- select -->
-    <n-modal
-      v-model:show="selectDialogShow"
-      :mask="false"
-    >
+    <n-modal v-model:show="selectDialogShow" :mask="false">
       <div class="w-95vw bg-[--n-color] p-x-15 pt-30 pb-20 rounded-7px">
         <n-form
           :model="queryForm"
@@ -492,191 +452,93 @@ function pageViewScrollTop() {
           label-width="87"
           @submit.prevent.enter="queryfilterData"
         >
-          <n-form-item
-            label="小说名:"
-            path="title"
-          >
-            <n-input
-              placeholder="小说名"
-              clearable
-              v-model:value="queryForm.title"
-            />
+          <n-form-item label="小说名:" path="title">
+            <n-input placeholder="小说名" clearable v-model:value="queryForm.title" />
           </n-form-item>
 
-          <n-form-item
-            label="网址:"
-            path="title"
-          >
-            <n-input
-              placeholder="网址"
-              clearable
-              v-model:value="queryForm.link"
-            />
+          <n-form-item label="网址:" path="title">
+            <n-input placeholder="网址" clearable v-model:value="queryForm.link" />
           </n-form-item>
 
           <n-form-item label="标签：">
             <n-checkbox-group v-model:value="queryForm.tags">
               <n-space>
-                <n-checkbox
-                  v-for="item in tags"
-                  :value="item"
-                  :label="item"
-                />
+                <n-checkbox v-for="item in tags" :value="item" :label="item" />
               </n-space>
             </n-checkbox-group>
           </n-form-item>
 
           <n-form-item label="读完：">
-            <n-radio-group
-              v-model:value="queryForm.duwan"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="queryForm.duwan" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="读完"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="未读完"
-                />
+                <n-radio-button :value="1" label="读完" />
+                <n-radio-button :value="0" label="未读完" />
                 <n-radio :value="-1" />
               </n-space>
             </n-radio-group>
           </n-form-item>
 
           <n-form-item label="显示/隐藏：">
-            <n-radio-group
-              v-model:value="queryForm.isdel"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="queryForm.isdel" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="显示"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="隐藏"
-                />
+                <n-radio-button :value="1" label="显示" />
+                <n-radio-button :value="0" label="隐藏" />
                 <n-radio :value="-1" />
               </n-space>
             </n-radio-group>
           </n-form-item>
 
           <n-form-item label="完结/连载：">
-            <n-radio-group
-              v-model:value="queryForm.wanjie"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="queryForm.wanjie" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="完结"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="连载"
-                />
+                <n-radio-button :value="1" label="完结" />
+                <n-radio-button :value="0" label="连载" />
                 <n-radio :value="-1" />
               </n-space>
             </n-radio-group>
           </n-form-item>
 
-          <drawerFormButton
-            class="drawer-form-button"
-            @close="bindAddShowQuery"
-            @reset="resetFormData"
-          />
+          <drawerFormButton class="drawer-form-button" @close="bindAddShowQuery" @reset="resetFormData" />
         </n-form>
       </div>
     </n-modal>
 
-    <n-modal
-      v-model:show="copyShow"
-      display-directive="show"
-    >
+    <n-modal v-model:show="copyShow" display-directive="show">
       <div class="w-90vw bg-white flex-col-center p-y-10 rounded-7px">
-        <div
-          class="text-21 m-y-7"
-          @click="copyStr(formData.title)"
-        >
+        <div class="text-21 m-y-7" @click="copyStr(formData.title)">
           {{ formData.title }}
         </div>
         <div class="text-21 m-y-7">
-          <a
-            :href="formData.link"
-            target="_blank"
-            >{{ formData.link }}</a
-          >
+          <a :href="formData.link" target="_blank">{{ formData.link }}</a>
         </div>
         <div class="text-21 m-y-7">
-          <a
-            :href="formData.linkback"
-            target="_blank"
-            >{{ formData.linkback }}</a
-          >
+          <a :href="formData.linkback" target="_blank">{{ formData.linkback }}</a>
         </div>
         <div class="text-21 m-y-7">备注： {{ formData.beizhu }}</div>
       </div>
     </n-modal>
 
     <!-- add -->
-    <n-drawer
-      v-model:show="show"
-      placement="left"
-      width="90vw"
-    >
-      <n-drawer-content
-        :title="actionTitle"
-        :native-scrollbar="false"
-      >
-        <n-form
-          ref="formRef"
-          :model="formData"
-        >
-          <n-form-item
-            label="小说名:"
-            path="title"
-            :rule="rule"
-          >
-            <n-input
-              placeholder="小说名"
-              clearable
-              v-model:value="formData.title"
-            />
+    <n-drawer v-model:show="show" placement="left" width="90vw">
+      <n-drawer-content :title="actionTitle" :native-scrollbar="false">
+        <n-form ref="formRef" :model="formData">
+          <n-form-item label="小说名:" path="title" :rule="rule">
+            <n-input placeholder="小说名" clearable v-model:value="formData.title" />
           </n-form-item>
 
           <n-form-item label="读到那章:">
             <n-input-group>
-              <n-input-number
-                v-model:value="formData.start"
-                class="text-align flex-1"
-                button-placement="both"
-              />
+              <n-input-number v-model:value="formData.start" class="text-align flex-1" button-placement="both" />
               <n-input-group-label>--</n-input-group-label>
-              <n-input-number
-                v-model:value="formData.finish"
-                class="text-align flex-1"
-                button-placement="both"
-              />
+              <n-input-number v-model:value="formData.finish" class="text-align flex-1" button-placement="both" />
             </n-input-group>
           </n-form-item>
 
           <n-form-item label="读完：">
-            <n-radio-group
-              v-model:value="formData.duwan"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="formData.duwan" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="读完"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="未读完"
-                />
+                <n-radio-button :value="1" label="读完" />
+                <n-radio-button :value="0" label="未读完" />
               </n-space>
             </n-radio-group>
           </n-form-item>
@@ -684,118 +546,58 @@ function pageViewScrollTop() {
           <n-form-item label="标签：">
             <n-checkbox-group v-model:value="formData.tabs">
               <n-space>
-                <n-checkbox
-                  v-for="item in tags"
-                  :value="item"
-                  :label="item"
-                />
+                <n-checkbox v-for="item in tags" :value="item" :label="item" />
               </n-space>
             </n-checkbox-group>
           </n-form-item>
 
           <n-form-item label="完结/连载：">
-            <n-radio-group
-              v-model:value="formData.wanjie"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="formData.wanjie" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="完结"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="连载"
-                />
+                <n-radio-button :value="1" label="完结" />
+                <n-radio-button :value="0" label="连载" />
               </n-space>
             </n-radio-group>
           </n-form-item>
 
           <n-form-item label="删除状态：">
-            <n-radio-group
-              v-model:value="formData.isdel"
-              name="radiogroup"
-            >
+            <n-radio-group v-model:value="formData.isdel" name="radiogroup">
               <n-space>
-                <n-radio-button
-                  :value="1"
-                  label="显示"
-                />
-                <n-radio-button
-                  :value="0"
-                  label="隐藏"
-                />
+                <n-radio-button :value="1" label="显示" />
+                <n-radio-button :value="0" label="隐藏" />
               </n-space>
             </n-radio-group>
           </n-form-item>
 
           <n-form-item label="首链接:">
-            <n-input
-              placeholder=""
-              clearable
-              v-model:value="formData.link"
-            />
+            <n-input placeholder="" clearable v-model:value="formData.link" />
           </n-form-item>
 
           <n-form-item label="后续链接:">
-            <n-input
-              placeholder=""
-              clearable
-              v-model:value="formData.linkback"
-            />
+            <n-input placeholder="" clearable v-model:value="formData.linkback" />
           </n-form-item>
 
           <n-form-item label="备注：">
-            <n-input
-              placeholder="备注"
-              type="textarea"
-              clearable
-              v-model:value="formData.beizhu"
-            />
+            <n-input placeholder="备注" type="textarea" clearable v-model:value="formData.beizhu" />
           </n-form-item>
 
           <n-form-item label="评分:">
-            <n-input
-              placeholder=""
-              clearable
-              v-model:value="formData.rate"
-            />
+            <n-input placeholder="" clearable v-model:value="formData.rate" />
           </n-form-item>
 
-          <div
-            class="links"
-            v-for="(linkItem, linki) in formData.links"
-            :key="linki"
-          >
-            <transition
-              name="fade-scale"
-              mode="out-in"
-              appear
-            >
+          <div class="links" v-for="(linkItem, linki) in formData.links" :key="linki">
+            <transition name="fade-scale" mode="out-in" appear>
               <div class="flex">
                 <div class="flex-1">
                   <n-form-item :label="linkItem.linkName ? linkItem.linkName : `${linki + 1}、链接名：`">
-                    <n-input
-                      placeholder="链接名"
-                      clearable
-                      v-model:value="linkItem.linkName"
-                    />
+                    <n-input placeholder="链接名" clearable v-model:value="linkItem.linkName" />
                   </n-form-item>
                   <n-form-item label="URL:">
-                    <n-input
-                      placeholder="URL"
-                      clearable
-                      v-model:value="linkItem.url"
-                    />
+                    <n-input placeholder="URL" clearable v-model:value="linkItem.url" />
                   </n-form-item>
                 </div>
                 <div class="flex flex-col justify-center items-end w-7 5">
-                  <n-button
-                    @click="bindRemoveLink(linki)"
-                    type="warning"
-                    strong
-                    secondary
-                  >
+                  <n-button @click="bindRemoveLink(linki)" type="warning" strong secondary>
                     <template #icon>
                       <Iconify class="i-ph-x-square" />
                     </template>
@@ -805,11 +607,7 @@ function pageViewScrollTop() {
             </transition>
           </div>
 
-          <n-button
-            block
-            class="mb-5"
-            @click="bandaddLinks"
-          >
+          <n-button block class="mb-5" @click="bandaddLinks">
             <Iconify class="i-ph-plus-circle" />
           </n-button>
 

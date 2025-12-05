@@ -189,7 +189,7 @@ class Router {
 
     for (const item of fu) {
       if (typeof item === 'function') {
-        middleware.push(...fu)
+        middleware.push(item)
       }
 
       if (Array.isArray(item)) {

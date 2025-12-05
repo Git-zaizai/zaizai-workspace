@@ -8,7 +8,10 @@
     />
     <title>文件上传进度显示</title>
     <script src="./js/tailwindcss.3.4.16.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
 
     <!-- 配置Tailwind自定义颜色 -->
     <script>
@@ -27,7 +30,12 @@
               info: '#3B82F6',
             },
             fontFamily: {
-              inter: ['Inter', 'sans-serif'],
+              inter: ['Inter', 'sans-serif', 'system-ui'],
+            },
+            boxShadow: {
+              input: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+              'input-focus':
+                '0 0 0 3px rgba(79, 70, 229, 0.3), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
             },
           },
         },
@@ -45,6 +53,17 @@
         }
         .progress-transition {
           transition: width 0.3s ease;
+        }
+      }
+      @layer utilities2 {
+        .content-auto {
+          content-visibility: auto;
+        }
+        .input-transition {
+          transition: all 0.2s ease-in-out;
+        }
+        .label-transition {
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
       }
     </style>
@@ -72,7 +91,7 @@
             <i class="fa fa-cloud-upload-alt text-primary/70 text-5xl mb-4"></i>
             <h3 class="text-lg font-medium text-neutral mb-2">拖放文件到此处上传</h3>
             <p class="text-gray-500 text-sm mb-2">或者</p>
-             <h3 class="text-lg font-medium text-neutral mb-2">点击选择文件</h3>
+            <h3 class="text-lg font-medium text-neutral mb-2">点击选择文件</h3>
 
             <label
               class="mt-2 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
@@ -187,6 +206,27 @@
           </div>
         </div>
       </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+        <div class="relative">
+          <input
+            type="text"
+            id="basic-input"
+            class="w-full px-4 py-3 rounded-lg border border-neutral-300 input-transition focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-input-focus text-neutral-800 placeholder-transparent"
+            required
+          />
+          <label
+            for="basic-input"
+            class="absolute left-4 -top-2.5 bg-white px-1 text-sm text-neutral-600 label-transition peer-placeholder-shown:text-base peer-placeholder-shown:text-neutral-500 peer-placeholder-shown:top-3 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary"
+            >上传地址：默认为空</label
+          >
+          <div
+            class="absolute right-4 top-3 text-neutral-400 transition-opacity duration-200 opacity-0 peer-focus:opacity-100"
+          >
+            <i class="fa fa-user"></i>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- 页脚 -->
@@ -215,6 +255,7 @@
       const statusIcon = document.getElementById('statusIcon')
       const statusText = document.getElementById('statusText')
       const uploadHistoryContainer = document.getElementById('uploadHistory')
+      const basicinput = document.querySelector('#basic-input')
 
       // 文件拖放事件
       ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -468,9 +509,9 @@
 
         // 记录开始时间
         uploadStartTime = Date.now()
-
+        const basicinputValue = basicinput.value
         // 发送请求
-        xhr.open('POST', '/upload-web', true)
+        xhr.open('POST', basicinputValue + '/upload-web', true)
         xhr.send(formData)
       }
 

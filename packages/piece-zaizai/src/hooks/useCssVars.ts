@@ -14,7 +14,7 @@ function convertToKebabCase(str: string): string {
 /**
  *
  * @param keys naive的颜色
- * @param style [暗色，亮色]
+ * @param style 自定义的颜色[暗色，亮色]
  * @param style2 使用 naive的颜色在自定义名字，防止与 naive的冲突
  * @param css
  * @returns

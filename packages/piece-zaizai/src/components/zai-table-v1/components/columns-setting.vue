@@ -283,10 +283,10 @@ watch(
   },
   { once: true }
 )
-
-// onMounted(() => {
-//   resetColumn()
-// })
+ 
+onMounted(() => {
+  resetColumn()
+})
 </script>
 
 <style scoped>

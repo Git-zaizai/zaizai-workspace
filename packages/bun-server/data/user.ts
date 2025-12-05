@@ -4,7 +4,7 @@ import { cert } from '../config'
 // 测试使用
 export const USER_DATA = [
   {
-    name: 'ONE_PIECE_ZAIZAI',
+    name: 'zaizai',
     pwd: 'zaizai',
   },
   {

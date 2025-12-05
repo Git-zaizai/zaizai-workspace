@@ -22,8 +22,8 @@ const privateRoutes: string[] = [
   '/upload-runfile',
 ]
 // 通配 /test/**/**
-if (process.env.NODE_ENV === 'development') {
-  privateRoutes.push('/test/:xx')
+if (process.env.NODE_ENV === 'production') {
+  privateRoutes.push('/test/**/**')
 }
 
 export let PRIVATE_ROUTES = privateRoutes.map(item => pathToRegexp(item))

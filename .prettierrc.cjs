@@ -39,5 +39,5 @@ module.exports = {
   // 换行符使用 lf 结尾是 可选值"<auto|lf|crlf|cr>"
   endOfLine: 'lf',
   // 在 HTML、Vue 和 JSX 中每行强制执行单个属性。
-  singleAttributePerLine: true,
+  singleAttributePerLine: false,
 }

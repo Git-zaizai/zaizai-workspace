@@ -9,6 +9,14 @@ const router = new Router({
   prefix: '/test',
 })
 
+router.get('/get', req => {
+  return { data: req.params }
+})
+
+router.post('/post', req => {
+  return { data: req.form }
+})
+
 router.post('/upload-app', async req => {
   const form = req.form
   const file = form.get('file')
@@ -42,7 +50,7 @@ router.post('/upload-app', async req => {
 router.post('/file/upload', async req => {
   const form = req.form
   const file = form.get('file')
-  
+
   if (!file) {
     return {
       code: 400,
@@ -54,8 +62,8 @@ router.post('/file/upload', async req => {
   const mkdir = path.join(UPLOAD_PATH, current)
   mkdirRecursive(mkdir)
   try {
-    console.log(file instanceof File); // true
-   const res = await Bun.write(path.join(mkdir, file.name), file)
+    console.log(file instanceof File) // true
+    const res = await Bun.write(path.join(mkdir, file.name), file)
     return 1
   } catch (err) {
     return {
