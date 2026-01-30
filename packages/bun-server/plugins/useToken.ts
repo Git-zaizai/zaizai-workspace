@@ -20,10 +20,11 @@ const privateRoutes: string[] = [
   '/deldet-tashks',
   '/runner',
   '/upload-runfile',
+
 ]
 // 通配 /test/**/**
 if (process.env.NODE_ENV === 'production') {
-  privateRoutes.push('/test/**/**')
+   privateRoutes.push('/test/*path')
 }
 
 export let PRIVATE_ROUTES = privateRoutes.map(item => pathToRegexp(item))

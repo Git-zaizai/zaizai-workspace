@@ -35,3 +35,10 @@ interface ImportMeta {
 type CssStyle = import('vue').CSSProperties
 
 type TagType = 'default' | 'success' | 'error' | 'warning' | 'primary' | 'info'
+
+interface RequestData<T = any> {
+  code: number
+  msg: string
+  data: T
+  [key: string]: any
+}

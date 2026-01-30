@@ -21,22 +21,20 @@ onMounted(() => {
 <template>
   <div>
     <n-layout class="h-100vh">
-      <n-layout-header
-        :inverted="app.Layoutinverted"
-        bordered
-        class="h-6vh flex-y-center px-5 h5-header"
-      >
-        <router-link
-          to="/"
-          class="flex-y-center"
-        >
-          <img
-            src="@/assets/logo.png"
-            class="h-40px w-40px ml-3"
-          />
+      <n-layout-header :inverted="app.Layoutinverted" bordered class="h-6vh flex-y-center px-5 h5-header">
+        <router-link to="/" class="flex-y-center">
+          <img src="@/assets/logo.png" class="h-40px w-40px ml-3" />
         </router-link>
 
         <div class="ml-auto flex-y-center">
+          <n-button
+            size="tiny"
+            secondary
+            strong
+            @click="app.$patch({ theme: app.theme === 'dark' ? 'light' : 'dark' })"
+          >
+            {{ app.theme === 'dark' ? '浅' : '深' }}
+          </n-button>
           <dialogLogin />
           <setting-drawer />
         </div>
@@ -48,6 +46,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

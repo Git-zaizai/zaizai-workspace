@@ -8,6 +8,14 @@ const h5Route: RouteRecordRaw = {
   component: h5Layout,
   children: [
     {
+      path: 'h5-hemon',
+      name: 'h5-hemon',
+      meta: {
+        title: 'h5-hemon',
+      },
+      component: () => import('@/views/h5/hemon.vue'),
+    },
+    {
       // 使用这样的 默认路由方式时 不写path，需要给一个name
       path: 'h5-link',
       name: 'h5-link',
@@ -24,6 +32,14 @@ const h5Route: RouteRecordRaw = {
         title: 'link',
       },
       component: () => import('@/views/h5/copy-str.vue'),
+    },
+    {
+      path: 'vxete',
+      name: 'vxete',
+      meta: {
+        title: 'vxete.con的txt',
+      },
+      component: () => import('@/views/h5/vxete.vue'),
     },
   ],
 }

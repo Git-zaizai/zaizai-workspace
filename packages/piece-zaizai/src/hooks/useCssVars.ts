@@ -20,8 +20,9 @@ function convertToKebabCase(str: string): string {
  * @returns
  */
 export const useCssVars = (keys: CssKey[] | null, style?: Style | null, style2?: Style2 | null, css?: CssStyle) => {
-  const { theme } = appStore()
+  const app = appStore()
   const naiveTheme = useThemeVars()
+  console.log(`🚀 ~ useCssVars ~ naiveTheme:`, naiveTheme)
   const vars = computed(() => {
     let value = {}
     if (keys) {
@@ -33,7 +34,7 @@ export const useCssVars = (keys: CssKey[] | null, style?: Style | null, style2?:
     }
     if (style) {
       for (const key in style) {
-        value[`--zai-${key}`] = theme === 'dark' ? style[key][0] : style[key][1]
+        value[`--zai-${key}`] = app.theme === 'dark' ? style[key][0] : style[key][1]
       }
     }
     if (style2) {

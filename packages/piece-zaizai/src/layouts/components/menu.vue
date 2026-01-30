@@ -87,6 +87,7 @@ if (props.router) {
   router = useRouter()
   route = useRoute()
   menuOptions = initMenu(router.getRoutes().find(v => v.name === props.routeName).children, props.routePath)
+  console.log(`🚀 ~ menuOptions:`, menuOptions)
   watchEffect(() => {
     movdelValue.value = (route.name as string) || route.fullPath
   })

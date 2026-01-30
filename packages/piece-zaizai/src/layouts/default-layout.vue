@@ -27,6 +27,15 @@
           </n-button>
         </router-link>
 
+        <router-link to="/h5-index/h5-hemon">
+          <n-button
+            quaternary
+            size="small"
+          >
+            H5
+          </n-button>
+        </router-link>
+
         <a
           :href="VITE_GITHUB"
           target="_blank"

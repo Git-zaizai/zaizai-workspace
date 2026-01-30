@@ -241,23 +241,23 @@ router.post('/upload-web', async req => {
     const name = form.fileInfo.name
     const size = form.fileInfo.size
     ph = path.join(mkdir, name)
-    const fileWriter = Bun.file(ph).writer();
-    let totalSize = 0;
+    const fileWriter = Bun.file(ph).writer()
+    let totalSize = 0
     const fileReader = await file.getReader()
 
     while (true) {
-      const { done, value } = await fileReader.read();
+      const { done, value } = await fileReader.read()
       if (done) {
-        break;
+        break
       }
-      totalSize += value.byteLength;
-      fileWriter.write(value);
+      totalSize += value.byteLength
+      fileWriter.write(value)
       if (totalSize >= size) {
-        break;
+        break
       }
     }
 
-    await fileWriter.end();
+    await fileWriter.end()
     return { data: { name, ph } }
   } catch (e) {
     console.log(`写入失败`, e)
@@ -270,7 +270,13 @@ import linkRoute from './link'
 import { wsHttpRouter } from '../ws/router'
 import TestRouter from './test'
 import scheduledTasksRouter from '../scheduled-tasks/router'
+import vxete from './vxete'
 
-router.use(linkRoute.routes()).use(wsHttpRouter.routes()).use(TestRouter.routes()).use(scheduledTasksRouter.routes())
+router
+  .use(linkRoute.routes())
+  .use(wsHttpRouter.routes())
+  .use(TestRouter.routes())
+  .use(scheduledTasksRouter.routes())
+  .use(vxete.routes())
 
 export default router
